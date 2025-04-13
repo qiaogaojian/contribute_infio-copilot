@@ -1,4 +1,4 @@
-import { OPENROUTER_BASE_URL } from '../constants'
+import { GROK_BASE_URL, OPENROUTER_BASE_URL } from '../constants'
 import { ApiProvider } from '../types/llm/model'
 
 export interface ModelInfo {
@@ -158,6 +158,40 @@ export const openRouterDefaultModelInfo: ModelInfo = {
 	cacheReadsPrice: 0.3,
 	description:
 		"The new Claude 3.5 Sonnet delivers better-than-Opus capabilities, faster-than-Sonnet speeds, at the same Sonnet prices. Sonnet is particularly good at:\n\n- Coding: New Sonnet scores ~49% on SWE-Bench Verified, higher than the last best score, and without any fancy prompt scaffolding\n- Data science: Augments human data science expertise; navigates unstructured data while using multiple tools for insights\n- Visual processing: excelling at interpreting charts, graphs, and images, accurately transcribing text to derive insights beyond just the text alone\n- Agentic tasks: exceptional tool use, making it great at agentic tasks (i.e. complex, multi-step problem solving tasks that require engaging with other systems)\n\n#multimodal",
+}
+let openRouterModelsCache: Record<string, ModelInfo> | null = null;
+async function fetchOpenRouterModels(): Promise<Record<string, ModelInfo>> {
+	if (openRouterModelsCache) {
+		return openRouterModelsCache;
+	}
+
+	try {
+		const response = await fetch(OPENROUTER_BASE_URL + "/models");
+		const data = await response.json();
+		const models: Record<string, ModelInfo> = {};
+
+		if (data?.data) {
+			for (const model of data.data) {
+				models[model.id] = {
+					maxTokens: model.top_provider?.max_completion_tokens ?? model.context_length,
+					contextWindow: model.context_length,
+					supportsImages: model.architecture?.modality?.includes("image") ?? false,
+					supportsPromptCache: false,
+					inputPrice: model.pricing?.prompt ?? 0,
+					outputPrice: model.pricing?.completion ?? 0,
+					description: model.description,
+				};
+			}
+		}
+
+		openRouterModelsCache = models;
+		return models;
+	} catch (error) {
+		console.error('Failed to fetch OpenRouter models:', error);
+		return {
+			[openRouterDefaultModelId]: openRouterDefaultModelInfo
+		};
+	}
 }
 
 // Gemini
@@ -1130,6 +1164,61 @@ export const groqModels = {
 	},
 } as const satisfies Record<string, ModelInfo>
 
+// Grok
+// https://docs.x.ai/docs/models
+export type GrokModelId = keyof typeof grokModels
+export const grokDefaultModelId: GrokModelId = "grok-3"
+export const grokModels = {
+	"grok-3": {
+		maxTokens: 8192,
+		contextWindow: 131072,
+		supportsImages: false,
+		supportsPromptCache: true,
+		inputPrice: 0,
+		outputPrice: 0,
+	},
+	"grok-3-fast": {
+		maxTokens: 8192,
+		contextWindow: 131072,
+		supportsImages: false,
+		supportsPromptCache: true,
+		inputPrice: 0,
+		outputPrice: 0,
+	}, 
+	"grok-3-mini": {
+		maxTokens: 8192,
+		contextWindow: 131072,
+		supportsImages: false,
+		supportsPromptCache: true,
+		inputPrice: 0,
+		outputPrice: 0,
+	}, 
+	"grok-3-mini-fast": {
+		maxTokens: 8192,
+		contextWindow: 131072,
+		supportsImages: false,
+		supportsPromptCache: true,
+		inputPrice: 0,
+		outputPrice: 0,
+	},
+	"grok-2-vision": {
+		maxTokens: 8192,
+		contextWindow: 131072,
+		supportsImages: true,
+		supportsPromptCache: true,
+		inputPrice: 0,
+		outputPrice: 0,
+	},
+	"grok-2-image": {
+		maxTokens: 8192,
+		contextWindow: 131072,
+		supportsImages: true,
+		supportsPromptCache: true,
+		inputPrice: 0,
+		outputPrice: 0,
+	}
+} as const satisfies Record<string, ModelInfo>
+
 /// helper functions
 // get all providers
 export const GetAllProviders = (): ApiProvider[] => {
@@ -1145,42 +1234,6 @@ export const GetEmbeddingProviders = (): ApiProvider[] => {
 		ApiProvider.OpenAICompatible,
 		ApiProvider.Ollama,
 	]
-}
-
-let openRouterModelsCache: Record<string, ModelInfo> | null = null;
-
-async function fetchOpenRouterModels(): Promise<Record<string, ModelInfo>> {
-	if (openRouterModelsCache) {
-		return openRouterModelsCache;
-	}
-
-	try {
-		const response = await fetch(OPENROUTER_BASE_URL + "/models");
-		const data = await response.json();
-		const models: Record<string, ModelInfo> = {};
-
-		if (data?.data) {
-			for (const model of data.data) {
-				models[model.id] = {
-					maxTokens: model.top_provider?.max_completion_tokens ?? model.context_length,
-					contextWindow: model.context_length,
-					supportsImages: model.architecture?.modality?.includes("image") ?? false,
-					supportsPromptCache: false,
-					inputPrice: model.pricing?.prompt ?? 0,
-					outputPrice: model.pricing?.completion ?? 0,
-					description: model.description,
-				};
-			}
-		}
-
-		openRouterModelsCache = models;
-		return models;
-	} catch (error) {
-		console.error('Failed to fetch OpenRouter models:', error);
-		return {
-			[openRouterDefaultModelId]: openRouterDefaultModelInfo
-		};
-	}
 }
 
 // Get all models for a provider
@@ -1204,6 +1257,8 @@ export const GetProviderModels = async (provider: ApiProvider): Promise<Record<s
 			return geminiModels
 		case ApiProvider.Groq:
 			return groqModels
+		case ApiProvider.Grok:
+			return grokModels
 		case ApiProvider.Ollama:
 			return {}
 		case ApiProvider.OpenAICompatible:

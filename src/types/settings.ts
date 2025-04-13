@@ -147,6 +147,18 @@ const GroqProviderSchema = z.object({
 	useCustomUrl: false
 })
 
+const GrokProviderSchema = z.object({
+	name: z.literal('Grok'),
+	apiKey: z.string().catch(''),
+	baseUrl: z.string().catch(''),
+	useCustomUrl: z.boolean().catch(false)
+}).catch({
+	name: 'Grok',
+	apiKey: '',
+	baseUrl: '',
+	useCustomUrl: false
+})
+
 const ollamaModelSchema = z.object({
 	baseUrl: z.string().catch(''),
 	model: z.string().catch(''),
@@ -205,6 +217,7 @@ export const InfioSettingsSchema = z.object({
 	googleProvider: GoogleProviderSchema,
 	ollamaProvider: OllamaProviderSchema,
 	groqProvider: GroqProviderSchema,
+	grokProvider: GrokProviderSchema,
 	openaicompatibleProvider: OpenAICompatibleProviderSchema,
 
 	// Chat Model 

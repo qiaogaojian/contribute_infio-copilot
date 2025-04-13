@@ -8,6 +8,7 @@ export enum ApiProvider {
 	OpenAI = "OpenAI",
 	Google = "Google",
 	Groq = "Groq",
+	Grok = "Grok",
 	Ollama = "Ollama",
 	OpenAICompatible = "OpenAICompatible",
 }

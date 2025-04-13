@@ -23,6 +23,7 @@ type ProviderSettingKey =
 	| 'deepseekProvider'
 	| 'googleProvider'
 	| 'groqProvider'
+	| 'grokProvider'
 	| 'ollamaProvider'
 	| 'openaicompatibleProvider';
 
@@ -36,8 +37,9 @@ const keyMap: Record<ApiProvider, ProviderSettingKey> = {
 	'Deepseek': 'deepseekProvider',
 	'Google': 'googleProvider',
 	'Groq': 'groqProvider',
+	'Grok': 'grokProvider',
 	'Ollama': 'ollamaProvider',
-	'OpenAICompatible': 'openaicompatibleProvider'
+	'OpenAICompatible': 'openaicompatibleProvider',
 };
 
 const getProviderSettingKey = (provider: ApiProvider): ProviderSettingKey => {

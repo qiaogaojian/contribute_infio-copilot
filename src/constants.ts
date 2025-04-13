@@ -29,6 +29,7 @@ export const SUPPORT_EMBEDDING_SIMENTION: number[] = [
 export const OPENAI_BASE_URL = 'https://api.openai.com/v1'
 export const DEEPSEEK_BASE_URL = 'https://api.deepseek.com'
 export const OPENROUTER_BASE_URL = 'https://openrouter.ai/api/v1'
+export const GROK_BASE_URL = 'https://api.x.ai/v1'
 export const SILICONFLOW_BASE_URL = 'https://api.siliconflow.cn/v1'
 export const ALIBABA_QWEN_BASE_URL = 'https://dashscope.aliyuncs.com/compatible-mode/v1'
 export const INFIO_BASE_URL = 'https://api.infio.com/api/raw_message'

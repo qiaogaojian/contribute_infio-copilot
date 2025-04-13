@@ -1,4 +1,4 @@
-import { ALIBABA_QWEN_BASE_URL, DEEPSEEK_BASE_URL, OPENROUTER_BASE_URL, SILICONFLOW_BASE_URL } from '../../constants'
+import { ALIBABA_QWEN_BASE_URL, DEEPSEEK_BASE_URL, GROK_BASE_URL, OPENROUTER_BASE_URL, SILICONFLOW_BASE_URL } from '../../constants'
 import { ApiProvider, LLMModel } from '../../types/llm/model'
 import {
 	LLMOptions,
@@ -39,6 +39,7 @@ class LLMManager implements LLMManagerInterface {
 	private anthropicProvider: AnthropicProvider
 	private googleProvider: GeminiProvider
 	private groqProvider: GroqProvider
+	private grokProvider: OpenAICompatibleProvider
 	private infioProvider: InfioProvider
 	private openrouterProvider: OpenAICompatibleProvider
 	private siliconflowProvider: OpenAICompatibleProvider
@@ -77,6 +78,16 @@ class LLMManager implements LLMManagerInterface {
 		this.anthropicProvider = new AnthropicProvider(settings.anthropicProvider.apiKey)
 		this.googleProvider = new GeminiProvider(settings.googleProvider.apiKey)
 		this.groqProvider = new GroqProvider(settings.groqProvider.apiKey)
+		console.log('GrokProvider',
+			settings.grokProvider.apiKey,
+			settings.grokProvider.baseUrl,
+			settings.grokProvider.useCustomUrl
+		)
+		this.grokProvider = new OpenAICompatibleProvider(settings.grokProvider.apiKey,
+			settings.grokProvider.baseUrl && settings.grokProvider.useCustomUrl ?
+				settings.grokProvider.baseUrl
+				: GROK_BASE_URL
+		)
 		this.ollamaProvider = new OllamaProvider(settings.ollamaProvider.baseUrl)
 		this.openaiCompatibleProvider = new OpenAICompatibleProvider(settings.openaicompatibleProvider.apiKey, settings.openaicompatibleProvider.baseUrl)
 		this.isInfioEnabled = !!settings.infioProvider.apiKey
@@ -145,6 +156,12 @@ class LLMManager implements LLMManagerInterface {
 					request,
 					options,
 				)
+			case ApiProvider.Grok:
+				return await this.grokProvider.generateResponse(
+					model,
+					request,
+					options,
+				)
 			case ApiProvider.OpenAICompatible:
 				return await this.openaiCompatibleProvider.generateResponse(model, request, options)
 			default:
@@ -182,6 +199,8 @@ class LLMManager implements LLMManagerInterface {
 				return await this.googleProvider.streamResponse(model, request, options)
 			case ApiProvider.Groq:
 				return await this.groqProvider.streamResponse(model, request, options)
+			case ApiProvider.Grok:
+				return await this.grokProvider.streamResponse(model, request, options)
 			case ApiProvider.Ollama:
 				return await this.ollamaProvider.streamResponse(model, request, options)
 			case ApiProvider.OpenAICompatible:

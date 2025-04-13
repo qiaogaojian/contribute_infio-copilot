@@ -296,6 +296,12 @@ describe('settings migration', () => {
 				baseUrl: '',
 				useCustomUrl: false,
 			},
+			grokProvider: {
+				name: 'Grok',
+				apiKey: '',
+				baseUrl: '',
+				useCustomUrl: false,
+			},
 			infioProvider: {
 				name: 'Infio',
 				apiKey: '',
