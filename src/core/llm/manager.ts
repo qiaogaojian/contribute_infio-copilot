@@ -78,11 +78,6 @@ class LLMManager implements LLMManagerInterface {
 		this.anthropicProvider = new AnthropicProvider(settings.anthropicProvider.apiKey)
 		this.googleProvider = new GeminiProvider(settings.googleProvider.apiKey)
 		this.groqProvider = new GroqProvider(settings.groqProvider.apiKey)
-		console.log('GrokProvider',
-			settings.grokProvider.apiKey,
-			settings.grokProvider.baseUrl,
-			settings.grokProvider.useCustomUrl
-		)
 		this.grokProvider = new OpenAICompatibleProvider(settings.grokProvider.apiKey,
 			settings.grokProvider.baseUrl && settings.grokProvider.useCustomUrl ?
 				settings.grokProvider.baseUrl

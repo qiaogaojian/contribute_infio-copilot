@@ -1034,6 +1034,29 @@ export const siliconFlowEmbeddingModels = {
 export type GroqModelId = keyof typeof groqModels
 export const groqDefaultModelId: GroqModelId = "llama-3.3-70b-versatile"
 export const groqModels = {
+	"meta-llama/llama-4-scout-17b-16e-instruct": {
+		maxTokens: 8192,
+		contextWindow: 131072,
+		supportsImages: false,
+		supportsPromptCache: false,
+		inputPrice: 0,
+		outputPrice: 0,
+	},
+	"meta-llama/llama-4-maverick-17b-128e-instruct": {
+		maxTokens: 8192,
+		contextWindow: 131072,
+		supportsImages: false,
+		supportsPromptCache: false,
+		inputPrice: 0,
+		outputPrice: 0,
+	},
+	"qwen-qwq-32b": {
+		maxTokens: 8192,
+		contextWindow: 131072,
+		supportsImages: false,
+		supportsPromptCache: false,
+		inputPrice: 0,
+	},
 	"llama-3.2-1b-preview": {
 		maxTokens: 4096,
 		contextWindow: 8192,
