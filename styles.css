@@ -1871,3 +1871,292 @@ button.infio-chat-input-model-select {
   align-items: center;
   gap: 4px;
 }
+
+/*
+ * CommandsView Styles
+ * - 命令管理界面
+ */
+
+ .infio-chat-commands {
+  overflow-y: scroll;
+ }
+
+.infio-commands-container {
+  /* background-color: #1e1e1e; */
+  color: var(--text-normal);
+  border-radius: var(--radius-m);
+  padding: var(--size-4-3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+	height: 100%;
+  margin: 0 auto;
+}
+
+.infio-commands-header {
+  padding-bottom: var(--size-4-2);
+  border-bottom: 1px solid #333;
+  margin-bottom: var(--size-4-2);
+}
+
+.infio-commands-new {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4-2);
+}
+
+.infio-commands-header-title {
+  color: var(--text-normal);
+  font-size: 28px;
+  font-weight: 500;
+  margin: 0 0 var(--size-4-3) 0;
+}
+
+.infio-commands-label {
+  color: var(--text-normal);
+  font-size: var(--font-ui-medium);
+  font-weight: var(--font-medium);
+  margin: var(--size-2-2) 0;
+}
+
+.infio-commands-hint {
+  color: #999;
+  font-size: var(--font-ui-smaller);
+  margin-top: var(--size-2-1);
+}
+
+.infio-commands-input {
+  background-color: #333 !important;
+  border: none;
+  border-radius: var(--radius-s);
+  color: var(--text-normal);
+  padding: var(--size-4-2);
+  font-size: var(--font-ui-small);
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: var(--size-4-2);
+}
+
+.infio-commands-textarea {
+  background-color: #333 !important;
+  border: none;
+  border-radius: var(--radius-s);
+  color: var(--text-normal);
+  padding: var(--size-4-2);
+  font-size: var(--font-ui-small);
+  width: 100%;
+  min-height: 80px;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.infio-commands-add-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--size-2-2);
+  background-color: transparent;
+  color: var(--text-accent);
+  border: 1px solid #555;
+  border-radius: var(--radius-s);
+  padding: var(--size-2-3) var(--size-4-3);
+  cursor: pointer;
+  font-size: var(--font-ui-small);
+  align-self: flex-start;
+  margin-top: var(--size-4-2);
+}
+
+.infio-commands-add-btn:disabled {
+  background-color: #444;
+  color: #777;
+  cursor: not-allowed;
+}
+
+.infio-commands-search {
+  display: flex;
+  align-items: center;
+  background-color: #333 !important;
+  border: 1px solid #444;
+  border-radius: 6px;
+  padding: 6px 12px;
+  margin-bottom: var(--size-4-3);
+  transition: all 0.2s ease;
+  height: 36px;
+  max-width: 100%;
+}
+
+.infio-commands-search:focus-within {
+  border-color: #666;
+}
+
+.infio-commands-search-icon {
+  color: #888;
+  margin-right: 8px;
+  opacity: 0.8;
+}
+
+.infio-commands-search-input {
+  background-color: transparent !important;
+  border: none !important;
+  color: #ddd;
+  padding: 4px 0;
+  font-size: 14px;
+  width: 100%;
+  outline: none;
+  height: 24px;
+  &:focus {
+    outline: none !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+}
+
+.infio-commands-search-input::placeholder {
+  color: #888;
+  opacity: 0.8;
+}
+
+.infio-commands-search-input::placeholder {
+  color: var(--text-faint);
+  opacity: 0.7;
+}
+
+.infio-commands-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4-2);
+}
+
+.infio-commands-empty {
+  display: flex;
+  justify-content: center;
+  padding: var(--size-4-3);
+  color: var(--text-muted);
+}
+
+.infio-commands-item {
+  background-color: #2a2a2a;
+  border-radius: var(--radius-s);
+  padding: var(--size-4-2);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.infio-commands-title {
+  font-weight: var(--font-medium);
+  margin-bottom: var(--size-2-3);
+  font-size: var(--font-ui-medium);
+  color: var(--text-accent);
+	user-select: text;
+}
+
+.infio-commands-content {
+  color: var(--text-muted);
+  margin-bottom: var(--size-4-2);
+  font-size: var(--font-ui-small);
+  white-space: pre-wrap;
+  word-break: break-word;
+	user-select: text;
+}
+
+.infio-commands-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--size-1-2);
+  position: relative;
+  z-index: 10;
+}
+
+.infio-commands-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: var(--text-muted);
+  padding: 0 !important; /* 确保没有内边距 */
+  margin: 0 !important; /* 确保没有外边距 */
+  width: 24px !important; /* 限制宽度 */
+  height: 24px !important; /* 限制高度 */
+
+  &:hover {
+    background-color: var(--background-modifier-hover) !important;
+  }
+}
+
+.infio-commands-edit-mode {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4-2);
+}
+
+.infio-commands-edit-title {
+  background-color: #333 !important;
+  border: none;
+  border-radius: var(--radius-s);
+  color: var(--text-normal);
+  padding: var(--size-4-2);
+  font-size: var(--font-ui-medium);
+  font-weight: var(--font-medium);
+  width: 100%;
+}
+
+.infio-commands-view-mode {
+  display: flex;
+  flex-direction: column;
+}
+
+.infio-commands-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4-3);
+}
+
+.infio-commands-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-2-2);
+}
+
+.infio-commands-section {
+  margin-bottom: var(--size-4-3);
+  border-bottom: 1px solid #333;
+  padding-bottom: var(--size-4-3);
+}
+
+.infio-commands-section-title {
+  color: var(--text-accent);
+  font-size: var(--font-ui-medium);
+  font-weight: var(--font-medium);
+  margin: 0 0 var(--size-4-2) 0;
+}
+
+.infio-commands-location {
+  display: flex;
+  gap: var(--size-4-4);
+  margin-bottom: var(--size-4-2);
+}
+
+.infio-commands-location-option {
+  display: flex;
+  flex-direction: column;
+  background-color: #2a2a2a;
+  border-radius: var(--radius-s);
+  padding: var(--size-4-2);
+  width: 50%;
+}
+
+.infio-commands-location-option input[type="radio"] {
+  margin-right: var(--size-2-2);
+}
+
+.infio-commands-location-option label {
+  color: var(--text-normal);
+  font-weight: var(--font-medium);
+  margin-bottom: var(--size-2-2);
+  display: flex;
+  align-items: center;
+}
+
+.infio-commands-location-description {
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+}

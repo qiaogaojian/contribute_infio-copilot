@@ -1,7 +1,7 @@
 import * as path from 'path'
 
 import { useMutation } from '@tanstack/react-query'
-import { CircleStop, History, Plus } from 'lucide-react'
+import { CircleStop, History, Plus, SquareSlash } from 'lucide-react'
 import { App, Notice } from 'obsidian'
 import {
 	forwardRef,
@@ -52,6 +52,7 @@ import { ModeSelect } from './chat-input/ModeSelect'
 import PromptInputWithActions, { ChatUserInputRef } from './chat-input/PromptInputWithActions'
 import { editorStateToPlainText } from './chat-input/utils/editor-state-to-plain-text'
 import { ChatHistory } from './ChatHistory'
+import CommandsView from './CommandsView'
 import MarkdownReasoningBlock from './Markdown/MarkdownReasoningBlock'
 import QueryProgress, { QueryProgressState } from './QueryProgress'
 import ReactMarkdown from './ReactMarkdown'
@@ -159,6 +160,8 @@ const Chat = forwardRef<ChatRef, ChatProps>((props, ref) => {
 			chatUserInputRefs.current.delete(id)
 		}
 	}
+
+	const [tab, setTab] = useState<'chat' | 'commands'>('commands')
 
 	useEffect(() => {
 		const scrollContainer = chatMessagesRef.current
@@ -870,11 +873,15 @@ const Chat = forwardRef<ChatRef, ChatProps>((props, ref) => {
 
 	return (
 		<div className="infio-chat-container">
+			{/* header view */}
 			<div className="infio-chat-header">
 				<ModeSelect />
 				<div className="infio-chat-header-buttons">
 					<button
-						onClick={() => handleNewChat()}
+						onClick={() => {
+							setTab('chat')
+							handleNewChat()
+						}}
 						className="infio-chat-list-dropdown"
 					>
 						<Plus size={18} />
@@ -906,112 +913,134 @@ const Chat = forwardRef<ChatRef, ChatProps>((props, ref) => {
 					>
 						<History size={18} />
 					</ChatHistory>
+					<button
+						onClick={() => {
+							// switch between chat and prompts
+							if (tab === 'commands') {
+								setTab('chat')
+							} else {
+								setTab('commands')
+							}
+						}}
+						className="infio-chat-list-dropdown"
+					>
+						<SquareSlash size={18} color={tab === 'commands' ? 'var(--text-accent)' : 'var(--text-color)'} />
+					</button>
 				</div>
 			</div>
-			<div className="infio-chat-messages" ref={chatMessagesRef}>
-				{
-					// If the chat is empty, show a message to start a new chat
-					chatMessages.length === 0 && (
-						<div className="infio-chat-empty-state">
-							<ShortcutInfo />
-						</div>
-					)
-				}
-				{chatMessages.map((message, index) =>
-					message.role === 'user' ? (
-						message.content &&
-						<div key={"user-" + message.id} className="infio-chat-messages-user">
-							<PromptInputWithActions
-								key={"input-" + message.id}
-								ref={(ref) => registerChatUserInputRef(message.id, ref)}
-								initialSerializedEditorState={message.content}
-								onSubmit={(content, useVaultSearch) => {
-									if (editorStateToPlainText(content).trim() === '') return
-									handleSubmit(
-										[
-											...chatMessages.slice(0, index),
-											{
-												role: 'user',
-												applyStatus: ApplyStatus.Idle,
-												content: content,
-												promptContent: null,
-												id: message.id,
-												mentionables: message.mentionables,
-											},
-										],
-										useVaultSearch,
-									)
-									chatUserInputRefs.current.get(inputMessage.id)?.focus()
-								}}
-								onFocus={() => {
-									setFocusedMessageId(message.id)
-								}}
-								mentionables={message.mentionables}
-								setMentionables={(mentionables) => {
-									setChatMessages((prevChatHistory) =>
-										prevChatHistory.map((msg) =>
-											msg.id === message.id ? { ...msg, mentionables } : msg,
-										),
-									)
-								}}
-							/>
-							{message.similaritySearchResults && (
-								<SimilaritySearchResults
-									key={"similarity-search-" + message.id}
-									similaritySearchResults={message.similaritySearchResults}
-								/>
-							)}
-						</div>
-					) : (
-						<div key={"assistant-" + message.id} className="infio-chat-messages-assistant">
-							<MarkdownReasoningBlock
-								key={"reasoning-" + message.id}
-								reasoningContent={message.reasoningContent} />
-							<ReactMarkdownItem
-								key={"content-" + message.id}
-								handleApply={(toolArgs) => handleApply(message.id, toolArgs)}
-								applyStatus={message.applyStatus}
-							>
-								{message.content}
-							</ReactMarkdownItem>
-						</div>
-					),
-				)}
-				<QueryProgress state={queryProgress} />
-				{submitMutation.isPending && (
-					<button onClick={abortActiveStreams} className="infio-stop-gen-btn">
-						<CircleStop size={16} />
-						<div>Stop generation</div>
-					</button>
-				)}
-			</div>
-			<PromptInputWithActions
-				key={inputMessage.id}
-				ref={(ref) => registerChatUserInputRef(inputMessage.id, ref)}
-				initialSerializedEditorState={inputMessage.content}
-				onSubmit={(content, useVaultSearch) => {
-					if (editorStateToPlainText(content).trim() === '') return
-					handleSubmit(
-						[...chatMessages, { ...inputMessage, content }],
-						useVaultSearch,
-					)
-					setInputMessage(getNewInputMessage(app, settings.defaultMention))
-					preventAutoScrollRef.current = false
-					handleScrollToBottom()
-				}}
-				onFocus={() => {
-					setFocusedMessageId(inputMessage.id)
-				}}
-				mentionables={inputMessage.mentionables}
-				setMentionables={(mentionables) => {
-					setInputMessage((prevInputMessage) => ({
-						...prevInputMessage,
-						mentionables,
-					}))
-				}}
-				autoFocus
-				addedBlockKey={addedBlockKey}
-			/>
+			{/* main view */}
+			{tab === 'chat' ? (
+				<>
+					<div className="infio-chat-messages" ref={chatMessagesRef}>
+						{
+							// If the chat is empty, show a message to start a new chat
+							chatMessages.length === 0 && (
+								<div className="infio-chat-empty-state">
+									<ShortcutInfo />
+								</div>
+							)
+						}
+						{chatMessages.map((message, index) =>
+							message.role === 'user' ? (
+								message.content &&
+								<div key={"user-" + message.id} className="infio-chat-messages-user">
+									<PromptInputWithActions
+										key={"input-" + message.id}
+										ref={(ref) => registerChatUserInputRef(message.id, ref)}
+										initialSerializedEditorState={message.content}
+										onSubmit={(content, useVaultSearch) => {
+											if (editorStateToPlainText(content).trim() === '') return
+											handleSubmit(
+												[
+													...chatMessages.slice(0, index),
+													{
+														role: 'user',
+														applyStatus: ApplyStatus.Idle,
+														content: content,
+														promptContent: null,
+														id: message.id,
+														mentionables: message.mentionables,
+													},
+												],
+												useVaultSearch,
+											)
+											chatUserInputRefs.current.get(inputMessage.id)?.focus()
+										}}
+										onFocus={() => {
+											setFocusedMessageId(message.id)
+										}}
+										mentionables={message.mentionables}
+										setMentionables={(mentionables) => {
+											setChatMessages((prevChatHistory) =>
+												prevChatHistory.map((msg) =>
+													msg.id === message.id ? { ...msg, mentionables } : msg,
+												),
+											)
+										}}
+									/>
+									{message.similaritySearchResults && (
+										<SimilaritySearchResults
+											key={"similarity-search-" + message.id}
+											similaritySearchResults={message.similaritySearchResults}
+										/>
+									)}
+								</div>
+							) : (
+								<div key={"assistant-" + message.id} className="infio-chat-messages-assistant">
+									<MarkdownReasoningBlock
+										key={"reasoning-" + message.id}
+										reasoningContent={message.reasoningContent} />
+									<ReactMarkdownItem
+										key={"content-" + message.id}
+										handleApply={(toolArgs) => handleApply(message.id, toolArgs)}
+										applyStatus={message.applyStatus}
+									>
+										{message.content}
+									</ReactMarkdownItem>
+								</div>
+							),
+						)}
+						<QueryProgress state={queryProgress} />
+						{submitMutation.isPending && (
+							<button onClick={abortActiveStreams} className="infio-stop-gen-btn">
+								<CircleStop size={16} />
+								<div>Stop generation</div>
+							</button>
+						)}
+					</div>
+					<PromptInputWithActions
+						key={inputMessage.id}
+						ref={(ref) => registerChatUserInputRef(inputMessage.id, ref)}
+						initialSerializedEditorState={inputMessage.content}
+						onSubmit={(content, useVaultSearch) => {
+							if (editorStateToPlainText(content).trim() === '') return
+							handleSubmit(
+								[...chatMessages, { ...inputMessage, content }],
+								useVaultSearch,
+							)
+							setInputMessage(getNewInputMessage(app, settings.defaultMention))
+							preventAutoScrollRef.current = false
+							handleScrollToBottom()
+						}}
+						onFocus={() => {
+							setFocusedMessageId(inputMessage.id)
+						}}
+						mentionables={inputMessage.mentionables}
+						setMentionables={(mentionables) => {
+							setInputMessage((prevInputMessage) => ({
+								...prevInputMessage,
+								mentionables,
+							}))
+						}}
+						autoFocus
+						addedBlockKey={addedBlockKey}
+					/>
+				</>
+			) : (
+				<div className="infio-chat-commands">
+					<CommandsView />
+				</div>
+			)}
 		</div>
 	)
 })
