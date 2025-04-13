@@ -1,4 +1,4 @@
-import { GROK_BASE_URL, OPENROUTER_BASE_URL } from '../constants'
+import { OPENROUTER_BASE_URL } from '../constants'
 import { ApiProvider } from '../types/llm/model'
 
 export interface ModelInfo {
@@ -12,6 +12,8 @@ export interface ModelInfo {
 	cacheWritesPrice?: number
 	cacheReadsPrice?: number
 	description?: string
+	reasoningEffort?: string,
+	thinking?: boolean
 }
 
 export interface EmbeddingModelInfo {
@@ -96,10 +98,34 @@ export const infioModels = {
 } as const satisfies Record<string, ModelInfo>
 
 // Anthropic
-// https://docs.anthropic.com/en/docs/about-claude/models // prices updated 2025-01-02
+// https://docs.anthropic.com/en/docs/about-claude/models
 export type AnthropicModelId = keyof typeof anthropicModels
-export const anthropicDefaultModelId: AnthropicModelId = "claude-3-5-sonnet-20241022"
+export const anthropicDefaultModelId: AnthropicModelId = "claude-3-7-sonnet-20250219"
 export const anthropicModels = {
+	"claude-3-7-sonnet-20250219:thinking": {
+		maxTokens: 128_000,
+		contextWindow: 200_000,
+		supportsImages: true,
+		supportsComputerUse: true,
+		supportsPromptCache: true,
+		inputPrice: 3.0, // $3 per million input tokens
+		outputPrice: 15.0, // $15 per million output tokens
+		cacheWritesPrice: 3.75, // $3.75 per million tokens
+		cacheReadsPrice: 0.3, // $0.30 per million tokens
+		thinking: true,
+	},
+	"claude-3-7-sonnet-20250219": {
+		maxTokens: 8192,
+		contextWindow: 200_000,
+		supportsImages: true,
+		supportsComputerUse: true,
+		supportsPromptCache: true,
+		inputPrice: 3.0, // $3 per million input tokens
+		outputPrice: 15.0, // $15 per million output tokens
+		cacheWritesPrice: 3.75, // $3.75 per million tokens
+		cacheReadsPrice: 0.3, // $0.30 per million tokens
+		thinking: false,
+	},
 	"claude-3-5-sonnet-20241022": {
 		maxTokens: 8192,
 		contextWindow: 200_000,
@@ -116,10 +142,10 @@ export const anthropicModels = {
 		contextWindow: 200_000,
 		supportsImages: false,
 		supportsPromptCache: true,
-		inputPrice: 0.8,
-		outputPrice: 4.0,
-		cacheWritesPrice: 1.0,
-		cacheReadsPrice: 0.08,
+		inputPrice: 1.0,
+		outputPrice: 5.0,
+		cacheWritesPrice: 1.25,
+		cacheReadsPrice: 0.1,
 	},
 	"claude-3-opus-20240229": {
 		maxTokens: 4096,
@@ -141,8 +167,7 @@ export const anthropicModels = {
 		cacheWritesPrice: 0.3,
 		cacheReadsPrice: 0.03,
 	},
-} as const satisfies Record<string, ModelInfo> // as const assertion makes the object deeply readonly
-
+} as const satisfies Record<string, ModelInfo>
 // OpenRouter
 // https://openrouter.ai/models?order=newest&supported_parameters=tools
 export const openRouterDefaultModelId = "anthropic/claude-3.5-sonnet" // will always exist in openRouterModels
@@ -199,6 +224,22 @@ async function fetchOpenRouterModels(): Promise<Record<string, ModelInfo>> {
 export type GeminiModelId = keyof typeof geminiModels
 export const geminiDefaultModelId: GeminiModelId = "gemini-2.0-flash-001"
 export const geminiModels = {
+	"gemini-2.5-pro-exp-03-25": {
+		maxTokens: 65_536,
+		contextWindow: 1_048_576,
+		supportsImages: true,
+		supportsPromptCache: false,
+		inputPrice: 0,
+		outputPrice: 0,
+	},
+	"gemini-2.5-pro-preview-03-25": {
+		maxTokens: 65_535,
+		contextWindow: 1_048_576,
+		supportsImages: true,
+		supportsPromptCache: false,
+		inputPrice: 2.5,
+		outputPrice: 15,
+	},
 	"gemini-2.0-flash-001": {
 		maxTokens: 8192,
 		contextWindow: 1_048_576,
@@ -308,20 +349,47 @@ export const geminiEmbeddingModels = {
 export type OpenAiNativeModelId = keyof typeof openAiNativeModels
 export const openAiNativeDefaultModelId: OpenAiNativeModelId = "gpt-4o"
 export const openAiNativeModels = {
+	// don't support tool use yet
 	"o3-mini": {
 		maxTokens: 100_000,
 		contextWindow: 200_000,
 		supportsImages: false,
-		supportsPromptCache: false,
+		supportsPromptCache: true,
 		inputPrice: 1.1,
 		outputPrice: 4.4,
+		reasoningEffort: "medium",
 	},
-	// don't support tool use yet
-	o1: {
+	"o3-mini-high": {
+		maxTokens: 100_000,
+		contextWindow: 200_000,
+		supportsImages: false,
+		supportsPromptCache: true,
+		inputPrice: 1.1,
+		outputPrice: 4.4,
+		reasoningEffort: "high",
+	},
+	"o3-mini-low": {
+		maxTokens: 100_000,
+		contextWindow: 200_000,
+		supportsImages: false,
+		supportsPromptCache: true,
+		inputPrice: 1.1,
+		outputPrice: 4.4,
+		reasoningEffort: "low",
+	},
+	"o1-pro": {
 		maxTokens: 100_000,
 		contextWindow: 200_000,
 		supportsImages: true,
 		supportsPromptCache: false,
+		inputPrice: 150,
+		outputPrice: 600,
+	},
+	o1: {
+		maxTokens: 100_000,
+		contextWindow: 200_000,
+		supportsImages: true,
+		supportsPromptCache: true,
 		inputPrice: 15,
 		outputPrice: 60,
 	},
@@ -329,7 +397,7 @@ export const openAiNativeModels = {
 		maxTokens: 32_768,
 		contextWindow: 128_000,
 		supportsImages: true,
-		supportsPromptCache: false,
+		supportsPromptCache: true,
 		inputPrice: 15,
 		outputPrice: 60,
 	},
@@ -337,15 +405,23 @@ export const openAiNativeModels = {
 		maxTokens: 65_536,
 		contextWindow: 128_000,
 		supportsImages: true,
-		supportsPromptCache: false,
+		supportsPromptCache: true,
 		inputPrice: 1.1,
 		outputPrice: 4.4,
 	},
-	"gpt-4o": {
-		maxTokens: 4_096,
+	"gpt-4.5-preview": {
+		maxTokens: 16_384,
 		contextWindow: 128_000,
 		supportsImages: true,
-		supportsPromptCache: false,
+		supportsPromptCache: true,
+		inputPrice: 75,
+		outputPrice: 150,
+	},
+	"gpt-4o": {
+		maxTokens: 16_384,
+		contextWindow: 128_000,
+		supportsImages: true,
+		supportsPromptCache: true,
 		inputPrice: 2.5,
 		outputPrice: 10,
 	},
@@ -353,7 +429,7 @@ export const openAiNativeModels = {
 		maxTokens: 16_384,
 		contextWindow: 128_000,
 		supportsImages: true,
-		supportsPromptCache: false,
+		supportsPromptCache: true,
 		inputPrice: 0.15,
 		outputPrice: 0.6,
 	},
@@ -405,6 +481,66 @@ export const deepSeekModels = {
 export type QwenModelId = keyof typeof qwenModels
 export const qwenDefaultModelId: QwenModelId = "qwen-max-latest"
 export const qwenModels = {
+	"qwen2.5-coder-32b-instruct": {
+		maxTokens: 8_192,
+		contextWindow: 131_072,
+		supportsImages: false,
+		supportsPromptCache: false,
+		inputPrice: 0.002,
+		outputPrice: 0.006,
+		cacheWritesPrice: 0.002,
+		cacheReadsPrice: 0.006,
+	},
+	"qwen2.5-coder-14b-instruct": {
+		maxTokens: 8_192,
+		contextWindow: 131_072,
+		supportsImages: false,
+		supportsPromptCache: false,
+		inputPrice: 0.002,
+		outputPrice: 0.006,
+		cacheWritesPrice: 0.002,
+		cacheReadsPrice: 0.006,
+	},
+	"qwen2.5-coder-7b-instruct": {
+		maxTokens: 8_192,
+		contextWindow: 131_072,
+		supportsImages: false,
+		supportsPromptCache: false,
+		inputPrice: 0.001,
+		outputPrice: 0.002,
+		cacheWritesPrice: 0.001,
+		cacheReadsPrice: 0.002,
+	},
+	"qwen2.5-coder-3b-instruct": {
+		maxTokens: 8_192,
+		contextWindow: 32_768,
+		supportsImages: false,
+		supportsPromptCache: false,
+		inputPrice: 0.0,
+		outputPrice: 0.0,
+		cacheWritesPrice: 0.0,
+		cacheReadsPrice: 0.0,
+	},
+	"qwen2.5-coder-1.5b-instruct": {
+		maxTokens: 8_192,
+		contextWindow: 32_768,
+		supportsImages: false,
+		supportsPromptCache: false,
+		inputPrice: 0.0,
+		outputPrice: 0.0,
+		cacheWritesPrice: 0.0,
+		cacheReadsPrice: 0.0,
+	},
+	"qwen2.5-coder-0.5b-instruct": {
+		maxTokens: 8_192,
+		contextWindow: 32_768,
+		supportsImages: false,
+		supportsPromptCache: false,
+		inputPrice: 0.0,
+		outputPrice: 0.0,
+		cacheWritesPrice: 0.0,
+		cacheReadsPrice: 0.0,
+	},
 	"qwen-coder-plus-latest": {
 		maxTokens: 129_024,
 		contextWindow: 131_072,
@@ -444,6 +580,26 @@ export const qwenModels = {
 		outputPrice: 9.6,
 		cacheWritesPrice: 2.4,
 		cacheReadsPrice: 9.6,
+	},
+	"qwq-plus-latest": {
+		maxTokens: 8_192,
+		contextWindow: 131_071,
+		supportsImages: false,
+		supportsPromptCache: false,
+		inputPrice: 0.0,
+		outputPrice: 0.0,
+		cacheWritesPrice: 0.0,
+		cacheReadsPrice: 0.0,
+	},
+	"qwq-plus": {
+		maxTokens: 8_192,
+		contextWindow: 131_071,
+		supportsImages: false,
+		supportsPromptCache: false,
+		inputPrice: 0.0,
+		outputPrice: 0.0,
+		cacheWritesPrice: 0.0,
+		cacheReadsPrice: 0.0,
 	},
 	"qwen-coder-plus": {
 		maxTokens: 129_024,
@@ -698,6 +854,22 @@ export const siliconFlowModels = {
 		inputPrice: 0.4,
 		outputPrice: 0.8,
 	},
+	"Qwen/Qwen2.5-VL-32B-Instruct": {
+		maxTokens: 8192,
+		contextWindow: 32_768,
+		supportsImages: true,
+		supportsPromptCache: false,
+		inputPrice: 0.4,
+		outputPrice: 0.8,
+	},
+	"Qwen/Qwen2.5-VL-72B-Instruct": {
+		maxTokens: 8192,
+		contextWindow: 32_768,
+		supportsImages: true,
+		supportsPromptCache: false,
+		inputPrice: 0.4,
+		outputPrice: 0.8,
+	},
 	"TeleAI/TeleChat2": {
 		maxTokens: 4096,
 		contextWindow: 32_768,
@@ -809,6 +981,14 @@ export const siliconFlowModels = {
 		supportsPromptCache: false,
 		inputPrice: 0.3,
 		outputPrice: 0.6,
+	},
+	"Qwen/QwQ-32B": {
+		maxTokens: 8192,
+		contextWindow: 32_768,
+		supportsImages: false,
+		supportsPromptCache: false,
+		inputPrice: 1.0,
+		outputPrice: 2.0,
 	},
 	"Qwen/QwQ-32B-Preview": {
 		maxTokens: 8192,
@@ -1207,7 +1387,7 @@ export const grokModels = {
 		supportsPromptCache: true,
 		inputPrice: 0,
 		outputPrice: 0,
-	}, 
+	},
 	"grok-3-mini": {
 		maxTokens: 8192,
 		contextWindow: 131072,
@@ -1215,7 +1395,7 @@ export const grokModels = {
 		supportsPromptCache: true,
 		inputPrice: 0,
 		outputPrice: 0,
-	}, 
+	},
 	"grok-3-mini-fast": {
 		maxTokens: 8192,
 		contextWindow: 131072,
