@@ -1,10 +1,10 @@
 import { Check, Diff, Loader2, X } from 'lucide-react'
 import { PropsWithChildren, useState } from 'react'
 
-import { useDarkModeContext } from '../../contexts/DarkModeContext'
-import { ApplyStatus, ToolArgs } from '../../types/apply'
+import { useDarkModeContext } from "../../../contexts/DarkModeContext"
+import { ApplyStatus, ToolArgs } from "../../../types/apply"
 
-import { MemoizedSyntaxHighlighterWrapper } from './SyntaxHighlighterWrapper'
+import { MemoizedSyntaxHighlighterWrapper } from "./SyntaxHighlighterWrapper"
 
 export default function MarkdownApplyDiffBlock({
 	mode,

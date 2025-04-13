@@ -1,7 +1,7 @@
 import { Check, ChevronDown, ChevronRight, Globe, Loader2, X } from 'lucide-react'
 import React, { useEffect, useRef, useState } from 'react'
 
-import { ApplyStatus, FetchUrlsContentToolArgs } from '../../types/apply'
+import { ApplyStatus, FetchUrlsContentToolArgs } from "../../../types/apply"
 
 export default function MarkdownFetchUrlsContentBlock({
 	applyStatus,

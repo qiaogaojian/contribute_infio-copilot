@@ -24,7 +24,7 @@ import {
 	serializeMentionable,
 } from '../../../utils/mentionable'
 import { openMarkdownFile, readTFileContent } from '../../../utils/obsidian'
-import { MemoizedSyntaxHighlighterWrapper } from '../SyntaxHighlighterWrapper'
+import { MemoizedSyntaxHighlighterWrapper } from '../Markdown/SyntaxHighlighterWrapper'
 
 import { ImageUploadButton } from './ImageUploadButton'
 import LexicalContentEditable from './LexicalContentEditable'

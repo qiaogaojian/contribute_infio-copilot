@@ -1,21 +1,19 @@
-import { FolderOpen } from 'lucide-react'
+import { ExternalLink } from 'lucide-react'
 import React from 'react'
 
-import { useApp } from '../../contexts/AppContext'
-import { ApplyStatus, ListFilesToolArgs } from '../../types/apply'
-import { openMarkdownFile } from '../../utils/obsidian'
+import { useApp } from "../../../contexts/AppContext"
+import { ApplyStatus, ReadFileToolArgs } from "../../../types/apply"
+import { openMarkdownFile } from "../../../utils/obsidian"
 
-export default function MarkdownListFilesBlock({
+export default function MarkdownReadFileBlock({
 	applyStatus,
 	onApply,
 	path,
-	recursive,
 	finish
 }: {
 	applyStatus: ApplyStatus
-	onApply: (args: ListFilesToolArgs) => void
+	onApply: (args: ReadFileToolArgs) => void
 	path: string,
-	recursive: boolean,
 	finish: boolean
 }) {
 	const app = useApp()
@@ -27,9 +25,8 @@ export default function MarkdownListFilesBlock({
 	React.useEffect(() => {
 		if (finish && applyStatus === ApplyStatus.Idle) {
 			onApply({
-				type: 'list_files',
-				filepath: path,
-				recursive
+				type: 'read_file',
+				filepath: path
 			})
 		}
 	}, [finish])
@@ -41,8 +38,8 @@ export default function MarkdownListFilesBlock({
 		>
 			<div className={'infio-chat-code-block-header'}>
 				<div className={'infio-chat-code-block-header-filename'}>
-					<FolderOpen size={14} className="infio-chat-code-block-header-icon" />
-					List files: {path}
+					<ExternalLink size={10} className="infio-chat-code-block-header-icon" />
+					Read file: {path}
 				</div>
 			</div>
 		</div>

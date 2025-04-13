@@ -1,8 +1,8 @@
 import { Check, Loader2, Search, X } from 'lucide-react'
 import React from 'react'
 
-import { useSettings } from '../../contexts/SettingsContext'
-import { ApplyStatus, SearchWebToolArgs } from '../../types/apply'
+import { useSettings } from "../../../contexts/SettingsContext"
+import { ApplyStatus, SearchWebToolArgs } from "../../../types/apply"
 
 export default function MarkdownWebSearchBlock({
 	applyStatus,

@@ -7,18 +7,18 @@ import {
 	parseMsgBlocks,
 } from '../../utils/parse-infio-block'
 
-import MarkdownApplyDiffBlock from './MarkdownApplyDiffBlock'
-import MarkdownEditFileBlock from './MarkdownEditFileBlock'
-import MarkdownFetchUrlsContentBlock from './MarkdownFetchUrlsContentBlock'
-import MarkdownListFilesBlock from './MarkdownListFilesBlock'
-import MarkdownReadFileBlock from './MarkdownReadFileBlock'
-import MarkdownReasoningBlock from './MarkdownReasoningBlock'
-import MarkdownRegexSearchFilesBlock from './MarkdownRegexSearchFilesBlock'
-import MarkdownSearchAndReplace from './MarkdownSearchAndReplace'
-import MarkdownSearchWebBlock from './MarkdownSearchWebBlock'
-import MarkdownSemanticSearchFilesBlock from './MarkdownSemanticSearchFilesBlock'
-import MarkdownSwitchModeBlock from './MarkdownSwitchModeBlock'
-import MarkdownWithIcons from './MarkdownWithIcon'
+import MarkdownApplyDiffBlock from './Markdown/MarkdownApplyDiffBlock'
+import MarkdownEditFileBlock from './Markdown/MarkdownEditFileBlock'
+import MarkdownFetchUrlsContentBlock from './Markdown/MarkdownFetchUrlsContentBlock'
+import MarkdownListFilesBlock from './Markdown/MarkdownListFilesBlock'
+import MarkdownReadFileBlock from './Markdown/MarkdownReadFileBlock'
+import MarkdownReasoningBlock from './Markdown/MarkdownReasoningBlock'
+import MarkdownRegexSearchFilesBlock from './Markdown/MarkdownRegexSearchFilesBlock'
+import MarkdownSearchAndReplace from './Markdown/MarkdownSearchAndReplace'
+import MarkdownSearchWebBlock from './Markdown/MarkdownSearchWebBlock'
+import MarkdownSemanticSearchFilesBlock from './Markdown/MarkdownSemanticSearchFilesBlock'
+import MarkdownSwitchModeBlock from './Markdown/MarkdownSwitchModeBlock'
+import MarkdownWithIcons from './Markdown/MarkdownWithIcon'
 
 function ReactMarkdown({
 	applyStatus,

@@ -1,21 +1,21 @@
 import { FileSearch } from 'lucide-react'
 import React from 'react'
 
-import { useApp } from '../../contexts/AppContext'
-import { ApplyStatus, SemanticSearchFilesToolArgs } from '../../types/apply'
-import { openMarkdownFile } from '../../utils/obsidian'
+import { useApp } from "../../../contexts/AppContext"
+import { ApplyStatus, RegexSearchFilesToolArgs } from "../../../types/apply"
+import { openMarkdownFile } from "../../../utils/obsidian"
 
-export default function MarkdownSemanticSearchFilesBlock({
+export default function MarkdownRegexSearchFilesBlock({
 	applyStatus,
 	onApply,
 	path,
-	query,
+	regex,
 	finish
 }: {
 	applyStatus: ApplyStatus
-	onApply: (args: SemanticSearchFilesToolArgs) => void
+	onApply: (args: RegexSearchFilesToolArgs) => void
 	path: string,
-	query: string,
+	regex: string,
 	finish: boolean
 }) {
 	const app = useApp()
@@ -27,9 +27,10 @@ export default function MarkdownSemanticSearchFilesBlock({
 	React.useEffect(() => {
 		if (finish && applyStatus === ApplyStatus.Idle) {
 			onApply({
-				type: 'semantic_search_files',
+				type: 'regex_search_files',
 				filepath: path,
-				query: query,
+				regex: regex,
+				file_pattern: ".md",
 			})
 		}
 	}, [finish])
@@ -42,7 +43,7 @@ export default function MarkdownSemanticSearchFilesBlock({
 			<div className={'infio-chat-code-block-header'}>
 				<div className={'infio-chat-code-block-header-filename'}>
 					<FileSearch size={14} className="infio-chat-code-block-header-icon" />
-					<span>semantic search files &quot;{query}&quot; in {path}</span>
+					<span>regex search files &quot;{regex}&quot; in {path}</span>
 				</div>
 			</div>
 		</div>

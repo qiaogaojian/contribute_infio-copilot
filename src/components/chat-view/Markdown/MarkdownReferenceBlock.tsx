@@ -1,10 +1,10 @@
 import { PropsWithChildren, useEffect, useMemo, useState } from 'react'
 
-import { useApp } from '../../contexts/AppContext'
-import { useDarkModeContext } from '../../contexts/DarkModeContext'
-import { openMarkdownFile, readTFileContent } from '../../utils/obsidian'
+import { useApp } from "../../../contexts/AppContext"
+import { useDarkModeContext } from "../../../contexts/DarkModeContext"
+import { openMarkdownFile, readTFileContent } from "../../../utils/obsidian"
 
-import { MemoizedSyntaxHighlighterWrapper } from './SyntaxHighlighterWrapper'
+import { MemoizedSyntaxHighlighterWrapper } from "./SyntaxHighlighterWrapper"
 
 export default function MarkdownReferenceBlock({
   filename,

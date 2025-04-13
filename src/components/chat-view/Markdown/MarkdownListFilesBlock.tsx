@@ -1,21 +1,21 @@
-import { FileSearch } from 'lucide-react'
+import { FolderOpen } from 'lucide-react'
 import React from 'react'
 
-import { useApp } from '../../contexts/AppContext'
-import { ApplyStatus, RegexSearchFilesToolArgs } from '../../types/apply'
-import { openMarkdownFile } from '../../utils/obsidian'
+import { useApp } from "../../../contexts/AppContext"
+import { ApplyStatus, ListFilesToolArgs } from "../../../types/apply"
+import { openMarkdownFile } from "../../../utils/obsidian"
 
-export default function MarkdownRegexSearchFilesBlock({
+export default function MarkdownListFilesBlock({
 	applyStatus,
 	onApply,
 	path,
-	regex,
+	recursive,
 	finish
 }: {
 	applyStatus: ApplyStatus
-	onApply: (args: RegexSearchFilesToolArgs) => void
+	onApply: (args: ListFilesToolArgs) => void
 	path: string,
-	regex: string,
+	recursive: boolean,
 	finish: boolean
 }) {
 	const app = useApp()
@@ -27,10 +27,9 @@ export default function MarkdownRegexSearchFilesBlock({
 	React.useEffect(() => {
 		if (finish && applyStatus === ApplyStatus.Idle) {
 			onApply({
-				type: 'regex_search_files',
+				type: 'list_files',
 				filepath: path,
-				regex: regex,
-				file_pattern: ".md",
+				recursive
 			})
 		}
 	}, [finish])
@@ -42,8 +41,8 @@ export default function MarkdownRegexSearchFilesBlock({
 		>
 			<div className={'infio-chat-code-block-header'}>
 				<div className={'infio-chat-code-block-header-filename'}>
-					<FileSearch size={14} className="infio-chat-code-block-header-icon" />
-					<span>regex search files &quot;{regex}&quot; in {path}</span>
+					<FolderOpen size={14} className="infio-chat-code-block-header-icon" />
+					List files: {path}
 				</div>
 			</div>
 		</div>

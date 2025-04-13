@@ -1,19 +1,21 @@
-import { ExternalLink } from 'lucide-react'
+import { FileSearch } from 'lucide-react'
 import React from 'react'
 
-import { useApp } from '../../contexts/AppContext'
-import { ApplyStatus, ReadFileToolArgs } from '../../types/apply'
-import { openMarkdownFile } from '../../utils/obsidian'
+import { useApp } from "../../../contexts/AppContext"
+import { ApplyStatus, SemanticSearchFilesToolArgs } from "../../../types/apply"
+import { openMarkdownFile } from "../../../utils/obsidian"
 
-export default function MarkdownReadFileBlock({
+export default function MarkdownSemanticSearchFilesBlock({
 	applyStatus,
 	onApply,
 	path,
+	query,
 	finish
 }: {
 	applyStatus: ApplyStatus
-	onApply: (args: ReadFileToolArgs) => void
+	onApply: (args: SemanticSearchFilesToolArgs) => void
 	path: string,
+	query: string,
 	finish: boolean
 }) {
 	const app = useApp()
@@ -25,8 +27,9 @@ export default function MarkdownReadFileBlock({
 	React.useEffect(() => {
 		if (finish && applyStatus === ApplyStatus.Idle) {
 			onApply({
-				type: 'read_file',
-				filepath: path
+				type: 'semantic_search_files',
+				filepath: path,
+				query: query,
 			})
 		}
 	}, [finish])
@@ -38,8 +41,8 @@ export default function MarkdownReadFileBlock({
 		>
 			<div className={'infio-chat-code-block-header'}>
 				<div className={'infio-chat-code-block-header-filename'}>
-					<ExternalLink size={10} className="infio-chat-code-block-header-icon" />
-					Read file: {path}
+					<FileSearch size={14} className="infio-chat-code-block-header-icon" />
+					<span>semantic search files &quot;{query}&quot; in {path}</span>
 				</div>
 			</div>
 		</div>

@@ -1,12 +1,12 @@
 import { Check, Loader2, Replace, X } from 'lucide-react'
 import React from 'react'
 
-import { useApp } from '../../contexts/AppContext'
-import { useDarkModeContext } from '../../contexts/DarkModeContext'
-import { ApplyStatus, SearchAndReplaceToolArgs } from '../../types/apply'
-import { openMarkdownFile } from '../../utils/obsidian'
+import { useApp } from '../../../contexts/AppContext'
+import { useDarkModeContext } from '../../../contexts/DarkModeContext'
+import { ApplyStatus, SearchAndReplaceToolArgs } from '../../../types/apply'
+import { openMarkdownFile } from '../../../utils/obsidian'
 
-import { MemoizedSyntaxHighlighterWrapper } from './SyntaxHighlighterWrapper'
+import { MemoizedSyntaxHighlighterWrapper } from "./SyntaxHighlighterWrapper"
 
 export default function MarkdownSearchAndReplace({
 	applyStatus,
