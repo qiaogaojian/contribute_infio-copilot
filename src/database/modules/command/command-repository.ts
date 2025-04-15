@@ -31,7 +31,7 @@ export class CommandRepository {
 		if (!this.db) {
 			throw new DatabaseNotInitializedException()
 		}
-		const result = await this.db.liveQuery<SelectTemplate>(
+		const result = await this.db.query<SelectTemplate>(
 			`SELECT * FROM "template"`
 		)
 		return result.rows

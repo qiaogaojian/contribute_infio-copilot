@@ -50,8 +50,8 @@ export class CommandManager {
 	}
 
 	async searchCommands(query: string): Promise<SelectTemplate[]> {
-		const templates = await this.findAllCommands()
-		const results = fuzzysort.go(query, templates, {
+		const commands = await this.findAllCommands()
+		const results = fuzzysort.go(query, commands, {
 			keys: ['name'],
 			threshold: 0.2,
 			limit: 20,

@@ -4,7 +4,7 @@ import { InitialEditorStateType } from '@lexical/react/LexicalComposer'
 import { $getRoot, $insertNodes, LexicalEditor } from 'lexical'
 import { Pencil, Search, Trash2 } from 'lucide-react'
 import { Notice } from 'obsidian'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 // import { v4 as uuidv4 } from 'uuid'
 
 import { lexicalNodeToPlainText } from '../../components/chat-view/chat-input/utils/editor-state-to-plain-text'
@@ -65,7 +65,44 @@ const CommandsView = (
 
 	const nameInputRefs = useRef<Map<string, HTMLInputElement>>(new Map())
 	const contentEditorRefs = useRef<Map<string, LexicalEditor>>(new Map())
-	const contentEditableRefs = useRef<Map<string, HTMLDivElement>>(new Map())
+
+	// 为每个正在编辑的命令创建refs
+	const commandEditRefs = useRef<Map<string, {
+		editorRef: React.RefObject<LexicalEditor>,
+		contentEditableRef: React.RefObject<HTMLDivElement>
+	}>>(new Map());
+
+	// 获取或创建命令编辑refs
+	const getCommandEditRefs = useCallback((id: string) => {
+		if (!commandEditRefs.current.has(id)) {
+			commandEditRefs.current.set(id, {
+				editorRef: React.createRef<LexicalEditor>(),
+				contentEditableRef: React.createRef<HTMLDivElement>()
+			});
+		}
+		// 由于之前的if语句确保了值存在，所以这里不会返回undefined
+		const refs = commandEditRefs.current.get(id);
+		if (!refs) {
+			// 添加保险逻辑，创建一个新的refs对象
+			const newRefs = {
+				editorRef: React.createRef<LexicalEditor>(),
+				contentEditableRef: React.createRef<HTMLDivElement>()
+			};
+			commandEditRefs.current.set(id, newRefs);
+			return newRefs;
+		}
+		return refs;
+	}, []);
+
+	// 当编辑状态改变时更新refs
+	useEffect(() => {
+		if (editingCommandId) {
+			const refs = getCommandEditRefs(editingCommandId);
+			if (refs.editorRef.current) {
+				contentEditorRefs.current.set(editingCommandId, refs.editorRef.current);
+			}
+		}
+	}, [editingCommandId, getCommandEditRefs]);
 
 	// new command content's editor state
 	const initialEditorState: InitialEditorStateType = (
@@ -80,9 +117,9 @@ const CommandsView = (
 		})
 	}
 	// new command content's editor
-	const editorRef = useRef<LexicalEditor | null>(null)
+	const editorRef = useRef<LexicalEditor>(null)
 	// new command content's editable
-	const contentEditableRef = useRef<HTMLDivElement | null>(null)
+	const contentEditableRef = useRef<HTMLDivElement>(null)
 
 	// Create new command
 	const handleAddCommand = async () => {
@@ -233,12 +270,8 @@ const CommandsView = (
 									<div className="infio-commands-textarea">
 										<LexicalContentEditable
 											initialEditorState={getCommandEditorState(command.content)}
-											editorRef={(editor: LexicalEditor) => {
-												if (editor) contentEditorRefs.current.set(command.id, editor)
-											}}
-											contentEditableRef={(el: HTMLDivElement) => {
-												if (el) contentEditableRefs.current.set(command.id, el)
-											}}
+											editorRef={getCommandEditRefs(command.id).editorRef}
+											contentEditableRef={getCommandEditRefs(command.id).contentEditableRef}
 										/>
 									</div>
 									<div className="infio-commands-actions">
