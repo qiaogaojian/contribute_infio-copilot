@@ -1,5 +1,6 @@
 import * as path from 'path'
 
+import { BaseSerializedNode } from '@lexical/clipboard/clipboard'
 import { useMutation } from '@tanstack/react-query'
 import { CircleStop, History, Plus, SquareSlash } from 'lucide-react'
 import { App, Notice } from 'obsidian'
@@ -51,14 +52,13 @@ import { fetchUrlsContent, webSearch } from '../../utils/web-search'
 import { ModeSelect } from './chat-input/ModeSelect'
 import PromptInputWithActions, { ChatUserInputRef } from './chat-input/PromptInputWithActions'
 import { editorStateToPlainText } from './chat-input/utils/editor-state-to-plain-text'
-import { ChatHistory } from './ChatHistory'
+import { ChatHistory } from './ChatHistoryView'
 import CommandsView from './CommandsView'
 import MarkdownReasoningBlock from './Markdown/MarkdownReasoningBlock'
 import QueryProgress, { QueryProgressState } from './QueryProgress'
 import ReactMarkdown from './ReactMarkdown'
 import ShortcutInfo from './ShortcutInfo'
 import SimilaritySearchResults from './SimilaritySearchResults'
-
 // Add an empty line here
 const getNewInputMessage = (app: App, defaultMention: string): ChatUserMessage => {
 	const mentionables: Mentionable[] = [];
@@ -161,7 +161,8 @@ const Chat = forwardRef<ChatRef, ChatProps>((props, ref) => {
 		}
 	}
 
-	const [tab, setTab] = useState<'chat' | 'commands'>('commands')
+	const [tab, setTab] = useState<'chat' | 'commands'>('chat')
+	const [selectedSerializedNodes, setSelectedSerializedNodes] = useState<BaseSerializedNode[]>([])
 
 	useEffect(() => {
 		const scrollContainer = chatMessagesRef.current
@@ -183,6 +184,11 @@ const Chat = forwardRef<ChatRef, ChatProps>((props, ref) => {
 		scrollContainer.addEventListener('scroll', handleScroll)
 		return () => scrollContainer.removeEventListener('scroll', handleScroll)
 	}, [chatMessages])
+
+	const handleCreateCommand = (serializedNodes: BaseSerializedNode[]) => {
+		setSelectedSerializedNodes(serializedNodes)
+		setTab('commands')
+	}
 
 	const handleScrollToBottom = () => {
 		if (chatMessagesRef.current) {
@@ -890,6 +896,9 @@ const Chat = forwardRef<ChatRef, ChatProps>((props, ref) => {
 						chatList={chatList}
 						currentConversationId={currentConversationId}
 						onSelect={async (conversationId) => {
+							if (tab !== 'chat') {
+								setTab('chat')
+							}
 							if (conversationId === currentConversationId) return
 							await handleLoadConversation(conversationId)
 						}}
@@ -969,6 +978,7 @@ const Chat = forwardRef<ChatRef, ChatProps>((props, ref) => {
 										onFocus={() => {
 											setFocusedMessageId(message.id)
 										}}
+										onCreateCommand={handleCreateCommand}
 										mentionables={message.mentionables}
 										setMentionables={(mentionables) => {
 											setChatMessages((prevChatHistory) =>
@@ -1025,6 +1035,7 @@ const Chat = forwardRef<ChatRef, ChatProps>((props, ref) => {
 						onFocus={() => {
 							setFocusedMessageId(inputMessage.id)
 						}}
+						onCreateCommand={handleCreateCommand}
 						mentionables={inputMessage.mentionables}
 						setMentionables={(mentionables) => {
 							setInputMessage((prevInputMessage) => ({
@@ -1038,7 +1049,9 @@ const Chat = forwardRef<ChatRef, ChatProps>((props, ref) => {
 				</>
 			) : (
 				<div className="infio-chat-commands">
-					<CommandsView />
+					<CommandsView
+						selectedSerializedNodes={selectedSerializedNodes}
+					/>
 				</div>
 			)}
 		</div>

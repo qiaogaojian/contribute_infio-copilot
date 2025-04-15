@@ -22,7 +22,6 @@ export class OpenAICompatibleProvider implements BaseLLMProvider {
   private baseURL: string
 
   constructor(apiKey: string, baseURL: string) {
-    console.log('OpenAICompatibleProvider constructor', apiKey, baseURL)
 		this.adapter = new OpenAIMessageAdapter()
     this.client = new OpenAI({
       apiKey: apiKey,
@@ -38,7 +37,6 @@ export class OpenAICompatibleProvider implements BaseLLMProvider {
     request: LLMRequestNonStreaming,
     options?: LLMOptions,
   ): Promise<LLMResponseNonStreaming> {
-    console.log('OpenAICompatibleProvider generateResponse', this.baseURL, this.apiKey)
     if (!this.baseURL || !this.apiKey) {
       throw new LLMBaseUrlNotSetException(
         'OpenAI Compatible base URL or API key is missing. Please set it in settings menu.',

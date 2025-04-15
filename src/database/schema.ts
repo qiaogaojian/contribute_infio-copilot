@@ -102,7 +102,7 @@ export type TemplateRecord = {
 
 export type SelectTemplate = TemplateRecord
 export type InsertTemplate = Omit<TemplateRecord, 'id' | 'createdAt' | 'updatedAt'>
-
+export type UpdateTemplate = Partial<InsertTemplate>
 export const templateTable: TableDefinition = {
 	name: 'template',
 	columns: {

@@ -6,7 +6,7 @@ export function editorStateToPlainText(
   return lexicalNodeToPlainText(editorState.root)
 }
 
-function lexicalNodeToPlainText(node: SerializedLexicalNode): string {
+export function lexicalNodeToPlainText(node: SerializedLexicalNode): string {
   if ('children' in node) {
     // Process children recursively and join their results
     return (node.children as SerializedLexicalNode[])

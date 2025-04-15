@@ -1,3 +1,4 @@
+import { BaseSerializedNode } from '@lexical/clipboard/clipboard'
 import {
 	InitialConfigType,
 	InitialEditorStateType,
@@ -26,8 +27,8 @@ import OnEnterPlugin from './plugins/on-enter/OnEnterPlugin'
 import OnMutationPlugin, {
 	NodeMutations,
 } from './plugins/on-mutation/OnMutationPlugin'
-// import CreateTemplatePopoverPlugin from './plugins/template/CreateTemplatePopoverPlugin'
-// import TemplatePlugin from './plugins/template/TemplatePlugin'
+import CreateCommandPopoverPlugin from './plugins/command/CreateCommandPopoverPlugin'
+import CommandPlugin from './plugins/command/CommandPlugin'
 
 export type LexicalContentEditableProps = {
 	editorRef: RefObject<LexicalEditor>
@@ -43,8 +44,9 @@ export type LexicalContentEditableProps = {
 		onEnter?: {
 			onVaultChat: () => void
 		}
-		templatePopover?: {
+		commandPopover?: {
 			anchorElement: HTMLElement | null
+			onCreateCommand: (nodes: BaseSerializedNode[]) => void
 		}
 	}
 }
@@ -141,13 +143,14 @@ export default function LexicalContentEditable({
 			<AutoLinkMentionPlugin />
 			<ImagePastePlugin onCreateImageMentionables={onCreateImageMentionables} />
 			<DragDropPaste onCreateImageMentionables={onCreateImageMentionables} />
-			{/* <TemplatePlugin /> */}
-			{/* {plugins?.templatePopover && (
-				<CreateTemplatePopoverPlugin
-					anchorElement={plugins.templatePopover.anchorElement}
+			<CommandPlugin />
+			{plugins?.commandPopover && (
+				<CreateCommandPopoverPlugin
+					anchorElement={plugins.commandPopover.anchorElement}
 					contentEditableElement={contentEditableRef.current}
+					onCreateCommand={plugins.commandPopover.onCreateCommand}
 				/>
-			)} */}
+			)}
 		</LexicalComposer>
 	)
 }

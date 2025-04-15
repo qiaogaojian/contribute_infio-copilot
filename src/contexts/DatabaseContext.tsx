@@ -7,13 +7,13 @@ import {
 } from 'react'
 
 import { DBManager } from '../database/database-manager'
-import { TemplateManager } from '../database/modules/template/template-manager'
+import { CommandManager } from '../database/modules/command/command-manager'
 import { VectorManager } from '../database/modules/vector/vector-manager'
 
 type DatabaseContextType = {
 	getDatabaseManager: () => Promise<DBManager>
 	getVectorManager: () => Promise<VectorManager>
-	getTemplateManager: () => Promise<TemplateManager>
+	getTemplateManager: () => Promise<CommandManager>
 }
 
 const DatabaseContext = createContext<DatabaseContextType | null>(null)
@@ -30,7 +30,7 @@ export function DatabaseProvider({
 	}, [getDatabaseManager])
 
 	const getTemplateManager = useCallback(async () => {
-		return (await getDatabaseManager()).getTemplateManager()
+		return (await getDatabaseManager()).getCommandManager()
 	}, [getDatabaseManager])
 
 	useEffect(() => {

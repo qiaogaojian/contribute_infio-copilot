@@ -1,3 +1,4 @@
+import { BaseSerializedNode } from '@lexical/clipboard/clipboard'
 import { useQuery } from '@tanstack/react-query'
 import { $nodesOfType, LexicalEditor, SerializedEditorState } from 'lexical'
 import {
@@ -30,7 +31,7 @@ import { ImageUploadButton } from './ImageUploadButton'
 import LexicalContentEditable from './LexicalContentEditable'
 import MentionableBadge from './MentionableBadge'
 import { ModelSelect } from './ModelSelect'
-import { ModeSelect } from './ModeSelect'
+// import { ModeSelect } from './ModeSelect'
 import { MentionNode } from './plugins/mention/MentionNode'
 import { NodeMutations } from './plugins/on-mutation/OnMutationPlugin'
 import { SubmitButton } from './SubmitButton'
@@ -44,6 +45,7 @@ export type ChatUserInputProps = {
 	onChange?: (content: SerializedEditorState) => void
 	onSubmit: (content: SerializedEditorState, useVaultSearch?: boolean) => void
 	onFocus: () => void
+	onCreateCommand: (nodes: BaseSerializedNode[]) => void
 	mentionables: Mentionable[]
 	setMentionables: (mentionables: Mentionable[]) => void
 	autoFocus?: boolean
@@ -57,6 +59,7 @@ const PromptInputWithActions = forwardRef<ChatUserInputRef, ChatUserInputProps>(
 			onChange,
 			onSubmit,
 			onFocus,
+			onCreateCommand,
 			mentionables,
 			setMentionables,
 			autoFocus = false,
@@ -265,6 +268,10 @@ const PromptInputWithActions = forwardRef<ChatUserInputRef, ChatUserInputProps>(
 							onVaultChat: () => {
 								handleSubmit({ useVaultSearch: true })
 							},
+						},
+						commandPopover: {
+							anchorElement: containerRef.current,
+							onCreateCommand: onCreateCommand,
 						},
 					}}
 				/>

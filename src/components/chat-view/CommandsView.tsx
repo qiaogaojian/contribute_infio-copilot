@@ -1,162 +1,197 @@
-import { Pencil, Save, Search, Trash2 } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
-import { v4 as uuidv4 } from 'uuid'
+import { $generateNodesFromSerializedNodes } from '@lexical/clipboard'
+import { BaseSerializedNode } from '@lexical/clipboard/clipboard'
+import { InitialEditorStateType } from '@lexical/react/LexicalComposer'
+import { $getRoot, $insertNodes, LexicalEditor } from 'lexical'
+import { Pencil, Search, Trash2 } from 'lucide-react'
+import { Notice } from 'obsidian'
+import { useCallback, useEffect, useRef, useState } from 'react'
+// import { v4 as uuidv4 } from 'uuid'
 
-export interface Command {
+import { lexicalNodeToPlainText } from '../../components/chat-view/chat-input/utils/editor-state-to-plain-text'
+import { useDatabase } from '../../contexts/DatabaseContext'
+import { DBManager } from '../../database/database-manager'
+import { TemplateContent } from '../../database/schema'
+
+import LexicalContentEditable from './chat-input/LexicalContentEditable'
+
+export interface QuickCommand {
 	id: string
-	title: string
-	content: string
+	name: string
+	content: TemplateContent
+	createdAt: Date | undefined
+	updatedAt: Date | undefined
 }
 
-const CommandsView = () => {
-	const [commands, setCommands] = useState<Command[]>([])
-	const [newCommand, setNewCommand] = useState<Command>({
-		id: uuidv4(),
-		title: '',
-		content: ''
-	})
+const CommandsView = (
+	{
+		selectedSerializedNodes
+	}: {
+		selectedSerializedNodes?: BaseSerializedNode[]
+	}
+) => {
+	const [commands, setCommands] = useState<QuickCommand[]>([])
+
+	const { getDatabaseManager } = useDatabase()
+	const getManager = useCallback(async (): Promise<DBManager> => {
+		return await getDatabaseManager()
+	}, [getDatabaseManager])
+
+	// init get all commands
+	const fetchCommands = useCallback(async () => {
+		const dbManager = await getManager()
+		dbManager.getCommandManager().getAllCommands((rows) => {
+			setCommands(rows.map((row) => ({
+				id: row.id,
+				name: row.name,
+				content: row.content,
+				createdAt: row.createdAt,
+				updatedAt: row.updatedAt,
+			})))
+		})
+	}, [getManager])
+
+	useEffect(() => {
+		void fetchCommands()
+	}, [fetchCommands])
+
+	// new command name
+	const [newCommandName, setNewCommandName] = useState('')
+
+	// search term
 	const [searchTerm, setSearchTerm] = useState('')
+
+	// editing command id
 	const [editingCommandId, setEditingCommandId] = useState<string | null>(null)
 
-	const titleInputRefs = useRef<Map<string, HTMLInputElement>>(new Map())
-	const contentInputRefs = useRef<Map<string, HTMLTextAreaElement>>(new Map())
+	const nameInputRefs = useRef<Map<string, HTMLInputElement>>(new Map())
+	const contentEditorRefs = useRef<Map<string, LexicalEditor>>(new Map())
+	const contentEditableRefs = useRef<Map<string, HTMLDivElement>>(new Map())
 
-	// 从本地存储加载commands
-	useEffect(() => {
-		const savedCommands = localStorage.getItem('commands')
-		if (savedCommands) {
-			try {
-				const parsedData = JSON.parse(savedCommands)
-
-				// 验证解析的数据是否为符合Prompt接口的数组
-				if (Array.isArray(parsedData) && parsedData.every(isCommand)) {
-					setCommands(parsedData)
-				}
-			} catch (error) {
-				console.error('无法解析保存的命令', error)
-			}
-		}
-	}, [])
-
-	// 类型守卫函数，用于验证对象是否符合Command接口
-	function isCommand(item: unknown): item is Command {
-		if (!item || typeof item !== 'object') {
-			return false;
-		}
-
-		// 使用in操作符检查属性存在
-		if (!('id' in item) || !('title' in item) || !('content' in item)) {
-			return false;
-		}
-
-		// 使用JavaScript的hasOwnProperty和typeof来检查属性类型
-		return (
-			Object.prototype.hasOwnProperty.call(item, 'id') &&
-			Object.prototype.hasOwnProperty.call(item, 'title') &&
-			Object.prototype.hasOwnProperty.call(item, 'content') &&
-			typeof Reflect.get(item, 'id') === 'string' &&
-			typeof Reflect.get(item, 'title') === 'string' &&
-			typeof Reflect.get(item, 'content') === 'string'
-		);
-	}
-
-	// 保存commands到本地存储
-	useEffect(() => {
-		localStorage.setItem('commands', JSON.stringify(commands))
-	}, [commands])
-
-	// 处理新command的标题变化
-	const handleNewCommandTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setNewCommand({ ...newCommand, title: e.target.value })
-	}
-
-	// 处理新command的内容变化
-	const handleNewCommandContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-		setNewCommand({ ...newCommand, content: e.target.value })
-	}
-
-	// 添加新command
-	const handleAddCommand = () => {
-		if (newCommand.title.trim() === '' || newCommand.content.trim() === '') {
-			return
-		}
-
-		setCommands([...commands, newCommand])
-		setNewCommand({
-			id: uuidv4(),
-			title: '',
-			content: ''
+	// new command content's editor state
+	const initialEditorState: InitialEditorStateType = (
+		editor: LexicalEditor,
+	) => {
+		if (!selectedSerializedNodes) return
+		editor.update(() => {
+			const parsedNodes = $generateNodesFromSerializedNodes(
+				selectedSerializedNodes,
+			)
+			$insertNodes(parsedNodes)
 		})
 	}
+	// new command content's editor
+	const editorRef = useRef<LexicalEditor | null>(null)
+	// new command content's editable
+	const contentEditableRef = useRef<HTMLDivElement | null>(null)
 
-	// 删除command
-	const handleDeleteCommand = (id: string) => {
-		setCommands(commands.filter(command => command.id !== id))
-		if (editingCommandId === id) {
-			setEditingCommandId(null)
+	// Create new command
+	const handleAddCommand = async () => {
+		const serializedEditorState = editorRef.current.toJSON()
+		const nodes = serializedEditorState.editorState.root.children
+		if (nodes.length === 0) {
+			new Notice('Please enter a content for your template')
+			return
 		}
+		if (newCommandName.trim().length === 0) {
+			new Notice('Please enter a name for your template')
+			return
+		}
+		const dbManager = await getManager()
+		dbManager.getCommandManager().createCommand({
+			name: newCommandName,
+			content: { nodes },
+		})
+
+		// clear editor content
+		editorRef.current.update(() => {
+			const root = $getRoot()
+			root.clear()
+		})
+
+		setNewCommandName('')
 	}
 
-	// 编辑command
-	const handleEditCommand = (command: Command) => {
+	// delete command
+	const handleDeleteCommand = async (id: string) => {
+		const dbManager = await getManager()
+		await dbManager.getCommandManager().deleteCommand(id)
+	}
+
+	// edit command
+	const handleEditCommand = (command: QuickCommand) => {
 		setEditingCommandId(command.id)
 	}
 
-	// 保存编辑后的command
-	const handleSaveEdit = (id: string) => {
-		const titleInput = titleInputRefs.current.get(id)
-		const contentInput = contentInputRefs.current.get(id)
-
-		if (titleInput && contentInput) {
-			setCommands(
-				commands.map(command =>
-					command.id === id
-						? { ...command, title: titleInput.value, content: contentInput.value }
-						: command
-				)
-			)
-			setEditingCommandId(null)
+	// save edited command
+	const handleSaveEdit = async (id: string) => {
+		const nameInput = nameInputRefs.current.get(id)
+		const currContentEditorRef = contentEditorRefs.current.get(id)
+		if (!currContentEditorRef) {
+			new Notice('Please enter a content for your template')
+			return
 		}
+		const serializedEditorState = currContentEditorRef.toJSON()
+		const nodes = serializedEditorState.editorState.root.children
+		if (nodes.length === 0) {
+			new Notice('Please enter a content for your template')
+			return
+		}
+		const dbManager = await getManager()
+		await dbManager.getCommandManager().updateCommand(id, {
+			name: nameInput.value,
+			content: { nodes },
+		})
+		setEditingCommandId(null)
 	}
 
-	// 处理搜索
+	// handle search
 	const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setSearchTerm(e.target.value)
 	}
 
-	// 过滤commands列表
+	// filter commands list
 	const filteredCommands = commands.filter(
 		command =>
-			command.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-			command.content.toLowerCase().includes(searchTerm.toLowerCase())
+			command.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+			command.content.nodes.map(lexicalNodeToPlainText).join('').toLowerCase().includes(searchTerm.toLowerCase())
 	)
+
+	const getCommandEditorState = (commandContent: TemplateContent): InitialEditorStateType => {
+		return (editor: LexicalEditor) => {
+			editor.update(() => {
+				const parsedNodes = $generateNodesFromSerializedNodes(
+					commandContent.nodes,
+				)
+				$insertNodes(parsedNodes)
+			})
+		}
+	}
 
 	return (
 		<div className="infio-commands-container">
 			{/* header */}
 			<div className="infio-commands-header">
 				<div className="infio-commands-new">
-					<h2 className="infio-commands-header-title">Create Quick Command</h2>
+					<h2 className="infio-commands-header-name">Create Quick Command</h2>
 					<div className="infio-commands-label">Name</div>
 					<input
 						type="text"
-						placeholder="Input Command Name"
-						value={newCommand.title}
-						onChange={handleNewCommandTitleChange}
+						value={newCommandName}
+						onChange={(e) => setNewCommandName(e.target.value)}
 						className="infio-commands-input"
 					/>
 					<div className="infio-commands-label">Content</div>
-					<textarea
-						placeholder="Input Command Content"
-						value={newCommand.content}
-						onChange={handleNewCommandContentChange}
-						className="infio-commands-textarea"
-					/>
-					{/* <div className="infio-commands-hint">English identifier (lowercase letters + numbers + hyphens)</div> */}
+					<div className="infio-commands-textarea">
+						<LexicalContentEditable
+							initialEditorState={initialEditorState}
+							editorRef={editorRef}
+							contentEditableRef={contentEditableRef}
+						/>
+					</div>
 					<button
 						onClick={handleAddCommand}
 						className="infio-commands-add-btn"
-						disabled={!newCommand.title.trim() || !newCommand.content.trim()}
+						disabled={!newCommandName.trim()}
 					>
 						<span>Create Command</span>
 					</button>
@@ -183,49 +218,53 @@ const CommandsView = () => {
 					</div>
 				) : (
 					filteredCommands.map(command => (
-						<div key={command.id} className="infio-commands-item">
+						<div key={command.name} className="infio-commands-item">
 							{editingCommandId === command.id ? (
 								// edit mode
 								<div className="infio-commands-edit-mode">
 									<input
 										type="text"
-										defaultValue={command.title}
-										className="infio-commands-edit-title"
+										defaultValue={command.name}
+										className="infio-commands-edit-name"
 										ref={(el) => {
-											if (el) titleInputRefs.current.set(command.id, el)
+											if (el) nameInputRefs.current.set(command.id, el)
 										}}
 									/>
-									<textarea
-										defaultValue={command.content}
-										className="infio-commands-textarea"
-										ref={(el) => {
-											if (el) contentInputRefs.current.set(command.id, el)
-										}}
-									/>
+									<div className="infio-commands-textarea">
+										<LexicalContentEditable
+											initialEditorState={getCommandEditorState(command.content)}
+											editorRef={(editor: LexicalEditor) => {
+												if (editor) contentEditorRefs.current.set(command.id, editor)
+											}}
+											contentEditableRef={(el: HTMLDivElement) => {
+												if (el) contentEditableRefs.current.set(command.id, el)
+											}}
+										/>
+									</div>
 									<div className="infio-commands-actions">
 										<button
 											onClick={() => handleSaveEdit(command.id)}
-											className="infio-commands-btn"
+											className="infio-commands-add-btn"
 										>
-											<Save size={16} />
+											<span>Update Command</span>
 										</button>
 									</div>
 								</div>
 							) : (
 								// view mode
 								<div className="infio-commands-view-mode">
-									<div className="infio-commands-title">{command.title}</div>
-									<div className="infio-commands-content">{command.content}</div>
+									<div className="infio-commands-name">{command.name}</div>
+									<div className="infio-commands-content">{command.content.nodes.map(lexicalNodeToPlainText).join('')}</div>
 									<div className="infio-commands-actions">
 										<button
 											onClick={() => handleEditCommand(command)}
-												className="infio-commands-btn"
+											className="infio-commands-btn"
 										>
 											<Pencil size={16} />
 										</button>
 										<button
 											onClick={() => handleDeleteCommand(command.id)}
-												className="infio-commands-btn"
+											className="infio-commands-btn"
 										>
 											<Trash2 size={16} />
 										</button>

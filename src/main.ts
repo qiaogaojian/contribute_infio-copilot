@@ -5,7 +5,7 @@ import { Editor, MarkdownView, Notice, Plugin, TFile } from 'obsidian'
 
 import { ApplyView } from './ApplyView'
 import { ChatView } from './ChatView'
-import { ChatProps } from './components/chat-view/Chat'
+import { ChatProps } from './components/chat-view/ChatView'
 import { APPLY_VIEW_TYPE, CHAT_VIEW_TYPE } from './constants'
 import { getDiffStrategy } from "./core/diff/DiffStrategy"
 import { InlineEdit } from './core/edit/inline-edit-processor'

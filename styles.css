@@ -1878,7 +1878,7 @@ button.infio-chat-input-model-select {
  */
 
  .infio-chat-commands {
-  overflow-y: scroll;
+  overflow-y: auto;
  }
 
 .infio-commands-container {
@@ -2039,7 +2039,7 @@ button.infio-chat-input-model-select {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.infio-commands-title {
+.infio-commands-name {
   font-weight: var(--font-medium);
   margin-bottom: var(--size-2-3);
   font-size: var(--font-ui-medium);
@@ -2054,6 +2054,11 @@ button.infio-chat-input-model-select {
   white-space: pre-wrap;
   word-break: break-word;
 	user-select: text;
+	display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .infio-commands-actions {
@@ -2088,7 +2093,7 @@ button.infio-chat-input-model-select {
   gap: var(--size-4-2);
 }
 
-.infio-commands-edit-title {
+.infio-commands-edit-name {
   background-color: #333 !important;
   border: none;
   border-radius: var(--radius-s);

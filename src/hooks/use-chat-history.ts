@@ -18,7 +18,6 @@ type UseChatHistory = {
 export function useChatHistory(): UseChatHistory {
   const { getDatabaseManager } = useDatabase()
 
-  // 这里更新有点繁琐, 但是能保持 chatList 实时更新
   const [chatList, setChatList] = useState<ChatConversationMeta[]>([])
 
   const getManager = useCallback(async (): Promise<DBManager> => {

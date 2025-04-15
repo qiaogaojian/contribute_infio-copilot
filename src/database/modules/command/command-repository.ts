@@ -2,9 +2,9 @@ import { PGliteInterface } from '@electric-sql/pglite'
 import { App } from 'obsidian'
 
 import { DatabaseNotInitializedException } from '../../exception'
-import { type InsertTemplate, type SelectTemplate } from '../../schema'
+import { type InsertTemplate, type SelectTemplate, type UpdateTemplate } from '../../schema'
 
-export class TemplateRepository {
+export class CommandRepository {
 	private app: App
 	private db: PGliteInterface | null
 
@@ -13,7 +13,7 @@ export class TemplateRepository {
 		this.db = pgClient
 	}
 
-	async create(template: InsertTemplate): Promise<SelectTemplate> {
+	async create(command: InsertTemplate): Promise<SelectTemplate> {
 		if (!this.db) {
 			throw new DatabaseNotInitializedException()
 		}
@@ -22,7 +22,7 @@ export class TemplateRepository {
 			`INSERT INTO "template" (name, content)
        VALUES ($1, $2)
        RETURNING *`,
-			[template.name, template.content]
+			[command.name, command.content]
 		)
 		return result.rows[0]
 	}
@@ -31,7 +31,7 @@ export class TemplateRepository {
 		if (!this.db) {
 			throw new DatabaseNotInitializedException()
 		}
-		const result = await this.db.query<SelectTemplate>(
+		const result = await this.db.liveQuery<SelectTemplate>(
 			`SELECT * FROM "template"`
 		)
 		return result.rows
@@ -50,7 +50,7 @@ export class TemplateRepository {
 
 	async update(
 		id: string,
-		template: Partial<InsertTemplate>,
+		command: UpdateTemplate,
 	): Promise<SelectTemplate | null> {
 		if (!this.db) {
 			throw new DatabaseNotInitializedException()
@@ -60,15 +60,15 @@ export class TemplateRepository {
 		const params: any[] = []
 		let paramIndex = 1
 
-		if (template.name !== undefined) {
+		if (command.name !== undefined) {
 			setClauses.push(`name = $${paramIndex}`)
-			params.push(template.name)
+			params.push(command.name)
 			paramIndex++
 		}
 
-		if (template.content !== undefined) {
+		if (command.content !== undefined) {
 			setClauses.push(`content = $${paramIndex}`)
-			params.push(template.content)
+			params.push(command.content)
 			paramIndex++
 		}
 

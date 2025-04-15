@@ -6,7 +6,7 @@ import { App } from 'obsidian'
 import { createAndInitDb } from '../pgworker'
 
 import { ConversationManager } from './modules/conversation/conversation-manager'
-import { TemplateManager } from './modules/template/template-manager'
+import { CommandManager as CommandManager } from './modules/command/command-manager'
 import { VectorManager } from './modules/vector/vector-manager'
 // import { pgliteResources } from './pglite-resources'
 // import { migrations } from './sql'
@@ -17,7 +17,7 @@ export class DBManager {
 	private db: PGliteWithLive | null = null
 	// private db: PgliteDatabase | null = null
 	private vectorManager: VectorManager
-	private templateManager: TemplateManager
+	private CommandManager: CommandManager
 	private conversationManager: ConversationManager
 
 	constructor(app: App) {
@@ -30,7 +30,7 @@ export class DBManager {
 		dbManager.db = await createAndInitDb()
 
 		dbManager.vectorManager = new VectorManager(app, dbManager)
-		dbManager.templateManager = new TemplateManager(app, dbManager)
+		dbManager.CommandManager = new CommandManager(app, dbManager)
 		dbManager.conversationManager = new ConversationManager(app, dbManager)
 
 		return dbManager
@@ -44,8 +44,8 @@ export class DBManager {
 		return this.vectorManager
 	}
 
-	getTemplateManager() {
-		return this.templateManager
+	getCommandManager() {
+		return this.CommandManager
 	}
 
 	getConversationManager() {
