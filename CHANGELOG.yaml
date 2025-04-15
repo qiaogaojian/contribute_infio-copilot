@@ -3,7 +3,7 @@ releases:
     features:
       - "Added Grok provider, update gemini, openai, bailian, anthropic provider"
       - "Added quick command management system"
-			- "add filter model select in chat view, thx @Spenquatch"
+      - "add filter model select in chat view, thx @Spenquatch"
 
   - version: "0.1.3"
     features:
