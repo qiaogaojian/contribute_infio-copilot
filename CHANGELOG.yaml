@@ -1,4 +1,7 @@
 releases:
+  - version: "0.1.5"
+    features:
+      - "hotfix command view style"
   - version: "0.1.4"
     features:
       - "Added Grok provider, update gemini, openai, bailian, anthropic provider"
