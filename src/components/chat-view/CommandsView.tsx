@@ -209,7 +209,7 @@ const CommandsView = (
 			{/* header */}
 			<div className="infio-commands-header">
 				<div className="infio-commands-new">
-					<h2 className="infio-commands-header-name">Create Quick Command</h2>
+					<h2 className="infio-commands-header-title">Create Quick Command</h2>
 					<div className="infio-commands-label">Name</div>
 					<input
 						type="text"
