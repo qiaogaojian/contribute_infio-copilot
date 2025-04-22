@@ -1,10 +1,10 @@
-
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import clsx from 'clsx'
 import {
 	$parseSerializedNode,
 	COMMAND_PRIORITY_NORMAL, SerializedLexicalNode, TextNode
 } from 'lexical'
+import { Slash } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 
@@ -63,8 +63,11 @@ function CommandMenuItem({
 			onMouseEnter={onMouseEnter}
 			onClick={onClick}
 		>
-			<div className="smtcmp-template-menu-item">
-				<div className="text">{option.name}</div>
+			<div className="infio-chat-template-menu-item">
+				<div className="text">
+					<Slash size={10} />{' '}
+					<span>{option.name}</span>
+				</div>
 			</div>
 		</li>
 	)
@@ -157,7 +160,7 @@ export default function CommandPlugin() {
 				anchorElementRef.current && searchResults.length
 					? createPortal(
 						<div
-							className="smtcmp-popover"
+							className="infio-popover"
 							style={{
 								position: 'fixed',
 							}}

@@ -37,7 +37,7 @@ function BadgeBase({
 					onDelete()
 				}}
 			>
-				<X size={10} />
+				<X size={16} />
 			</div>
 		</div>
 	)
