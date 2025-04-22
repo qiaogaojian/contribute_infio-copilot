@@ -79,6 +79,10 @@
 - **错误报告**：如果您遇到任何错误或意外行为，请在我们的 [GitHub Issues](https://github.com/infiolab/infio-copilot/issues) 页面提交问题。请确保包含尽可能多的细节，以帮助我们重现和解决问题。
 - **功能请求**：对于新功能想法或改进建议，请使用我们的 [GitHub Discussions - Ideas & Feature Requests](https://github.com/infiolab/infio-copilot/discussions/categories/ideas) 页面。创建新的讨论来分享您的建议。
 
+## 交流
+![WechatIMG185 1](https://github.com/user-attachments/assets/d689c9d6-fdea-499c-99bd-4af4649abe1d)
+
+
 ## 致谢
 
 本项目站在巨人的肩膀上。我们要向以下开源项目表示感谢：
