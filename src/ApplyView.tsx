@@ -2,6 +2,7 @@ import { TFile, View, WorkspaceLeaf } from 'obsidian'
 import { Root, createRoot } from 'react-dom/client'
 
 import ApplyViewRoot from './components/apply-view/ApplyViewRoot'
+// import DiffViewRoot from './components/apply-view/DiffViewRoot'
 import { APPLY_VIEW_TYPE } from './constants'
 import { AppProvider } from './contexts/AppContext'
 
