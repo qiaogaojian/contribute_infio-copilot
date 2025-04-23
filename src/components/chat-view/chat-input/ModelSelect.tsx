@@ -148,7 +148,6 @@ export function ModelSelect() {
 			try {
 				const models = await GetProviderModelIds(modelProvider)
 				setModelIds(models)
-				setChatModelId(settings.chatModelId)
 			} catch (error) {
 				console.error('Failed to fetch provider models:', error)
 				setModelIds([])
@@ -158,7 +157,13 @@ export function ModelSelect() {
 		}
 
 		fetchModels()
-	}, [modelProvider, settings.chatModelId])
+	}, [modelProvider])
+
+	// Sync chat model id & chat model provider
+	useEffect(() => {
+		setModelProvider(settings.chatModelProvider)
+		setChatModelId(settings.chatModelId)
+	}, [settings.chatModelProvider, settings.chatModelId])
 
 	const searchableItems = useMemo(() => {
 		return modelIds.map((id) => ({
@@ -197,7 +202,7 @@ export function ModelSelect() {
 						{isOpen ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
 					</div>
 					<div className="infio-chat-input-model-select__model-name">
-						[{modelProvider}] {chatModelId}
+						{chatModelId}
 					</div>
 				</DropdownMenu.Trigger>
 

@@ -48,7 +48,7 @@ export function LLMProvider({ children }: PropsWithChildren) {
 			provider: settings.chatModelProvider,
 			modelId: settings.chatModelId,
 		}
-	}, [settings])
+	}, [settings.chatModelProvider, settings.chatModelId])
 
 	// const applyModel = useMemo((): LLMModel => {
 	// 	return {
