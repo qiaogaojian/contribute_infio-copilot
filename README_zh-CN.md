@@ -8,6 +8,8 @@
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/felixduan)
 
+## 最新版本
+[0.1.7](https://github.com/infiolab/infio-copilot/releases/tag/0.1.7) 添加图片选择器模态框，允许用户在聊天中搜索、选择和上传图片
 
 ## 功能特点
 

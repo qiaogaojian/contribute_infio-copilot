@@ -5,6 +5,8 @@
 [中文文档](README_zh-CN.md)
 
 ## New Version
+[0.1.7](https://github.com/infiolab/infio-copilot/releases/tag/0.1.7) Added image selector modal, allowing users to search, select, and upload images in obsidian vault or local file browser
+
 [0.1.6](https://github.com/infiolab/infio-copilot/releases/tag/0.1.6) update apply view, you can edit content in apply view
 
 ## Features
@@ -30,7 +32,7 @@ Edit your notes directly within the current file
 ![inline-edit](asserts/edit-inline.gif)
 
 
-### chat with vault 
+### chat with vault
 
 Leverage the power of AI to interact with your entire Obsidian vault, gaining insights and connections across your notes
 
@@ -84,7 +86,7 @@ We value your input and want to ensure you can easily share your thoughts and re
 This project stands on the shoulders of giants. We would like to express our gratitude to the following open-source projects:
 
 - [obsidian-copilot-auto-completion](https://github.com/j0rd1smit/obsidian-copilot-auto-completion) - For autocomplete implementation and TypeScript architecture inspiration
-- [obsidian-smart-composer](https://github.com/glowingjade/obsidian-smart-composer) - For chat/apply UI patterns and PgLite integration examples  
+- [obsidian-smart-composer](https://github.com/glowingjade/obsidian-smart-composer) - For chat/apply UI patterns and PgLite integration examples
 - [continue](https://github.com/continuedev/continue) & [cline](https://github.com/cline/cline) - For prompt engineering and LLM interaction patterns
 - [pglite](https://github.com/electric-sql/pglite) - For conversation/vector data storage and sample code
 
