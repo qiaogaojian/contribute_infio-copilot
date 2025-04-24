@@ -1,8 +1,8 @@
 import { SerializedLexicalNode } from 'lexical'
 
-export const TEMPLATE_SCHEMA_VERSION = 1
+export const COMMAND_SCHEMA_VERSION = 1
 
-export type Template = {
+export type Command = {
   id: string
   name: string
   content: { nodes: SerializedLexicalNode[] }
@@ -11,7 +11,7 @@ export type Template = {
   schemaVersion: number
 }
 
-export type TemplateMetadata = {
+export type CommandMetadata = {
   id: string
   name: string
   schemaVersion: number

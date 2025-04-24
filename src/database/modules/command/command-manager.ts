@@ -2,7 +2,7 @@ import fuzzysort from 'fuzzysort'
 import { App } from 'obsidian'
 
 import { DBManager } from '../../database-manager'
-import { DuplicateTemplateException } from '../../exception'
+import { DuplicateCommandException } from '../../exception'
 import { InsertTemplate, SelectTemplate, UpdateTemplate } from '../../schema'
 
 import { CommandRepository } from './command-repository'
@@ -21,7 +21,7 @@ export class CommandManager {
 	async createCommand(command: InsertTemplate): Promise<SelectTemplate> {
 		const existingTemplate = await this.repository.findByName(command.name)
 		if (existingTemplate) {
-			throw new DuplicateTemplateException(command.name)
+			throw new DuplicateCommandException(command.name)
 		}
 		const created = await this.repository.create(command)
 		return created

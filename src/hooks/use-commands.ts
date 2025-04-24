@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { lexicalNodeToPlainText } from '../components/chat-view/chat-input/utils/editor-state-to-plain-text'
 import { useApp } from '../contexts/AppContext'
-import { TemplateManager } from '../database/json/command/TemplateManager'
+import { CommandManager } from '../database/json/command/CommandManager'
 import { TemplateContent } from '../database/schema'
 
 
@@ -28,10 +28,10 @@ export function useCommands(): UseCommands {
 
 
 	const app = useApp()
-	const templateManager = useMemo(() => new TemplateManager(app), [app])
+	const templateManager = useMemo(() => new CommandManager(app), [app])
 
 	const fetchCommandList = useCallback(async () => {
-		templateManager.ListTemplates().then((rows) => {
+		templateManager.ListCommands().then((rows) => {
 			setCommandList(rows.map((row) => ({
 				id: row.id,
 				name: row.name,
@@ -49,7 +49,7 @@ export function useCommands(): UseCommands {
 
 	const createCommand = useCallback(
 		async (name: string, content: TemplateContent): Promise<void> => {
-			await templateManager.createTemplate({
+			await templateManager.createCommand({
 				name,
 				content,
 			})
@@ -60,7 +60,7 @@ export function useCommands(): UseCommands {
 
 	const deleteCommand = useCallback(
 		async (id: string): Promise<void> => {
-			await templateManager.deleteTemplate(id)
+			await templateManager.deleteCommand(id)
 			fetchCommandList()
 		},
 		[templateManager, fetchCommandList],
@@ -68,7 +68,7 @@ export function useCommands(): UseCommands {
 
 	const updateCommand = useCallback(
 		async (id: string, name: string, content: TemplateContent): Promise<void> => {
-			await templateManager.updateTemplate(id, {
+			await templateManager.updateCommand(id, {
 				name,
 				content,
 			})

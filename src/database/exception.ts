@@ -12,9 +12,9 @@ export class DatabaseNotInitializedException extends DatabaseException {
 	}
 }
 
-export class DuplicateTemplateException extends DatabaseException {
-	constructor(templateName: string) {
-		super(`Template with name "${templateName}" already exists`)
-		this.name = 'DuplicateTemplateException'
+export class DuplicateCommandException extends DatabaseException {
+	constructor(commandName: string) {
+		super(`Command with name "${commandName}" already exists`)
+		this.name = 'DuplicateCommandException'
 	}
 }

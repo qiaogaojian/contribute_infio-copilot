@@ -1,12 +1,12 @@
 import { App, normalizePath } from 'obsidian'
 
 import { DBManager } from '../database-manager'
-import { DuplicateTemplateException } from '../exception'
+import { DuplicateCommandException } from '../exception'
 import { ConversationManager } from '../modules/conversation/conversation-manager'
 
 import { ChatManager } from './chat/ChatManager'
+import { CommandManager } from './command/CommandManager'
 import { INITIAL_MIGRATION_MARKER, ROOT_DIR } from './constants'
-import { TemplateManager } from './command/TemplateManager'
 import { serializeChatMessage } from './utils'
 
 async function hasMigrationCompleted(app: App): Promise<boolean> {
@@ -62,44 +62,44 @@ async function transferChatHistory(app: App, dbManager: DBManager): Promise<void
 	console.log('Chat history migration to JSON database completed')
 }
 
-async function transferTemplates(
+async function transferCommands(
 	app: App,
 	dbManager: DBManager,
 ): Promise<void> {
-	const jsonTemplateManager = new TemplateManager(app)
-	const templateManager = dbManager.getCommandManager()
+	const jsonCommandManager = new CommandManager(app)
+	const commandManager = dbManager.getCommandManager()
 
-	const templates = await templateManager.findAllCommands()
+	const commands = await commandManager.findAllCommands()
 
-	for (const template of templates) {
+	for (const command of commands) {
 		try {
-			if (await jsonTemplateManager.findByName(template.name)) {
+			if (await jsonCommandManager.findByName(command.name)) {
 				// Template already exists, skip
 				continue
 			}
-			await jsonTemplateManager.createTemplate({
-				name: template.name,
-				content: template.content,
+			await jsonCommandManager.createCommand({
+				name: command.name,
+				content: command.content,
 			})
 
-			const verifyTemplate = await jsonTemplateManager.findByName(template.name)
-			if (!verifyTemplate) {
+			const verifyCommand = await jsonCommandManager.findByName(command.name)
+			if (!verifyCommand) {
 				throw new Error(
-					`Failed to verify migration of template ${template.name}`,
+					`Failed to verify migration of command ${command.name}`,
 				)
 			}
 
-			await templateManager.deleteCommand(template.id)
+			await commandManager.deleteCommand(command.id)
 		} catch (error) {
-			if (error instanceof DuplicateTemplateException) {
-				console.log(`Duplicate template found: ${template.name}. Skipping...`)
+			if (error instanceof DuplicateCommandException) {
+				console.log(`Duplicate command found: ${command.name}. Skipping...`)
 			} else {
-				console.error(`Error migrating template ${template.name}:`, error)
+				console.error(`Error migrating command ${command.name}:`, error)
 			}
 		}
 	}
 
-	console.log('Templates migration to JSON database completed')
+	console.log('Commands migration to JSON database completed')
 }
 
 export async function migrateToJsonDatabase(
@@ -112,7 +112,7 @@ export async function migrateToJsonDatabase(
 	}
 
 	await transferChatHistory(app, dbManager)
-	await transferTemplates(app, dbManager)
+	await transferCommands(app, dbManager)
 	await markMigrationCompleted(app)
 	onMigrationComplete?.()
 }

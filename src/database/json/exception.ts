@@ -1,14 +1,14 @@
-export class DuplicateTemplateException extends Error {
-  constructor(templateName: string) {
-    super(`Template with name "${templateName}" already exists`)
-    this.name = 'DuplicateTemplateException'
+export class DuplicateCommandException extends Error {
+  constructor(commandName: string) {
+    super(`Command with name "${commandName}" already exists`)
+    this.name = 'DuplicateCommandException'
   }
 }
 
-export class EmptyTemplateNameException extends Error {
+export class EmptyCommandNameException extends Error {
   constructor() {
-    super('Template name cannot be empty')
-    this.name = 'EmptyTemplateNameException'
+    super('Command name cannot be empty')
+    this.name = 'EmptyCommandNameException'
   }
 }
 
