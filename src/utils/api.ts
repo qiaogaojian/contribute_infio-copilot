@@ -222,10 +222,29 @@ async function fetchOpenRouterModels(): Promise<Record<string, ModelInfo>> {
 // Gemini
 // https://ai.google.dev/gemini-api/docs/models/gemini
 export type GeminiModelId = keyof typeof geminiModels
-export const geminiDefaultModelId: GeminiModelId = "gemini-2.0-flash-001"
+export const geminiDefaultModelId: GeminiModelId = "gemini-2.5-flash-preview-04-17"
 export const geminiModels = {
+	"gemini-2.5-flash-preview-04-17:thinking": {
+		maxTokens: 65_535,
+		contextWindow: 1_048_576,
+		supportsImages: true,
+		supportsPromptCache: false,
+		inputPrice: 0.15,
+		outputPrice: 3.5,
+		thinking: true,
+		// maxThinkingTokens: 24_576,
+	},
+	"gemini-2.5-flash-preview-04-17": {
+		maxTokens: 65_535,
+		contextWindow: 1_048_576,
+		supportsImages: true,
+		supportsPromptCache: false,
+		inputPrice: 0.15,
+		outputPrice: 0.6,
+		thinking: false,
+	},
 	"gemini-2.5-pro-exp-03-25": {
-		maxTokens: 65_536,
+		maxTokens: 65_535,
 		contextWindow: 1_048_576,
 		supportsImages: true,
 		supportsPromptCache: false,
@@ -236,17 +255,21 @@ export const geminiModels = {
 		maxTokens: 65_535,
 		contextWindow: 1_048_576,
 		supportsImages: true,
-		supportsPromptCache: false,
-		inputPrice: 2.5,
+		supportsPromptCache: true,
+		inputPrice: 2.5, // This is the pricing for prompts above 200k tokens.
 		outputPrice: 15,
+		cacheReadsPrice: 0.625,
+		cacheWritesPrice: 4.5,
 	},
 	"gemini-2.0-flash-001": {
 		maxTokens: 8192,
 		contextWindow: 1_048_576,
 		supportsImages: true,
-		supportsPromptCache: false,
-		inputPrice: 0,
-		outputPrice: 0,
+		supportsPromptCache: true,
+		inputPrice: 0.1,
+		outputPrice: 0.4,
+		cacheReadsPrice: 0.025,
+		cacheWritesPrice: 1.0,
 	},
 	"gemini-2.0-flash-lite-preview-02-05": {
 		maxTokens: 8192,
@@ -1404,7 +1427,7 @@ export const grokModels = {
 		inputPrice: 0,
 		outputPrice: 0,
 	},
-	"grok-2-vision": {
+	"grok-2-latest": {
 		maxTokens: 8192,
 		contextWindow: 131072,
 		supportsImages: true,
@@ -1412,7 +1435,7 @@ export const grokModels = {
 		inputPrice: 0,
 		outputPrice: 0,
 	},
-	"grok-2-image": {
+	"grok-2": {
 		maxTokens: 8192,
 		contextWindow: 131072,
 		supportsImages: true,

@@ -5,35 +5,34 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { editorStateToPlainText } from '../components/chat-view/chat-input/utils/editor-state-to-plain-text'
 import { useApp } from '../contexts/AppContext'
 import { ChatManager } from '../database/json/chat/ChatManager'
-import { ChatConversationMetadata } from '../database/json/chat/types'
 import { deserializeChatMessage, serializeChatMessage } from '../database/json/utils'
-import { ChatMessage } from '../types/chat'
+import { ChatConversationMeta, ChatMessage, ChatUserMessage } from '../types/chat'
 
 type UseChatHistory = {
-  createOrUpdateConversation: (
-    id: string,
-    messages: ChatMessage[],
-  ) => Promise<void>
-  deleteConversation: (id: string) => Promise<void>
-  getChatMessagesById: (id: string) => Promise<ChatMessage[] | null>
-  updateConversationTitle: (id: string, title: string) => Promise<void>
-	chatList: ChatConversationMetadata[]
+	createOrUpdateConversation: (
+		id: string,
+		messages: ChatMessage[],
+	) => Promise<void>
+	deleteConversation: (id: string) => Promise<void>
+	getChatMessagesById: (id: string) => Promise<ChatMessage[] | null>
+	updateConversationTitle: (id: string, title: string) => Promise<void>
+	chatList: ChatConversationMeta[]
 }
 
 export function useChatHistory(): UseChatHistory {
-  const app = useApp()
-  const chatManager = useMemo(() => new ChatManager(app), [app])
+	const app = useApp()
+	const chatManager = useMemo(() => new ChatManager(app), [app])
 
-	const [chatList, setChatList] = useState<ChatConversationMetadata[]>([])
+	const [chatList, setChatList] = useState<ChatConversationMeta[]>([])
 
-  const fetchChatList = useCallback(async () => {
+	const fetchChatList = useCallback(async () => {
 		const conversations = await chatManager.listChats()
-    setChatList(conversations)
-  }, [chatManager])
+		setChatList(conversations)
+	}, [chatManager])
 
-  useEffect(() => {
-    void fetchChatList()
-  }, [fetchChatList])
+	useEffect(() => {
+		void fetchChatList()
+	}, [fetchChatList])
 
 	const createOrUpdateConversation = useMemo(
 		() =>
@@ -50,7 +49,7 @@ export function useChatHistory(): UseChatHistory {
 							messages: serializedMessages,
 						})
 					} else {
-						const firstUserMessage = messages.find((v) => v.role === 'user')
+						const firstUserMessage = messages.find((v) => v.role === 'user') as ChatUserMessage
 
 						await chatManager.createChat({
 							id,
@@ -74,13 +73,13 @@ export function useChatHistory(): UseChatHistory {
 		[chatManager, fetchChatList],
 	)
 
-  const deleteConversation = useCallback(
-    async (id: string): Promise<void> => {
-      await chatManager.deleteChat(id)
-      await fetchChatList()
-    },
-    [chatManager, fetchChatList],
-  )
+	const deleteConversation = useCallback(
+		async (id: string): Promise<void> => {
+			await chatManager.deleteChat(id)
+			await fetchChatList()
+		},
+		[chatManager, fetchChatList],
+	)
 
 	const getChatMessagesById = useCallback(
 		async (id: string): Promise<ChatMessage[] | null> => {
@@ -112,11 +111,11 @@ export function useChatHistory(): UseChatHistory {
 		[chatManager, fetchChatList],
 	)
 
-  return {
-    createOrUpdateConversation,
-    deleteConversation,
-    getChatMessagesById,
-    updateConversationTitle,
-    chatList,
-  }
+	return {
+		createOrUpdateConversation,
+		deleteConversation,
+		getChatMessagesById,
+		updateConversationTitle,
+		chatList,
+	}
 }

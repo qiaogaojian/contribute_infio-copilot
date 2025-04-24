@@ -212,7 +212,6 @@ export function ModelSelect() {
 		return results
 	}, [searchableItems, searchTerm, fuse])
 
-	// 添加或删除收藏
 	const toggleCollected = (id: string, e: React.MouseEvent) => {
 		e.stopPropagation();
 		e.preventDefault();
@@ -224,12 +223,12 @@ export function ModelSelect() {
 		let newCollectedModels = settings.collectedChatModels || [];
 
 		if (isCurrentlyCollected) {
-			// 移除收藏
+			// remove
 			newCollectedModels = newCollectedModels.filter(
 				item => !(item.provider === modelProvider && item.modelId === id)
 			);
 		} else {
-			// 添加收藏
+			// add
 			newCollectedModels = [...newCollectedModels, { provider: modelProvider, modelId: id }];
 		}
 
@@ -253,7 +252,7 @@ export function ModelSelect() {
 
 				<DropdownMenu.Portal>
 					<DropdownMenu.Content className="infio-popover infio-llm-setting-combobox-dropdown">
-						{/* 收藏的模型区域 - 所有providers的收藏模型 */}
+						{/* collected models */}
 						{settings.collectedChatModels?.length > 0 && (
 							<div className="infio-model-section">
 								<div className="infio-model-section-title">
@@ -292,8 +291,7 @@ export function ModelSelect() {
 													<Star size={16} className="infio-star-active" onClick={(e) => {
 														e.stopPropagation();
 														e.preventDefault();
-
-														// 从收藏中删除
+														// delete 
 														const newCollectedModels = settings.collectedChatModels.filter(
 															item => !(item.provider === collectedModel.provider && item.modelId === collectedModel.modelId)
 														);

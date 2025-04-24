@@ -1,4 +1,9 @@
 releases:
+  - version: "0.1.6"
+    features:
+      - "update model select in chat view, add collected models "
+      - "fix vault obsidian sync error"
+			- "update apply view, you can edit content in apply view"
   - version: "0.1.5"
     features:
       - "hotfix command view style"

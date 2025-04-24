@@ -16,7 +16,6 @@ import { findFilesMatchingPatterns } from '../utils/glob-utils';
 import AdvancedSettings from './components/AdvancedSettings';
 import BasicAutoCompleteSettings from './components/BasicAutoCompleteSettings';
 import DangerZoneSettings from './components/DangerZoneSettings';
-import ModelParametersSettings from './components/ModelParametersSettings';
 import CustomProviderSettings from './components/ModelProviderSettings';
 import PostprocessingSettings from './components/PostprocessingSettings';
 import PreprocessingSettings from './components/PreprocessingSettings';

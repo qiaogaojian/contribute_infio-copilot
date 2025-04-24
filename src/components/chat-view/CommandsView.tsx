@@ -17,8 +17,8 @@ export interface QuickCommand {
 	name: string
 	content: TemplateContent
 	contentText: string
-	createdAt: Date | undefined
-	updatedAt: Date | undefined
+	createdAt: number
+	updatedAt: number
 }
 
 const CommandsView = (
