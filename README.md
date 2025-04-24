@@ -5,10 +5,7 @@
 [中文文档](README_zh-CN.md)
 
 ## New Version
-![0.1.6](https://github.com/infiolab/infio-copilot/releases/tag/0.1.6)
-update model select in chat view, add collected models
-fix vault obsidian sync error
-update apply view, you can edit content in apply view
+[0.1.6](https://github.com/infiolab/infio-copilot/releases/tag/0.1.6) update apply view, you can edit content in apply view
 
 ## Features
 
