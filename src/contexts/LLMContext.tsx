@@ -50,13 +50,6 @@ export function LLMProvider({ children }: PropsWithChildren) {
 		}
 	}, [settings.chatModelProvider, settings.chatModelId])
 
-	// const applyModel = useMemo((): LLMModel => {
-	// 	return {
-	// 		provider: settings.applyModelProvider,
-	// 		modelId: settings.applyModelId,
-	// 	}
-	// }, [settings])
-
 	useEffect(() => {
 		const manager = new LLMManager(settings)
 		setLLMManager(manager)

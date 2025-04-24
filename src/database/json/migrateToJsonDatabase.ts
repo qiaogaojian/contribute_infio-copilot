@@ -116,3 +116,4 @@ export async function migrateToJsonDatabase(
 	await markMigrationCompleted(app)
 	onMigrationComplete?.()
 }
+

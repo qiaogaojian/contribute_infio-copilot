@@ -220,6 +220,12 @@ export const InfioSettingsSchema = z.object({
 	grokProvider: GrokProviderSchema,
 	openaicompatibleProvider: OpenAICompatibleProviderSchema,
 
+	// Chat Model start list
+	collectedChatModels: z.array(z.object({
+		provider: z.nativeEnum(ApiProvider),
+		modelId: z.string(),
+	})).catch([]),
+
 	// Chat Model 
 	chatModelProvider: z.nativeEnum(ApiProvider).catch(ApiProvider.OpenRouter),
 	chatModelId: z.string().catch(''),
