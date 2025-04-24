@@ -419,64 +419,60 @@ export function ModelSelect() {
 						{isLoading ? (
 							<div className="infio-loading">loading...</div>
 						) : (
-							<>
+							<div className="infio-model-section">
+								<ul>
+									{filteredOptions.map((option, index) => {
+										// 计算正确的选中索引，考虑搜索模式和非搜索模式
+										const isSelected = searchTerm
+											? index === selectedIndex
+											: index + settings.collectedChatModels?.length === selectedIndex;
 
-								{/* 所有模型区域 */}
-								<div className="infio-model-section">
-									<ul>
-											{filteredOptions.map((option, index) => {
-											// 计算正确的选中索引，考虑搜索模式和非搜索模式
-											const isSelected = searchTerm
-												? index === selectedIndex
-												: index + settings.collectedChatModels?.length === selectedIndex;
-
-											return (
-												<DropdownMenu.Item
-													key={option.id}
-													onSelect={() => {
-														setSettings({
-															...settings,
-															chatModelProvider: modelProvider,
-															chatModelId: option.id,
-														})
-														setChatModelId(option.id)
-														setSearchTerm("")
-														setIsOpen(false)
-													}}
-													className={`infio-llm-setting-combobox-option ${isSelected ? 'is-selected' : ''}`}
-													onMouseEnter={() => {
-														// 计算正确的鼠标悬停索引
-														const hoverIndex = searchTerm
-															? index
-															: index + settings.collectedChatModels?.length;
-														setSelectedIndex(hoverIndex);
-													}}
-													asChild
+										return (
+											<DropdownMenu.Item
+												key={option.id}
+												onSelect={() => {
+													setSettings({
+														...settings,
+														chatModelProvider: modelProvider,
+														chatModelId: option.id,
+													})
+													setChatModelId(option.id)
+													setSearchTerm("")
+													setIsOpen(false)
+												}}
+												className={`infio-llm-setting-combobox-option ${isSelected ? 'is-selected' : ''}`}
+												onMouseEnter={() => {
+													// 计算正确的鼠标悬停索引
+													const hoverIndex = searchTerm
+														? index
+														: index + settings.collectedChatModels?.length;
+													setSelectedIndex(hoverIndex);
+												}}
+												asChild
+											>
+												<li
+													className={`infio-llm-setting-model-item ${option.isCollected ? 'infio-collected-model-item' : ''}`}
+													title={option.id}
 												>
-													<li
-														className={`infio-llm-setting-model-item ${option.isCollected ? 'infio-collected-model-item' : ''}`}
-														title={option.id}
+													<div className="infio-model-item-text-wrapper">
+														<HighlightedText segments={option.html} />
+													</div>
+													<div
+														className="infio-model-item-star"
+														onClick={(e) => toggleCollected(option.id, e)}
+														title={option.isCollected ? "star" : "unstar"}
 													>
-														<div className="infio-model-item-text-wrapper">
-															<HighlightedText segments={option.html} />
-														</div>
-														<div
-															className="infio-model-item-star"
-															onClick={(e) => toggleCollected(option.id, e)}
-															title={option.isCollected ? "star" : "unstar"}
-														>
-															{option.isCollected ?
-																<Star size={16} className="infio-star-active" /> :
-																<Star size={16} className="infio-star-inactive" />
-															}
-														</div>
-													</li>
-												</DropdownMenu.Item>
-											);
-										})}
-									</ul>
-								</div>
-							</>
+														{option.isCollected ?
+															<Star size={16} className="infio-star-active" /> :
+															<Star size={16} className="infio-star-inactive" />
+														}
+													</div>
+												</li>
+											</DropdownMenu.Item>
+										);
+									})}
+								</ul>
+							</div>
 						)}
 					</DropdownMenu.Content>
 				</DropdownMenu.Portal>
@@ -580,7 +576,7 @@ export function ModelSelect() {
 						display: flex;
 						align-items: center;
 						flex: 0 0 auto;
-						width: 30%;
+						width: 45%;
 					}
 					
 					/* Provider selector */
@@ -623,7 +619,7 @@ export function ModelSelect() {
 						display: flex;
 						align-items: center;
 						flex: 1 1 auto;
-						width: 70%;
+						width: 50%;
 					}
 
 					/* Search input */
@@ -653,8 +649,7 @@ export function ModelSelect() {
 					
 					/* Dropdown menu container */
 					.infio-llm-setting-combobox-dropdown {
-						max-height: 350px;
-						overflow-y: auto;
+						max-height: 400px;
 						box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12), 0 3px 6px rgba(0, 0, 0, 0.08);
 						border-radius: 8px;
 						border: 1px solid var(--background-modifier-border);
@@ -663,6 +658,8 @@ export function ModelSelect() {
 					/* 模型区域样式 */
 					.infio-model-section {
 						padding: 0;
+						max-height: 300px;
+						overflow-y: auto;
 					}
 					
 					.infio-model-section-title {
