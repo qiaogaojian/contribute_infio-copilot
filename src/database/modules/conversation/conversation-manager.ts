@@ -1,5 +1,5 @@
-import { App } from 'obsidian'
 import { Transaction } from '@electric-sql/pglite'
+import { App } from 'obsidian'
 
 import { editorStateToPlainText } from '../../../components/chat-view/chat-input/utils/editor-state-to-plain-text'
 import { ChatAssistantMessage, ChatConversationMeta, ChatMessage, ChatUserMessage } from '../../../types/chat'
@@ -75,6 +75,10 @@ export class ConversationManager {
 
 	async deleteConversation(id: string): Promise<void> {
 		await this.repository.delete(id)
+	}
+
+	async conversations(): Promise<SelectConversation[]>{
+		return this.repository.findAll()
 	}
 
 	getAllConversations(callback: (conversations: ChatConversationMeta[]) => void): void {

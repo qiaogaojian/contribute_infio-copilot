@@ -63,4 +63,4 @@ export const GROQ_PRICES: Record<string, ModelPricing> = {
 	'llama-3.1-8b-instant': { input: 0.05, output: 0.08 },
 }
 
-export const PGLITE_DB_PATH = '.infio_vector_db.tar.gz'
+export const PGLITE_DB_PATH = '.infio_pglite_db.tar.gz'

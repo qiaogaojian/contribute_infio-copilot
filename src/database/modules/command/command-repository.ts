@@ -32,7 +32,7 @@ export class CommandRepository {
 			throw new DatabaseNotInitializedException()
 		}
 		const result = await this.db.query<SelectTemplate>(
-			`SELECT * FROM "template"`
+			`SELECT * FROM "template" ORDER BY created_at DESC`
 		)
 		return result.rows
 	}

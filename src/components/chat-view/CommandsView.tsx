@@ -4,20 +4,19 @@ import { InitialEditorStateType } from '@lexical/react/LexicalComposer'
 import { $getRoot, $insertNodes, LexicalEditor } from 'lexical'
 import { Pencil, Search, Trash2 } from 'lucide-react'
 import { Notice } from 'obsidian'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
-// import { v4 as uuidv4 } from 'uuid'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
-import { lexicalNodeToPlainText } from '../../components/chat-view/chat-input/utils/editor-state-to-plain-text'
-import { useDatabase } from '../../contexts/DatabaseContext'
-import { DBManager } from '../../database/database-manager'
 import { TemplateContent } from '../../database/schema'
+import { useCommands } from '../../hooks/use-commands'
 
 import LexicalContentEditable from './chat-input/LexicalContentEditable'
+
 
 export interface QuickCommand {
 	id: string
 	name: string
 	content: TemplateContent
+	contentText: string
 	createdAt: Date | undefined
 	updatedAt: Date | undefined
 }
@@ -29,30 +28,12 @@ const CommandsView = (
 		selectedSerializedNodes?: BaseSerializedNode[]
 	}
 ) => {
-	const [commands, setCommands] = useState<QuickCommand[]>([])
-
-	const { getDatabaseManager } = useDatabase()
-	const getManager = useCallback(async (): Promise<DBManager> => {
-		return await getDatabaseManager()
-	}, [getDatabaseManager])
-
-	// init get all commands
-	const fetchCommands = useCallback(async () => {
-		const dbManager = await getManager()
-		dbManager.getCommandManager().getAllCommands((rows) => {
-			setCommands(rows.map((row) => ({
-				id: row.id,
-				name: row.name,
-				content: row.content,
-				createdAt: row.createdAt,
-				updatedAt: row.updatedAt,
-			})))
-		})
-	}, [getManager])
-
-	useEffect(() => {
-		void fetchCommands()
-	}, [fetchCommands])
+	const {
+		createCommand,
+		deleteCommand,
+		updateCommand,
+		commandList,
+	} = useCommands()
 
 	// new command name
 	const [newCommandName, setNewCommandName] = useState('')
@@ -66,13 +47,13 @@ const CommandsView = (
 	const nameInputRefs = useRef<Map<string, HTMLInputElement>>(new Map())
 	const contentEditorRefs = useRef<Map<string, LexicalEditor>>(new Map())
 
-	// 为每个正在编辑的命令创建refs
+	// create refs for each command
 	const commandEditRefs = useRef<Map<string, {
 		editorRef: React.RefObject<LexicalEditor>,
 		contentEditableRef: React.RefObject<HTMLDivElement>
 	}>>(new Map());
 
-	// 获取或创建命令编辑refs
+	// get or create command edit refs
 	const getCommandEditRefs = useCallback((id: string) => {
 		if (!commandEditRefs.current.has(id)) {
 			commandEditRefs.current.set(id, {
@@ -94,7 +75,7 @@ const CommandsView = (
 		return refs;
 	}, []);
 
-	// 当编辑状态改变时更新refs
+	// update command edit refs when editing command id changes
 	useEffect(() => {
 		if (editingCommandId) {
 			const refs = getCommandEditRefs(editingCommandId);
@@ -133,25 +114,20 @@ const CommandsView = (
 			new Notice('Please enter a name for your template')
 			return
 		}
-		const dbManager = await getManager()
-		dbManager.getCommandManager().createCommand({
-			name: newCommandName,
-			content: { nodes },
-		})
+		
+		await createCommand(newCommandName, { nodes })
 
 		// clear editor content
 		editorRef.current.update(() => {
 			const root = $getRoot()
 			root.clear()
 		})
-
 		setNewCommandName('')
 	}
 
 	// delete command
 	const handleDeleteCommand = async (id: string) => {
-		const dbManager = await getManager()
-		await dbManager.getCommandManager().deleteCommand(id)
+		await deleteCommand(id)
 	}
 
 	// edit command
@@ -173,11 +149,11 @@ const CommandsView = (
 			new Notice('Please enter a content for your template')
 			return
 		}
-		const dbManager = await getManager()
-		await dbManager.getCommandManager().updateCommand(id, {
-			name: nameInput.value,
-			content: { nodes },
-		})
+		await updateCommand(
+			id,
+			nameInput.value,
+			{ nodes },
+		)
 		setEditingCommandId(null)
 	}
 
@@ -187,11 +163,16 @@ const CommandsView = (
 	}
 
 	// filter commands list
-	const filteredCommands = commands.filter(
-		command =>
-			command.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-			command.content.nodes.map(lexicalNodeToPlainText).join('').toLowerCase().includes(searchTerm.toLowerCase())
-	)
+	const filteredCommands = useMemo(() => {
+		if (!searchTerm.trim()) {
+			return commandList;
+		}
+		return commandList.filter(
+			command =>
+				command.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+				command.contentText.toLowerCase().includes(searchTerm.toLowerCase())
+		);
+	}, [commandList, searchTerm]);
 
 	const getCommandEditorState = (commandContent: TemplateContent): InitialEditorStateType => {
 		return (editor: LexicalEditor) => {
@@ -287,7 +268,7 @@ const CommandsView = (
 								// view mode
 								<div className="infio-commands-view-mode">
 									<div className="infio-commands-name">{command.name}</div>
-									<div className="infio-commands-content">{command.content.nodes.map(lexicalNodeToPlainText).join('')}</div>
+									<div className="infio-commands-content">{command.contentText}</div>
 									<div className="infio-commands-actions">
 										<button
 											onClick={() => handleEditCommand(command)}

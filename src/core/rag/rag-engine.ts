@@ -13,7 +13,7 @@ import { getEmbeddingModel } from './embedding'
 export class RAGEngine {
 	private app: App
 	private settings: InfioSettings
-	private vectorManager: VectorManager
+	private vectorManager: VectorManager | null = null
 	private embeddingModel: EmbeddingModel | null = null
 	private initialized = false
 
@@ -28,6 +28,11 @@ export class RAGEngine {
 		this.embeddingModel = getEmbeddingModel(settings)
 	}
 
+	cleanup() {
+		this.embeddingModel = null
+		this.vectorManager = null
+	}
+
 	setSettings(settings: InfioSettings) {
 		this.settings = settings
 		this.embeddingModel = getEmbeddingModel(settings)
@@ -40,8 +45,6 @@ export class RAGEngine {
 		}
 	}
 
-	// TODO: Implement automatic vault re-indexing when settings are changed.
-	// Currently, users must manually re-index the vault.
 	async updateVaultIndex(
 		options: { reindexAll: boolean },
 		onQueryProgressChange?: (queryProgress: QueryProgressState) => void,

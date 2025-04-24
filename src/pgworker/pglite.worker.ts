@@ -1,6 +1,5 @@
 // @ts-nocheck
 import { PGlite } from '@electric-sql/pglite'
-
 import { PGliteWorkerOptions, worker } from '@electric-sql/pglite/worker'
 
 import { pgliteResources } from '../database/pglite-resources'
@@ -43,7 +42,7 @@ const loadPGliteResources = async (): Promise<{
 }
 
 worker({
-	async init(options: PGliteWorkerOptions) {
+	async init(options: PGliteWorkerOptions, ) {
 		let db: PGlite;
 		try {
 			const { fsBundle, wasmModule, vectorExtensionBundlePath } =

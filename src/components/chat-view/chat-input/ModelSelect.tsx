@@ -242,7 +242,7 @@ export function ModelSelect() {
 										onChange={(e) => {
 											setSearchTerm(e.target.value)
 											setSelectedIndex(0)
-											// 确保下一个渲染循环中仍然聚焦在输入框
+											// Ensure the input is focused in the next render cycle
 											setTimeout(() => {
 												inputRef.current?.focus()
 											}, 0)
@@ -292,7 +292,7 @@ export function ModelSelect() {
 									value={searchTerm}
 									onChange={(e) => {
 										setSearchTerm(e.target.value)
-										// 确保下一个渲染循环中仍然聚焦在输入框
+										// ensure the input is focused in the next render cycle
 										setTimeout(() => {
 											inputRef.current?.focus()
 										}, 0)
@@ -350,7 +350,7 @@ export function ModelSelect() {
 			</DropdownMenu.Root>
 			<style>
 				{`
-					/* 模型项样式 */
+					/* Model item styles */
 					.infio-llm-setting-model-item {
 						display: block;
 						padding: 0;
@@ -366,7 +366,7 @@ export function ModelSelect() {
 						border-left: 3px solid var(--interactive-accent);
 					}
 					
-					/* 文本溢出处理 */
+					/* Text overflow handling */
 					.infio-model-item-text-wrapper {
 						white-space: nowrap;
 						overflow: hidden;
@@ -379,7 +379,7 @@ export function ModelSelect() {
 						display: inline;
 					}
 
-					/* 高亮样式 - 使用紫色而不是主题色 */
+					/* Highlighted text style - use purple instead of theme color */
 					.infio-llm-setting-model-item-highlight {
 						display: inline;
 						color: #9370DB;
@@ -389,7 +389,7 @@ export function ModelSelect() {
 						border-radius: 2px;
 					}
 					
-					/* 搜索容器 */
+					/* Search container */
 					.infio-llm-setting-search-container {
 						display: flex;
 						flex-direction: row;
@@ -399,7 +399,7 @@ export function ModelSelect() {
 						padding-bottom: 2px;
 					}
 					
-					/* 提供商选择器容器 */
+					/* Provider selector container */
 					.infio-llm-setting-provider-container {
 						position: relative;
 						display: flex;
@@ -408,9 +408,7 @@ export function ModelSelect() {
 						width: 26%;
 					}
 					
-					/* 移除提供商选择箭头 */
-					
-					/* 提供商选择器 */
+					/* Provider selector */
 					.infio-llm-setting-provider-switch {
 						width: 100% !important;
 						margin: 0;
@@ -435,7 +433,7 @@ export function ModelSelect() {
 						box-shadow: 0 0 0 2px rgba(var(--interactive-accent-rgb), 0.2);
 					}
 					
-					/* 搜索框容器 */
+					/* Search container */
 					.infio-search-input-container {
 						position: relative;
 						display: flex;
@@ -443,10 +441,8 @@ export function ModelSelect() {
 						flex: 1 1 auto;
 						width: 74%;
 					}
-					
-					/* 移除搜索图标 */
-					
-					/* 搜索输入框 */
+
+					/* Search input */
 					.infio-llm-setting-item-search {
 						width: 100% !important;
 						border: 1px solid var(--background-modifier-border);
@@ -469,7 +465,7 @@ export function ModelSelect() {
 						outline: none;
 					}
 					
-					/* 下拉菜单容器 */
+					/* Dropdown menu container */
 					.infio-llm-setting-combobox-dropdown {
 						max-height: 350px;
 						overflow-y: auto;

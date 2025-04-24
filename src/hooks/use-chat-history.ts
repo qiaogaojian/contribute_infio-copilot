@@ -1,8 +1,13 @@
-import { useCallback, useEffect, useState } from 'react'
+import debounce from 'lodash.debounce'
+import isEqual from 'lodash.isequal'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
-import { useDatabase } from '../contexts/DatabaseContext'
-import { DBManager } from '../database/database-manager'
-import { ChatConversationMeta, ChatMessage } from '../types/chat'
+import { editorStateToPlainText } from '../components/chat-view/chat-input/utils/editor-state-to-plain-text'
+import { useApp } from '../contexts/AppContext'
+import { ChatManager } from '../database/json/chat/ChatManager'
+import { ChatConversationMetadata } from '../database/json/chat/types'
+import { deserializeChatMessage, serializeChatMessage } from '../database/json/utils'
+import { ChatMessage } from '../types/chat'
 
 type UseChatHistory = {
   createOrUpdateConversation: (
@@ -12,64 +17,100 @@ type UseChatHistory = {
   deleteConversation: (id: string) => Promise<void>
   getChatMessagesById: (id: string) => Promise<ChatMessage[] | null>
   updateConversationTitle: (id: string, title: string) => Promise<void>
-  chatList: ChatConversationMeta[]
+	chatList: ChatConversationMetadata[]
 }
 
 export function useChatHistory(): UseChatHistory {
-  const { getDatabaseManager } = useDatabase()
+  const app = useApp()
+  const chatManager = useMemo(() => new ChatManager(app), [app])
 
-  const [chatList, setChatList] = useState<ChatConversationMeta[]>([])
-
-  const getManager = useCallback(async (): Promise<DBManager> => {
-    return await getDatabaseManager()
-  }, [getDatabaseManager])
+	const [chatList, setChatList] = useState<ChatConversationMetadata[]>([])
 
   const fetchChatList = useCallback(async () => {
-    const dbManager = await getManager()
-    dbManager.getConversationManager().getAllConversations((conversations) => {
-      setChatList(conversations)
-    })
-  }, [getManager])
+		const conversations = await chatManager.listChats()
+    setChatList(conversations)
+  }, [chatManager])
 
   useEffect(() => {
     void fetchChatList()
   }, [fetchChatList])
 
-  const createOrUpdateConversation = useCallback(
-    async (id: string, messages: ChatMessage[]): Promise<void> => {
-      const dbManager = await getManager()
-      const conversationManager = dbManager.getConversationManager()
-      await conversationManager.txCreateOrUpdateConversation(id, messages)
-    },
-    [getManager],
-  )
+	const createOrUpdateConversation = useMemo(
+		() =>
+			debounce(
+				async (id: string, messages: ChatMessage[]): Promise<void> => {
+					const serializedMessages = messages.map(serializeChatMessage)
+					const existingConversation = await chatManager.findById(id)
+
+					if (existingConversation) {
+						if (isEqual(existingConversation.messages, serializedMessages)) {
+							return
+						}
+						await chatManager.updateChat(existingConversation.id, {
+							messages: serializedMessages,
+						})
+					} else {
+						const firstUserMessage = messages.find((v) => v.role === 'user')
+
+						await chatManager.createChat({
+							id,
+							title: firstUserMessage?.content
+								? editorStateToPlainText(firstUserMessage.content).substring(
+									0,
+									50,
+								)
+								: 'New chat',
+							messages: serializedMessages,
+						})
+					}
+
+					await fetchChatList()
+				},
+				300,
+				{
+					maxWait: 1000,
+				},
+			),
+		[chatManager, fetchChatList],
+	)
 
   const deleteConversation = useCallback(
     async (id: string): Promise<void> => {
-      const dbManager = await getManager()
-      const conversationManager = dbManager.getConversationManager()
-      await conversationManager.deleteConversation(id)
+      await chatManager.deleteChat(id)
+      await fetchChatList()
     },
-    [getManager],
+    [chatManager, fetchChatList],
   )
 
-  const getChatMessagesById = useCallback(
-    async (id: string): Promise<ChatMessage[] | null> => {
-      const dbManager = await getManager()
-      const conversationManager = dbManager.getConversationManager()
-      return await conversationManager.findConversation(id)
-    },
-    [getManager],
-  )
+	const getChatMessagesById = useCallback(
+		async (id: string): Promise<ChatMessage[] | null> => {
+			const conversation = await chatManager.findById(id)
+			if (!conversation) {
+				return null
+			}
+			return conversation.messages.map((message) =>
+				deserializeChatMessage(message, app),
+			)
+		},
+		[chatManager, app],
+	)
 
-  const updateConversationTitle = useCallback(
-    async (id: string, title: string): Promise<void> => {
-      const dbManager = await getManager()
-      const conversationManager = dbManager.getConversationManager()
-      await conversationManager.updateConversationTitle(id, title)
-    },
-    [getManager],
-  )
+	const updateConversationTitle = useCallback(
+		async (id: string, title: string): Promise<void> => {
+			if (title.length === 0) {
+				throw new Error('Chat title cannot be empty')
+			}
+			const conversation = await chatManager.findById(id)
+			if (!conversation) {
+				throw new Error('Conversation not found')
+			}
+			await chatManager.updateChat(conversation.id, {
+				title,
+			})
+			await fetchChatList()
+		},
+		[chatManager, fetchChatList],
+	)
 
   return {
     createOrUpdateConversation,

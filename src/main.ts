@@ -11,6 +11,7 @@ import { getDiffStrategy } from "./core/diff/DiffStrategy"
 import { InlineEdit } from './core/edit/inline-edit-processor'
 import { RAGEngine } from './core/rag/rag-engine'
 import { DBManager } from './database/database-manager'
+import { migrateToJsonDatabase } from './database/json/migrateToJsonDatabase'
 import EventListener from "./event-listener"
 import CompletionKeyWatcher from "./render-plugin/completion-key-watcher"
 import DocumentChangesListener, {
@@ -29,6 +30,7 @@ import {
 } from './types/settings'
 import { getMentionableBlockData } from './utils/obsidian'
 import './utils/path'
+
 
 export default class InfioPlugin extends Plugin {
 	private metadataCacheUnloadFn: (() => void) | null = null
@@ -351,9 +353,21 @@ export default class InfioPlugin extends Plugin {
 				editor.replaceRange(customBlock, insertPos);
 			},
 		});
+
+		// migrate to json database
+		void this.migrateToJsonStorage()
 	}
 
 	onunload() {
+		// RagEngine cleanup
+		this.ragEngine?.cleanup()
+		this.ragEngine = null
+
+		// Promise cleanup
+		this.dbManagerInitPromise = null
+		this.ragEngineInitPromise = null
+
+		this.dbManager?.cleanup()
 		this.dbManager = null
 	}
 
@@ -467,5 +481,30 @@ export default class InfioPlugin extends Plugin {
 
 		// if initialization is running, wait for it to complete instead of creating a new initialization promise
 		return this.ragEngineInitPromise
+	}
+
+	private async migrateToJsonStorage() {
+		try {
+			const dbManager = await this.getDbManager()
+			await migrateToJsonDatabase(this.app, dbManager, async () => {
+				await this.reloadChatView()
+				console.log('Migration to JSON storage completed successfully')
+			})
+		} catch (error) {
+			console.error('Failed to migrate to JSON storage:', error)
+			new Notice(
+				'Failed to migrate to JSON storage. Please check the console for details.',
+			)
+		}
+	}
+
+	private async reloadChatView() {
+		const leaves = this.app.workspace.getLeavesOfType(CHAT_VIEW_TYPE)
+		if (leaves.length === 0 || !(leaves[0].view instanceof ChatView)) {
+			return
+		}
+		new Notice('Reloading "infio" due to migration', 1000)
+		leaves[0].detach()
+		await this.activateChatView()
 	}
 }
