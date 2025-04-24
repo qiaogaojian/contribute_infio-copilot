@@ -1,5 +1,5 @@
 /*
- * Autocomplete 
+ * Autocomplete
  */
 
 .infio-autocomplete-setting-list-item {
@@ -62,8 +62,8 @@
   }
 }
 
-/* 
- * Chat 
+/*
+ * Chat
  */
 .infio-chat-header {
   display: flex;
@@ -101,7 +101,7 @@
   }
 }
 
-/* 
+/*
  * Chat Messages and Content
  * - Message containers
  * - Message styling*/
@@ -130,7 +130,7 @@
   }
 }
 
-/* 
+/*
  * Markdown Content Styling
  * - Typography and text formatting
  * - Lists, blockquotes, and code blocks
@@ -244,7 +244,7 @@
   font-weight: 500; /* 稍微加粗 */
 }
 
-/* 
+/*
  * Input Controls and Buttons
  * - Buttons and interactive elements
  * - Input areas and textareas
@@ -479,7 +479,7 @@ button:not(.clickable-icon).infio-chat-list-dropdown {
     border 0.15s ease-in-out;
 }
 
-/* 
+/*
  * Popovers and Dialogs
  * - Popover styles
  * - Dialog styles
@@ -744,7 +744,7 @@ input[type='text'].infio-chat-list-dropdown-item-title-input {
   margin: 0;
 }
 
-/* 
+/*
  * Lexical Content Editable
  * - Styles for the content editable area
  */
@@ -771,7 +771,7 @@ input[type='text'].infio-chat-list-dropdown-item-title-input {
   line-height: 1.6;
 }
 
-/* 
+/*
  * Settings and Dialogs
  * - Styles for settings and dialogs
  */
@@ -986,7 +986,7 @@ input[type='text'].infio-chat-list-dropdown-item-title-input {
   }
 }
 
-/* 
+/*
 * LLM Info
 */
 .infio-llm-info-content {
@@ -2060,10 +2060,10 @@ button.infio-chat-input-model-select {
   border: none !important;
   box-shadow: none !important;
   color: var(--text-muted);
-  padding: 0 !important; 
-  margin: 0 !important; 
-  width: 24px !important; 
-  height: 24px !important; 
+  padding: 0 !important;
+  margin: 0 !important;
+  width: 24px !important;
+  height: 24px !important;
 
   &:hover {
     background-color: var(--background-modifier-hover) !important;
@@ -2151,51 +2151,67 @@ button.infio-chat-input-model-select {
 }
 
 .infio-image-selector {
-  padding: var(--size-4-4);
-  min-width: 500px;
-  max-width: 800px;
+  padding: var(--size-4-3); /* 减小内边距 */
+  min-width: 450px; /* 减小最小宽度 */
+  max-width: 700px; /* 减小最大宽度 */
+  /* 禁用外部容器的滚动 */
+  overflow: hidden;
+  /* 确保模态框内容不会超出视口高度 */
+  max-height: 80vh; /* 减小最大高度 */
+  display: flex;
+  flex-direction: column;
 }
 
 .infio-image-selector-header {
   display: flex;
-  gap: var(--size-2-2);
-  margin-bottom: var(--size-4-4);
+  gap: var(--size-2-1); /* 减小间距 */
+  margin-bottom: var(--size-4-2); /* 减小底部边距 */
+  /* 确保头部不会收缩 */
+  flex-shrink: 0;
 }
 
 .infio-image-search {
   flex: 1;
-  padding: var(--size-2-2);
+  padding: var(--size-2-1); /* 减小内边距 */
   border: 1px solid var(--background-modifier-border);
   border-radius: var(--radius-s);
   background-color: var(--background-primary);
   color: var(--text-normal);
+  font-size: var(--font-ui-small); /* 减小字体大小 */
+  height: 28px; /* 固定高度 */
 }
 
 .infio-upload-button {
-  padding: var(--size-2-2) var(--size-4-4);
+  padding: var(--size-2-1) var(--size-4-3); /* 减小内边距 */
   background-color: var(--interactive-accent);
   color: var(--text-on-accent);
   border-radius: var(--radius-s);
   cursor: pointer;
-  font-size: var(--font-ui-small);
+  font-size: var(--font-ui-smaller); /* 减小字体大小 */
   display: inline-flex;
   align-items: center;
-  gap: var(--size-2-2);
+  gap: var(--size-2-1); /* 减小间距 */
+  height: 28px; /* 固定高度 */
 }
 
 .infio-image-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: var(--size-4-4);
-  max-height: 400px;
+  /* 减小每个图片项的最小宽度，使每行可以显示更多图片 */
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: var(--size-4-2); /* 减小间距 */
+  /* 允许内部容器滚动 */
   overflow-y: auto;
   padding: var(--size-2-2);
+  /* 使用flex-grow确保网格占用剩余空间 */
+  flex-grow: 1;
+  /* 减小最大高度，使网格更紧凑 */
+  max-height: calc(70vh - 80px);
 }
 
 .infio-image-item {
   border: 1px solid var(--background-modifier-border);
   border-radius: var(--radius-s);
-  padding: var(--size-2-2);
+  padding: var(--size-2-1); /* 减小内边距 */
   cursor: pointer;
   transition: all 0.2s ease;
   background-color: var(--background-primary);
@@ -2207,18 +2223,25 @@ button.infio-chat-input-model-select {
 
 .infio-image-item img {
   width: 100%;
-  height: 120px;
+  /* 减小图片高度 */
+  height: 100px;
   object-fit: cover;
   border-radius: var(--radius-xs);
 }
 
 .infio-image-name {
-  margin-top: var(--size-2-2);
-  font-size: var(--font-ui-smaller);
+  margin-top: var(--size-2-1); /* 减小上边距 */
+  font-size: var(--font-ui-smallest); /* 使用更小的字体 */
   text-align: center;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: var(--text-normal);
+  color: var(--text-muted); /* 使用更淡的颜色 */
+  line-height: 1.2; /* 减小行高 */
+}
+
+/* 禁用Obsidian模态框的滚动 */
+.modal.mod-image-selector .modal-content {
+  overflow: hidden !important;
 }
 

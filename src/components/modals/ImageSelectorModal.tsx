@@ -17,11 +17,11 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
 }) => {
   const [searchTerm, setSearchTerm] = useState('')
   const [vaultImages, setVaultImages] = useState<TFile[]>([])
-  
+
   useEffect(() => {
     const images = app.vault.getFiles()
       .filter((file) => file.extension.match(/png|jpg|jpeg|gif|svg/i))
-      .filter((file) => 
+      .filter((file) =>
         searchTerm ? file.path.toLowerCase().includes(searchTerm.toLowerCase()) : true
       )
     setVaultImages(images)
@@ -56,10 +56,10 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
           />
         </label>
       </div>
-      
+
       <div className="infio-image-grid">
         {vaultImages.map((file) => (
-          <div 
+          <div
             key={file.path}
             className="infio-image-item"
             onClick={() => {
@@ -67,9 +67,9 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
               onClose()
             }}
           >
-            <img 
-              src={app.vault.adapter.getResourcePath(file.path)} 
-              alt={file.name} 
+            <img
+              src={app.vault.adapter.getResourcePath(file.path)}
+              alt={file.name}
             />
             <div className="infio-image-name">{file.name}</div>
           </div>
@@ -94,9 +94,13 @@ export class ImageSelectorModal extends Modal {
   }
 
   onOpen(): void {
-    const { contentEl } = this
+    const { contentEl, modalEl } = this
+
+    // 添加特定的CSS类以便我们可以定位模态框
+    modalEl.addClass('mod-image-selector')
+
     const root = createRoot(contentEl)
-    
+
     root.render(
       <ImageSelector
         onClose={() => this.close()}
@@ -108,7 +112,9 @@ export class ImageSelectorModal extends Modal {
   }
 
   onClose(): void {
-    const { contentEl } = this
+    const { contentEl, modalEl } = this
+    // 移除特定的CSS类
+    modalEl.removeClass('mod-image-selector')
     contentEl.empty()
   }
 }
