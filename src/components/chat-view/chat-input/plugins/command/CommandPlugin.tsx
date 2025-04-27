@@ -2,36 +2,25 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import clsx from 'clsx'
 import {
 	$parseSerializedNode,
-	COMMAND_PRIORITY_NORMAL, SerializedLexicalNode, TextNode
+	COMMAND_PRIORITY_NORMAL,
+	TextNode
 } from 'lexical'
 import { Slash } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 
-import { lexicalNodeToPlainText } from '../../../../../components/chat-view/chat-input/utils/editor-state-to-plain-text'
-import { useDatabase } from '../../../../../contexts/DatabaseContext'
-import { DBManager } from '../../../../../database/database-manager'
+import { QuickCommand, useCommands } from '../../../../../hooks/use-commands'
 import { MenuOption } from '../shared/LexicalMenu'
 import {
 	LexicalTypeaheadMenuPlugin,
 	useBasicTypeaheadTriggerMatch,
 } from '../typeahead-menu/LexicalTypeaheadMenuPlugin'
 
-
-export type Command = {
-	id: string
-	name: string
-	content: { nodes: SerializedLexicalNode[] }
-	createdAt: Date
-	updatedAt: Date
-}
-
-
 class CommandTypeaheadOption extends MenuOption {
 	name: string
-	command: Command
+	command: QuickCommand
 
-	constructor(name: string, command: Command) {
+	constructor(name: string, command: QuickCommand) {
 		super(name)
 		this.name = name
 		this.command = command
@@ -75,42 +64,21 @@ function CommandMenuItem({
 
 export default function CommandPlugin() {
 	const [editor] = useLexicalComposerContext()
-	const [commands, setCommands] = useState<Command[]>([])
 
-	const { getDatabaseManager } = useDatabase()
-	const getManager = useCallback(async (): Promise<DBManager> => {
-		return await getDatabaseManager()
-	}, [getDatabaseManager])
-
-	const fetchCommands = useCallback(async () => {
-		const dbManager = await getManager()
-		dbManager.getCommandManager().getAllCommands((rows) => {
-			setCommands(rows.map((row) => ({
-				id: row.id,
-				name: row.name,
-				content: row.content,
-				createdAt: row.createdAt,
-				updatedAt: row.updatedAt,
-			})))
-		})
-	}, [getManager])
-
-	useEffect(() => {
-		void fetchCommands()
-	}, [fetchCommands])
+	const { commandList } = useCommands()
 
 	const [queryString, setQueryString] = useState<string | null>(null)
-	const [searchResults, setSearchResults] = useState<Command[]>([])
+	const [searchResults, setSearchResults] = useState<QuickCommand[]>([])
 
 	useEffect(() => {
 		if (queryString == null) return
-		const filteredCommands = commands.filter(
+		const filteredCommands = commandList.filter(
 			command =>
 				command.name.toLowerCase().includes(queryString.toLowerCase()) ||
-				command.content.nodes.map(lexicalNodeToPlainText).join('').toLowerCase().includes(queryString.toLowerCase())
+				command.contentText.toLowerCase().includes(queryString.toLowerCase())
 		)
 		setSearchResults(filteredCommands)
-	}, [queryString, commands])
+	}, [queryString, commandList])
 
 	const options = useMemo(
 		() =>

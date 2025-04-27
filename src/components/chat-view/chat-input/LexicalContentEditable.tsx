@@ -17,6 +17,8 @@ import { useApp } from '../../../contexts/AppContext'
 import { MentionableImage } from '../../../types/mentionable'
 import { fuzzySearch } from '../../../utils/fuzzy-search'
 
+import CommandPlugin from './plugins/command/CommandPlugin'
+import CreateCommandPopoverPlugin from './plugins/command/CreateCommandPopoverPlugin'
 import DragDropPaste from './plugins/image/DragDropPastePlugin'
 import ImagePastePlugin from './plugins/image/ImagePastePlugin'
 import AutoLinkMentionPlugin from './plugins/mention/AutoLinkMentionPlugin'
@@ -27,8 +29,6 @@ import OnEnterPlugin from './plugins/on-enter/OnEnterPlugin'
 import OnMutationPlugin, {
 	NodeMutations,
 } from './plugins/on-mutation/OnMutationPlugin'
-import CreateCommandPopoverPlugin from './plugins/command/CreateCommandPopoverPlugin'
-import CommandPlugin from './plugins/command/CommandPlugin'
 
 export type LexicalContentEditableProps = {
 	editorRef: RefObject<LexicalEditor>
