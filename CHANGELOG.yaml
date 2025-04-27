@@ -1,4 +1,7 @@
 releases:
+  - version: "0.1.8"
+    improvements:
+      - "fix chat input command plugin"
   - version: "0.1.7"
     features:
       - "Added image selector modal, allowing users to select and upload images in chat"
