@@ -8,6 +8,7 @@ import { RAGEngine } from '../core/rag/rag-engine'
 import { SelectVector } from '../database/schema'
 import { ChatMessage, ChatUserMessage } from '../types/chat'
 import { ContentPart, RequestMessage } from '../types/llm/request'
+import { SystemPromptsManager } from '../core/prompts/system-prompts-manager'
 import {
 	MentionableBlock,
 	MentionableFile,
@@ -115,6 +116,7 @@ export class PromptGenerator {
 	private app: App
 	private settings: InfioSettings
 	private diffStrategy: DiffStrategy
+	private systemPromptsManager: SystemPromptsManager
 	private static readonly EMPTY_ASSISTANT_MESSAGE: RequestMessage = {
 		role: 'assistant',
 		content: '',
@@ -130,6 +132,7 @@ export class PromptGenerator {
 		this.app = app
 		this.settings = settings
 		this.diffStrategy = diffStrategy
+		this.systemPromptsManager = new SystemPromptsManager(this.app)
 	}
 
 	public async generateRequestMessages({
@@ -465,7 +468,7 @@ export class PromptGenerator {
 	}
 
 	private async getSystemMessageNew(mode: Mode, filesSearchMethod: string, preferredLanguage: string): Promise<RequestMessage> {
-		const systemPrompt = await SYSTEM_PROMPT(
+		const systemPrompt = await this.systemPromptsManager.getSystemPrompt(
 			this.app.vault.getRoot().path,
 			false,
 			mode,

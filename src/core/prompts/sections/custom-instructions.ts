@@ -1,25 +1,24 @@
-import fs from "fs/promises"
-import path from "path"
 
-async function safeReadFile(filePath: string): Promise<string> {
-	try {
-		const content = await fs.readFile(filePath, "utf-8")
-		return content.trim()
-	} catch (err) {
-		const errorCode = (err as NodeJS.ErrnoException).code
-		if (!errorCode || !["ENOENT", "EISDIR"].includes(errorCode)) {
-			throw err
-		}
+import * as path from 'path'
+
+import { App, normalizePath } from 'obsidian'
+
+import { ROOT_DIR } from '../constants'
+
+export async function loadRuleFiles(
+	app: App,
+	mode: string,
+): Promise<string> {
+	const ruleFilesFolder = path.join(ROOT_DIR, `${mode}/rules/`)
+	if (!(await app.vault.adapter.exists(ruleFilesFolder))) {
 		return ""
 	}
-}
 
-export async function loadRuleFiles(cwd: string): Promise<string> {
-	const ruleFiles = [".clinerules", ".cursorrules", ".windsurfrules"]
+	const ruleFiles = await app.vault.adapter.list(normalizePath(ruleFilesFolder))
+
 	let combinedRules = ""
-
-	for (const file of ruleFiles) {
-		const content = await safeReadFile(path.join(cwd, file))
+	for (const file of ruleFiles.files) {
+		const content = await app.vault.adapter.read(normalizePath(file))
 		if (content) {
 			combinedRules += `\n# Rules from ${file}:\n${content}\n`
 		}
@@ -29,19 +28,23 @@ export async function loadRuleFiles(cwd: string): Promise<string> {
 }
 
 export async function addCustomInstructions(
+	app: App,
 	modeCustomInstructions: string,
 	globalCustomInstructions: string,
 	cwd: string,
 	mode: string,
 	options: { preferredLanguage?: string } = {},
 ): Promise<string> {
+	console.log("addCustomInstructions this app, ", app)
 	const sections = []
 
-	// Load mode-specific rules if mode is provided
+	// Load mode-specific rules file if mode is provided
 	let modeRuleContent = ""
 	if (mode) {
-		const modeRuleFile = `.clinerules-${mode}`
-		modeRuleContent = await safeReadFile(path.join(cwd, modeRuleFile))
+		const modeRulesFile = path.join(ROOT_DIR, `${mode}/rules.md`)
+		if (await app.vault.adapter.exists(modeRulesFile)) {
+			modeRuleContent = await app.vault.adapter.read(normalizePath(modeRulesFile))
+		}
 	}
 
 	// Add language preference if provided
@@ -66,12 +69,12 @@ export async function addCustomInstructions(
 
 	// Add mode-specific rules first if they exist
 	if (modeRuleContent && modeRuleContent.trim()) {
-		const modeRuleFile = `.clinerules-${mode}`
+		const modeRuleFile = `${mode}_rules.md`
 		rules.push(`# Rules from ${modeRuleFile}:\n${modeRuleContent}`)
 	}
 
 	// Add generic rules
-	const genericRuleContent = await loadRuleFiles(cwd)
+	const genericRuleContent = await loadRuleFiles(app, mode)
 	if (genericRuleContent && genericRuleContent.trim()) {
 		rules.push(genericRuleContent.trim())
 	}
