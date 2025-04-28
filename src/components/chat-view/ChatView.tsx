@@ -2,7 +2,7 @@ import * as path from 'path'
 
 import { BaseSerializedNode } from '@lexical/clipboard/clipboard'
 import { useMutation } from '@tanstack/react-query'
-import { CircleStop, History, Plus, SquareSlash } from 'lucide-react'
+import { CircleStop, History, NotebookPen, Plus, SquareSlash } from 'lucide-react'
 import { App, Notice } from 'obsidian'
 import {
 	forwardRef,
@@ -54,6 +54,7 @@ import PromptInputWithActions, { ChatUserInputRef } from './chat-input/PromptInp
 import { editorStateToPlainText } from './chat-input/utils/editor-state-to-plain-text'
 import { ChatHistory } from './ChatHistoryView'
 import CommandsView from './CommandsView'
+import CustomModeView from './CustomModeView'
 import MarkdownReasoningBlock from './Markdown/MarkdownReasoningBlock'
 import QueryProgress, { QueryProgressState } from './QueryProgress'
 import ReactMarkdown from './ReactMarkdown'
@@ -161,7 +162,7 @@ const Chat = forwardRef<ChatRef, ChatProps>((props, ref) => {
 		}
 	}
 
-	const [tab, setTab] = useState<'chat' | 'commands'>('chat')
+	const [tab, setTab] = useState<'chat' | 'commands' | 'custom-mode'>('custom-mode')
 	const [selectedSerializedNodes, setSelectedSerializedNodes] = useState<BaseSerializedNode[]>([])
 
 	useEffect(() => {
@@ -935,6 +936,19 @@ const Chat = forwardRef<ChatRef, ChatProps>((props, ref) => {
 					>
 						<SquareSlash size={18} color={tab === 'commands' ? 'var(--text-accent)' : 'var(--text-color)'} />
 					</button>
+					<button
+						onClick={() => {
+							// switch between chat and prompts
+							if (tab === 'custom-mode') {
+								setTab('chat')
+							} else {
+								setTab('custom-mode')
+							}
+						}}
+						className="infio-chat-list-dropdown"
+					>
+						<NotebookPen size={18} color={tab === 'custom-mode' ? 'var(--text-accent)' : 'var(--text-color)'} />
+					</button>
 				</div>
 			</div>
 			{/* main view */}
@@ -1047,11 +1061,15 @@ const Chat = forwardRef<ChatRef, ChatProps>((props, ref) => {
 						addedBlockKey={addedBlockKey}
 					/>
 				</>
-			) : (
+			) : tab === 'commands' ? (
 				<div className="infio-chat-commands">
 					<CommandsView
 						selectedSerializedNodes={selectedSerializedNodes}
 					/>
+				</div>
+			) : (
+				<div className="infio-chat-commands">
+					<CustomModeView />
 				</div>
 			)}
 		</div>

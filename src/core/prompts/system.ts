@@ -33,7 +33,7 @@ import {
 import { getToolDescriptionsForMode } from "./tools"
 
 
-export class SystemPromptsManager {
+export class SystemPrompt {
 	protected dataDir: string
 	protected app: App
 
