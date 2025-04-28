@@ -252,7 +252,7 @@ export class PromptGenerator {
 
 		// Add current mode details
 		const currentMode = this.settings.mode
-		const modeDetails = await getFullModeDetails(currentMode)
+		const modeDetails = await getFullModeDetails(this.app, currentMode, this.customModeList, this.customModePrompts)
 		details += `\n\n# Current Mode\n`
 		details += `<slug>${currentMode}</slug>\n`
 		details += `<name>${modeDetails.name}</name>\n`

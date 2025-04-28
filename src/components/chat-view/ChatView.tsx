@@ -114,6 +114,7 @@ const Chat = forwardRef<ChatRef, ChatProps>((props, ref) => {
 	const { streamResponse, chatModel } = useLLM()
 
 	const promptGenerator = useMemo(() => {
+		// @ts-expect-error
 		return new PromptGenerator(getRAGEngine, app, settings, diffStrategy, customModePrompts, customModeList)
 	}, [getRAGEngine, app, settings, diffStrategy, customModePrompts, customModeList])
 

@@ -1,3 +1,5 @@
+import { App } from "obsidian"
+
 import { addCustomInstructions } from "../core/prompts/sections/custom-instructions"
 
 import { ALWAYS_AVAILABLE_TOOLS, TOOL_GROUPS, ToolGroup } from "./tool-groups"
@@ -262,6 +264,7 @@ export async function getAllModesWithPrompts(): Promise<ModeConfig[]> {
 
 // Helper function to get complete mode details with all overrides
 export async function getFullModeDetails(
+	app: App,
 	modeSlug: string,
 	customModes?: ModeConfig[],
 	customModePrompts?: CustomModePrompts,
@@ -284,6 +287,7 @@ export async function getFullModeDetails(
 	let fullCustomInstructions = baseCustomInstructions
 	if (options?.cwd) {
 		fullCustomInstructions = await addCustomInstructions(
+			app,
 			baseCustomInstructions,
 			options.globalCustomInstructions || "",
 			options.cwd,

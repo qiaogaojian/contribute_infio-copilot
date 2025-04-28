@@ -1,4 +1,7 @@
 releases:
+  - version: "0.2"
+    features:
+      - "add mode config, you can create mode config in _infio_prompts folder"
   - version: "0.1.8"
     improvements:
       - "fix chat input command plugin"
