@@ -30,6 +30,7 @@ import {
 } from '../../core/llm/exception'
 import { regexSearchFiles } from '../../core/ripgrep'
 import { useChatHistory } from '../../hooks/use-chat-history'
+import { useCustomModes } from '../../hooks/use-custom-mode'
 import { ApplyStatus, ToolArgs } from '../../types/apply'
 import { ChatMessage, ChatUserMessage } from '../../types/chat'
 import {
@@ -101,6 +102,7 @@ const Chat = forwardRef<ChatRef, ChatProps>((props, ref) => {
 	const { settings, setSettings } = useSettings()
 	const { getRAGEngine } = useRAG()
 	const diffStrategy = useDiffStrategy()
+	const { customModeList, customModePrompts } = useCustomModes()
 
 	const {
 		createOrUpdateConversation,
@@ -112,8 +114,8 @@ const Chat = forwardRef<ChatRef, ChatProps>((props, ref) => {
 	const { streamResponse, chatModel } = useLLM()
 
 	const promptGenerator = useMemo(() => {
-		return new PromptGenerator(getRAGEngine, app, settings, diffStrategy)
-	}, [getRAGEngine, app, settings, diffStrategy])
+		return new PromptGenerator(getRAGEngine, app, settings, diffStrategy, customModePrompts, customModeList)
+	}, [getRAGEngine, app, settings, diffStrategy, customModePrompts, customModeList])
 
 	const [inputMessage, setInputMessage] = useState<ChatUserMessage>(() => {
 		const newMessage = getNewInputMessage(app, settings.defaultMention)

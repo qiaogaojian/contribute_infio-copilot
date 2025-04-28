@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useApp } from '../contexts/AppContext'
 import { CustomModeManager } from '../database/json/custom-mode/CustomModeManager'
 import { CustomMode, GroupEntry } from '../database/json/custom-mode/types'
-
+import { CustomModePrompts } from '../utils/modes'
 
 type UseCustomModes = {
 	createCustomMode: (
@@ -22,6 +22,7 @@ type UseCustomModes = {
 	) => Promise<void>
 	FindCustomModeByName: (name: string) => Promise<CustomMode | undefined>
 	customModeList: CustomMode[]
+	customModePrompts: CustomModePrompts
 }
 
 export function useCustomModes(): UseCustomModes {
@@ -36,6 +37,16 @@ export function useCustomModes(): UseCustomModes {
 			setCustomModeList(rows)
 		})
 	}, [customModeManager])
+
+	const customModePrompts = useMemo(() => {
+		return customModeList.reduce((acc, customMode) => {
+			acc[customMode.slug] = {
+				roleDefinition: customMode.roleDefinition,
+				customInstructions: customMode.customInstructions,
+			}
+			return acc
+		}, {} as CustomModePrompts)
+	}, [customModeList])
 
 	useEffect(() => {
 		void fetchCustomModeList()
@@ -91,5 +102,6 @@ export function useCustomModes(): UseCustomModes {
 		updateCustomMode,
 		FindCustomModeByName,
 		customModeList,
+		customModePrompts,
 	}
 }

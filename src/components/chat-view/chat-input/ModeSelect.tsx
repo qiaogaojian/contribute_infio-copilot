@@ -1,8 +1,9 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { ChevronDown, ChevronUp } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 
 import { useSettings } from '../../../contexts/SettingsContext'
+import { useCustomModes } from '../../../hooks/use-custom-mode'
 import { modes } from '../../../utils/modes'
 
 export function ModeSelect() {
@@ -10,10 +11,13 @@ export function ModeSelect() {
 	const [isOpen, setIsOpen] = useState(false)
 	const [mode, setMode] = useState(settings.mode)
 
+	const { customModeList } = useCustomModes()
+
+	const allModes = useMemo(() => [...modes, ...customModeList], [customModeList])
+
 	useEffect(() => {
 		setMode(settings.mode)
 	}, [settings.mode])
-
 
 	return (
 		<DropdownMenu.Root open={isOpen} onOpenChange={setIsOpen}>
@@ -22,7 +26,7 @@ export function ModeSelect() {
 					{isOpen ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
 				</div>
 				<div className="infio-chat-input-model-select__model-name">
-					{modes.find((m) => m.slug === mode)?.name}
+					{allModes.find((m) => m.slug === mode)?.name}
 				</div>
 			</DropdownMenu.Trigger>
 
@@ -30,7 +34,7 @@ export function ModeSelect() {
 				<DropdownMenu.Content
 					className="infio-popover">
 					<ul>
-						{modes.map((mode) => (
+						{allModes.map((mode) => (
 							<DropdownMenu.Item
 								key={mode.slug}
 								onSelect={() => {

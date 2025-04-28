@@ -1,10 +1,14 @@
-import { Plus, Undo2, Settings, Circle, Trash2 } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
+import { ChevronDown, ChevronRight, Plus, Trash2, Undo2 } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 
+import { useApp } from '../../contexts/AppContext';
+import { CustomMode, GroupEntry, ToolGroup } from '../../database/json/custom-mode/types';
 import { useCustomModes } from '../../hooks/use-custom-mode';
-import { CustomMode, ToolGroup, toolGroups, GroupEntry } from '../../database/json/custom-mode/types';
 import { modes as buildinModes } from '../../utils/modes';
+import { openOrCreateMarkdownFile } from '../../utils/obsidian';
 const CustomModeView = () => {
+	const app = useApp()
+
 	const {
 		createCustomMode,
 		deleteCustomMode,
@@ -15,7 +19,7 @@ const CustomModeView = () => {
 	// 当前选择的模式
 	const [selectedMode, setSelectedMode] = useState<string>('ask')
 	const [isBuiltinMode, setIsBuiltinMode] = useState<boolean>(true)
-
+	const [isAdvancedCollapsed, setIsAdvancedCollapsed] = useState(true);
 
 	const isNewMode = React.useMemo(() => selectedMode === "add_new_mode", [selectedMode])
 
@@ -46,7 +50,6 @@ const CustomModeView = () => {
 	// 自定义指令
 	const [customInstructions, setCustomInstructions] = useState<string>('')
 
-
 	// 当模式变更时更新表单数据
 	useEffect(() => {
 		//  new mode
@@ -63,7 +66,7 @@ const CustomModeView = () => {
 		const builtinMode = buildinModes.find(m => m.slug === selectedMode);
 		if (builtinMode) {
 			setIsBuiltinMode(true);
-			setModeName(builtinMode.name);
+			setModeName(builtinMode.slug);
 			setRoleDefinition(builtinMode.roleDefinition);
 			setCustomInstructions(builtinMode.customInstructions || '');
 			setSelectedTools(builtinMode.groups as GroupEntry[]);
@@ -219,9 +222,11 @@ const CustomModeView = () => {
 			<div className="infio-custom-modes-section">
 				<div className="infio-section-header">
 					<h3>角色定义</h3>
-					<button className="infio-section-btn">
-						<Undo2 size={16} />
-					</button>
+					{isBuiltinMode && (
+						<button className="infio-section-btn">
+							<Undo2 size={16} />
+						</button>
+					)}
 				</div>
 				<p className="infio-section-subtitle">设定专业领域和应答风格</p>
 				<textarea
@@ -274,7 +279,7 @@ const CustomModeView = () => {
 								checked={selectedTools.includes('research')}
 								onChange={() => handleToolChange('research')}
 							/>
-							浏览器
+							网络搜索
 						</label>
 					</div>
 				</div>
@@ -298,10 +303,29 @@ const CustomModeView = () => {
 					placeholder="输入模式自定义指令..."
 				/>
 				<p className="infio-section-footer">
-					支持从<a href="#" className="infio-link">_infio_prompts/code-rules/</a>目录读取配置
+					支持从<a href="#" className="infio-link" onClick={() => openOrCreateMarkdownFile(app, `_infio_prompts/${modeName}/rules.md`, 0)}>_infio_prompts/{modeName}/rules</a> 文件中读取配置
 				</p>
 			</div>
 
+			{/* 高级, 覆盖系统提示词 */}
+			<div className="infio-custom-modes-section">
+				<div
+					className="infio-section-header infio-section-header-collapsible"
+					onClick={() => setIsAdvancedCollapsed(!isAdvancedCollapsed)}
+				>
+					<div className="infio-section-header-title-container">
+						{isAdvancedCollapsed ? <ChevronRight size={16} /> : <ChevronDown size={16} />}
+						<h6>覆盖系统提示词</h6>
+					</div>
+				</div>
+				{!isAdvancedCollapsed && (
+					<p className="infio-section-subtitle">
+						您可以通过在工作区创建文件
+						<a href="#" className="infio-link" onClick={() => openOrCreateMarkdownFile(app, `_infio_prompts/${modeName}/system-prompt.md`, 0)}>_infio_prompts/{modeName}/system-prompt</a>
+						，完全替换此模式的系统提示（角色定义和自定义指令除外）。这是一个非常高级的功能，会覆盖工具使用等全部内置提示, 请谨慎操作
+					</p>
+				)}
+			</div>
 			<div className="infio-custom-modes-actions">
 				<button className="infio-preview-btn">
 					预览
@@ -545,6 +569,17 @@ const CustomModeView = () => {
 					align-items: center;
 					justify-content: center;
 					width: fit-content;
+				}
+
+				.infio-section-header-collapsible {
+					cursor: pointer;
+					user-select: none;
+				}
+
+				.infio-section-header-title-container {
+					display: flex;
+					align-items: center;
+					gap: 4px;
 				}
 				`}
 			</style>

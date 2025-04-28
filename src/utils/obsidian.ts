@@ -1,5 +1,7 @@
 import { App, Editor, MarkdownView, TFile, TFolder, Vault, WorkspaceLeaf } from 'obsidian'
 
+import * as path from 'path'
+
 import { MentionableBlockData } from '../types/mentionable'
 
 export async function readTFileContent(
@@ -61,7 +63,7 @@ export function getOpenFiles(app: App): TFile[] {
 		const leaves = app.workspace.getLeavesOfType('markdown')
 
 		return leaves
-			.filter((v): v is WorkspaceLeaf & { view: MarkdownView & { file: TFile } } => 
+			.filter((v): v is WorkspaceLeaf & { view: MarkdownView & { file: TFile } } =>
 				v.view instanceof MarkdownView && !!v.view.file
 			)
 			.map((v) => v.view.file)
@@ -124,4 +126,21 @@ export function openMarkdownFile(
 			eState: startLine ? { line: startLine - 1 } : undefined, // -1 because line is 0-indexed
 		})
 	}
+}
+
+export async function openOrCreateMarkdownFile(
+	app: App,
+	filePath: string,
+	startLine?: number,
+) {
+	const file_exists = await app.vault.adapter.exists(filePath)
+	if (!file_exists) {
+		const dir = path.dirname(filePath)
+		const dir_exists = await app.vault.adapter.exists(dir)
+		if (!dir_exists) {
+			await app.vault.adapter.mkdir(dir)
+		}
+		await app.vault.adapter.write(filePath, '')
+	}
+	openMarkdownFile(app, filePath, startLine)
 }

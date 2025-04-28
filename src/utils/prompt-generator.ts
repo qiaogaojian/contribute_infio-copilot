@@ -17,7 +17,7 @@ import {
 	MentionableVault
 } from '../types/mentionable'
 import { InfioSettings } from '../types/settings'
-import { Mode, getFullModeDetails } from "../utils/modes"
+import { CustomModePrompts, Mode, ModeConfig, getFullModeDetails } from "../utils/modes"
 
 import {
 	readTFileContent
@@ -116,6 +116,8 @@ export class PromptGenerator {
 	private settings: InfioSettings
 	private diffStrategy: DiffStrategy
 	private systemPrompt: SystemPrompt
+	private customModePrompts: CustomModePrompts | null = null
+	private customModeList: ModeConfig[] | null = null
 	private static readonly EMPTY_ASSISTANT_MESSAGE: RequestMessage = {
 		role: 'assistant',
 		content: '',
@@ -126,12 +128,16 @@ export class PromptGenerator {
 		app: App,
 		settings: InfioSettings,
 		diffStrategy?: DiffStrategy,
+		customModePrompts?: CustomModePrompts,
+		customModeList?: ModeConfig[],
 	) {
 		this.getRagEngine = getRagEngine
 		this.app = app
 		this.settings = settings
 		this.diffStrategy = diffStrategy
 		this.systemPrompt = new SystemPrompt(this.app)
+		this.customModePrompts = customModePrompts ?? null
+		this.customModeList = customModeList ?? null
 	}
 
 	public async generateRequestMessages({
@@ -473,7 +479,9 @@ export class PromptGenerator {
 			mode,
 			filesSearchMethod,
 			preferredLanguage,
-			this.diffStrategy
+			this.diffStrategy,
+			this.customModePrompts,
+			this.customModeList,
 		)
 
 		return {
