@@ -504,6 +504,48 @@ export const deepSeekModels = {
 export type QwenModelId = keyof typeof qwenModels
 export const qwenDefaultModelId: QwenModelId = "qwen-max-latest"
 export const qwenModels = {
+	"qwen3-235b-a22b": {
+		maxTokens: 129_024,
+		contextWindow: 131_072,
+		supportsImages: false,
+		supportsPromptCache: false,
+		inputPrice: 0.002,
+		outputPrice: 0.006,
+		cacheWritesPrice: 0.002,
+		cacheReadsPrice: 0.006,
+	},
+	"qwen3-32b": {
+		maxTokens: 129_024,
+		contextWindow: 131_072,
+		supportsImages: false,
+		supportsPromptCache: false,
+		inputPrice: 0.002,
+		outputPrice: 0.006,
+	},
+	"qwen3-30b-a3b": {
+		maxTokens: 129_024,
+		contextWindow: 131_072,
+		supportsImages: false,
+		supportsPromptCache: false,
+		inputPrice: 0.002,
+		outputPrice: 0.006,
+	},
+	"qwen3-14b": {
+		maxTokens: 129_024,
+		contextWindow: 131_072,
+		supportsImages: false,
+		supportsPromptCache: false,
+		inputPrice: 0.002,
+		outputPrice: 0.006,
+	},
+	"qwen3-8b": {
+		maxTokens: 129_024,
+		contextWindow: 131_072,
+		supportsImages: false,
+		supportsPromptCache: false,
+		inputPrice: 0.002,
+		outputPrice: 0.006,
+	},
 	"qwen2.5-coder-32b-instruct": {
 		maxTokens: 8_192,
 		contextWindow: 131_072,

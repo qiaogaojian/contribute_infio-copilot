@@ -33,14 +33,14 @@ const CustomModeView = () => {
 		return new PromptGenerator(getRAGEngine, app, settings, diffStrategy, customModePrompts, customModeList)
 	}, [app, settings, diffStrategy, customModePrompts, customModeList])
 
-	// 当前选择的模式
+	// Currently selected mode
 	const [selectedMode, setSelectedMode] = useState<string>('ask')
 	const [isBuiltinMode, setIsBuiltinMode] = useState<boolean>(true)
-	const [isAdvancedCollapsed, setIsAdvancedCollapsed] = useState(false);
+	const [isAdvancedCollapsed, setIsAdvancedCollapsed] = useState(true);
 
 	const isNewMode = React.useMemo(() => selectedMode === "add_new_mode", [selectedMode])
 
-	// new mode config
+	// New mode configuration
 	const [newMode, setNewMode] = useState<CustomMode>({
 		id: '',
 		slug: '',
@@ -52,22 +52,22 @@ const CustomModeView = () => {
 		updatedAt: 0,
 	})
 
-	// custom mode id
+	// Custom mode ID
 	const [customModeId, setCustomModeId] = useState<string>('')
 
-	// 模型名称
+	// Mode name
 	const [modeName, setModeName] = useState<string>('')
 
-	// 角色定义
+	// Role definition
 	const [roleDefinition, setRoleDefinition] = useState<string>('')
 
-	// 选中的工具组
+	// Selected tool groups
 	const [selectedTools, setSelectedTools] = useState<GroupEntry[]>([])
 
-	// 自定义指令
+	// Custom instructions
 	const [customInstructions, setCustomInstructions] = useState<string>('')
 
-	// 当模式变更时更新表单数据
+	// Update form data when mode changes
 	useEffect(() => {
 		//  new mode
 		if (isNewMode) {
@@ -87,7 +87,7 @@ const CustomModeView = () => {
 			setRoleDefinition(builtinMode.roleDefinition);
 			setCustomInstructions(builtinMode.customInstructions || '');
 			setSelectedTools(builtinMode.groups as GroupEntry[]);
-			setCustomModeId(''); // 内置模式没有自定义 ID
+			setCustomModeId(''); // Built-in modes don't have custom IDs
 		} else {
 			setIsBuiltinMode(false);
 			const customMode = customModeList.find(m => m.slug === selectedMode);
@@ -104,7 +104,7 @@ const CustomModeView = () => {
 	}, [selectedMode, customModeList]);
 
 
-	// 处理工具组选择变更
+	// Handle tool group selection change
 	const handleToolChange = React.useCallback((tool: ToolGroup) => {
 		if (isNewMode) {
 			setNewMode((prev) => ({
@@ -121,7 +121,7 @@ const CustomModeView = () => {
 		});
 	}, [isNewMode])
 
-	// 更新模式配置
+	// Update mode configuration
 	const handleUpdateMode = React.useCallback(async () => {
 		if (!isBuiltinMode) {
 			await updateCustomMode(
@@ -134,7 +134,7 @@ const CustomModeView = () => {
 		}
 	}, [isBuiltinMode, customModeId, modeName, roleDefinition, customInstructions, selectedTools])
 
-	// 创建新模式
+	// Create new mode
 	const createNewMode = React.useCallback(async () => {
 		if (!isNewMode) return;
 		await createCustomMode(
@@ -157,7 +157,7 @@ const CustomModeView = () => {
 		setSelectedMode("add_new_mode")
 	}, [isNewMode, modeName, roleDefinition, customInstructions, selectedTools])
 
-	// 删除模式
+	// Delete mode
 	const deleteMode = React.useCallback(async () => {
 		if (isNewMode || isBuiltinMode) return;
 		await deleteCustomMode(customModeId);
@@ -170,10 +170,10 @@ const CustomModeView = () => {
 
 	return (
 		<div className="infio-custom-modes-container">
-			{/* 模式配置标题和按钮 */}
+			{/* Mode configuration title and buttons */}
 			<div className="infio-custom-modes-header">
 				<div className="infio-custom-modes-title">
-					<h2>模式配置</h2>
+					<h2>Mode Configuration</h2>
 				</div>
 				{/* <div className="infio-custom-modes-actions">
 					<button className="infio-custom-modes-btn">
@@ -185,12 +185,12 @@ const CustomModeView = () => {
 				</div> */}
 			</div>
 
-			{/* 创建模式提示 */}
+			{/* Create mode tip */}
 			<div className="infio-custom-modes-tip">
-				点击 + 创建模式，创建一个新模式。
+				Click + to create a new mode
 			</div>
 
-			{/* 模式选择区 */}
+			{/* Mode selection area */}
 			<div className="infio-custom-modes-builtin">
 				{[...buildinModes, ...customModeList].map(mode => (
 					<button
@@ -210,10 +210,10 @@ const CustomModeView = () => {
 				</button>
 			</div>
 
-			{/* 模式名称 */}
+			{/* Mode name */}
 			<div className="infio-custom-modes-section">
 				<div className="infio-section-header">
-					<h3>模式名称</h3>
+					<h3>Mode Name</h3>
 					{!isBuiltinMode && !isNewMode && (
 						<button className="infio-section-btn" onClick={deleteMode}>
 							<Trash2 size={16} />
@@ -221,8 +221,12 @@ const CustomModeView = () => {
 					)}
 				</div>
 				{
-					isBuiltinMode && (
-						<p className="infio-section-subtitle">内置模式名称不能被修改</p>
+					isBuiltinMode ? (
+						<p className="infio-section-subtitle">Built-in mode names cannot be modified</p>
+					) : (
+						<p className="infio-section-subtitle">
+							Mode names must only contain letters, numbers, and hyphens
+						</p>
 					)
 				}
 				<input
@@ -235,22 +239,22 @@ const CustomModeView = () => {
 						setModeName(e.target.value)
 					}}
 					className="infio-custom-modes-input"
-					placeholder="输入模式名称..."
+					placeholder="Enter mode name..."
 					disabled={isBuiltinMode}
 				/>
 			</div>
 
-			{/* 角色定义 */}
+			{/* Role definition */}
 			<div className="infio-custom-modes-section">
 				<div className="infio-section-header">
-					<h3>角色定义</h3>
+					<h3>Role Definition</h3>
 					{isBuiltinMode && (
 						<button className="infio-section-btn">
 							<Undo2 size={16} />
 						</button>
 					)}
 				</div>
-				<p className="infio-section-subtitle">设定专业领域和应答风格</p>
+				<p className="infio-section-subtitle">Set professional domain and response style</p>
 				<textarea
 					className="infio-custom-textarea"
 					value={roleDefinition}
@@ -260,14 +264,14 @@ const CustomModeView = () => {
 						}
 						setRoleDefinition(e.target.value)
 					}}
-					placeholder="输入角色定义..."
+					placeholder="Enter role definition..."
 				/>
 			</div>
 
-			{/* 可用功能 */}
+			{/* Available features */}
 			<div className="infio-custom-modes-section">
 				<div className="infio-section-header">
-					<h3>可用功能</h3>
+					<h3>Available Features</h3>
 					{/* {!isBuiltinMode && (
 					<button className="infio-section-btn">
 						<Undo2 size={16} />
@@ -276,7 +280,7 @@ const CustomModeView = () => {
 				</div>
 				{
 					isBuiltinMode && (
-						<p className="infio-section-subtitle">内置模式的可用功能不能被修改</p>
+						<p className="infio-section-subtitle">Available features of built-in modes cannot be modified</p>
 					)
 				}
 				<div className="infio-tools-list">
@@ -288,7 +292,7 @@ const CustomModeView = () => {
 								checked={selectedTools.includes('read')}
 								onChange={() => handleToolChange('read')}
 							/>
-							读取文件
+							Read Files
 						</label>
 					</div>
 					<div className="infio-tool-item">
@@ -299,7 +303,7 @@ const CustomModeView = () => {
 								checked={selectedTools.includes('edit')}
 								onChange={() => handleToolChange('edit')}
 							/>
-							编辑文件
+							Edit Files
 						</label>
 					</div>
 					<div className="infio-tool-item">
@@ -310,18 +314,23 @@ const CustomModeView = () => {
 								checked={selectedTools.includes('research')}
 								onChange={() => handleToolChange('research')}
 							/>
-							网络搜索
+							Web Search
 						</label>
 					</div>
 				</div>
 			</div>
 
-			{/* 模式专属规则 */}
+			{/* Mode-specific rules */}
 			<div className="infio-custom-modes-section">
 				<div className="infio-section-header">
-					<h3> 模式专属规则（可选）</h3>
+					<h3>Mode-Specific Rules (Optional)</h3>
+					{isBuiltinMode && (
+						<button className="infio-section-btn">
+							<Undo2 size={16} />
+						</button>
+					)}
 				</div>
-				<p className="infio-section-subtitle">模式专属规则</p>
+				<p className="infio-section-subtitle">Mode-specific rules</p>
 				<textarea
 					className="infio-custom-textarea"
 					value={customInstructions}
@@ -331,14 +340,14 @@ const CustomModeView = () => {
 						}
 						setCustomInstructions(e.target.value)
 					}}
-					placeholder="输入模式自定义指令..."
+					placeholder="Enter mode custom instructions..."
 				/>
 				<p className="infio-section-footer">
-					支持从<a href="#" className="infio-link" onClick={() => openOrCreateMarkdownFile(app, `_infio_prompts/${modeName}/rules.md`, 0)}>_infio_prompts/{modeName}/rules</a> 文件中读取配置
+					Support reading configuration from<a href="#" className="infio-link" onClick={() => openOrCreateMarkdownFile(app, `_infio_prompts/${modeName}/rules.md`, 0)}>_infio_prompts/{modeName}/rules</a> file
 				</p>
 			</div>
 
-			{/* 高级, 覆盖系统提示词 */}
+			{/* Advanced, override system prompt */}
 			<div className="infio-custom-modes-section">
 				<div
 					className="infio-section-header infio-section-header-collapsible"
@@ -346,15 +355,15 @@ const CustomModeView = () => {
 				>
 					<div className="infio-section-header-title-container">
 						{isAdvancedCollapsed ? <ChevronRight size={16} /> : <ChevronDown size={16} />}
-						<h6 className="infio-section-header-title">覆盖系统提示词</h6>
+						<h6 className="infio-section-header-title">Override System Prompt</h6>
 					</div>
 				</div>
 				{!isAdvancedCollapsed && (
 					<>
 						<p className="infio-section-subtitle">
-							您可以通过在工作区创建文件
+							You can completely replace the system prompt for this mode (excluding role definition and custom instructions) by creating a file
 							<a href="#" className="infio-link" onClick={() => openOrCreateMarkdownFile(app, `_infio_prompts/${modeName}/system_prompt.md`, 0)}>_infio_prompts/{modeName}/system_prompt</a>
-							，完全替换此模式的系统提示（角色定义和自定义指令除外）。这是一个非常高级的功能，会覆盖工具使用等全部内置提示, 请谨慎操作						<button
+							. This is a very advanced feature that will override all built-in prompts including tool usage, please use with caution						<button
 								className="infio-preview-btn"
 								onClick={async () => {
 									let filesSearchMethod = settings.filesSearchMethod
@@ -386,13 +395,13 @@ const CustomModeView = () => {
 								}
 								}
 							>
-								预览系统提示词
+								Preview System Prompt
 							</button>
 						</p></>
 				)}
 			</div>
 
-			{/* 保存 */}
+			{/* Save */}
 			<div className="infio-custom-modes-actions">
 				<button
 					className="infio-preview-btn"
@@ -404,11 +413,11 @@ const CustomModeView = () => {
 						}
 					}}
 				>
-					保存
+					Save
 				</button>
 			</div>
 
-			{/* 样式 */}
+			{/* Styles */}
 			<style>
 				{`
 				.infio-custom-modes-container {
