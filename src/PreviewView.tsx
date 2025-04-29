@@ -14,7 +14,7 @@ export type PreviewViewState = {
 
 export class PreviewView extends View {
 	private root: Root | null = null
-	private state: PreviewViewState | null = null
+	state: PreviewViewState | null = null
 
 	constructor(leaf: WorkspaceLeaf) {
 		super(leaf)
