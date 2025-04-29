@@ -1,4 +1,8 @@
 releases:
+  - version: "0.2.1"
+    features:
+      - "Added custom mode functionality, allowing users to create their own modes"
+      - "Updated Qwen3 model integration in Alibaba Cloud provider"
   - version: "0.2"
     features:
       - "add mode config, you can create mode config in _infio_prompts folder"
