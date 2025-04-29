@@ -35,7 +35,6 @@ export async function addCustomInstructions(
 	mode: string,
 	options: { preferredLanguage?: string } = {},
 ): Promise<string> {
-	console.log("addCustomInstructions this app, ", app)
 	const sections = []
 
 	// Load mode-specific rules file if mode is provided

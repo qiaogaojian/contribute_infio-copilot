@@ -44,7 +44,6 @@ export class SystemPrompt {
 	}
 
 	private async ensureDirectory(): Promise<void> {
-		console.log("this.app, ", this.app)
 		if (!(await this.app.vault.adapter.exists(this.dataDir))) {
 			await this.app.vault.adapter.mkdir(this.dataDir)
 		}
@@ -58,7 +57,6 @@ export class SystemPrompt {
 	private async loadSystemPromptFile(mode: Mode): Promise<string> {
 		const fileName = this.getSystemPromptFilePath(mode)
 		const filePath = normalizePath(path.join(this.dataDir, fileName))
-		console.log("filePath", filePath)
 		if (!(await this.app.vault.adapter.exists(filePath))) {
 			return ""
 		}

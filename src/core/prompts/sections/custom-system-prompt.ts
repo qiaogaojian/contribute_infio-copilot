@@ -36,10 +36,7 @@ export function getSystemPromptFilePath(cwd: string, mode: Mode): string {
  * If the file doesn't exist, returns an empty string
  */
 export async function loadSystemPromptFile(cwd: string, mode: Mode): Promise<string> {
-	console.log("cwd", cwd)
-	console.log("mode", mode)
 	const filePath = getSystemPromptFilePath(cwd, mode)
-	console.log("filePath", filePath)
 	return safeReadFile(filePath)
 }
 

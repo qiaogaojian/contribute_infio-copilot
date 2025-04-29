@@ -380,7 +380,6 @@ const CustomModeView = () => {
 												leaf.view instanceof PreviewView && leaf.view.state.title === `${modeName} system prompt`
 										)
 									if (existingLeaf) {
-										console.log(existingLeaf)
 										app.workspace.setActiveLeaf(existingLeaf, { focus: true })
 									} else {
 										app.workspace.getLeaf(true).setViewState({
