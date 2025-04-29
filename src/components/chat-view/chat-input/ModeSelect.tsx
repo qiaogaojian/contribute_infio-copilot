@@ -1,6 +1,6 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { ChevronDown, ChevronUp } from 'lucide-react'
-import React, { useEffect, useState, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { useSettings } from '../../../contexts/SettingsContext'
 import { useCustomModes } from '../../../hooks/use-custom-mode'

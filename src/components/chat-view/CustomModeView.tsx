@@ -1,11 +1,19 @@
 import { ChevronDown, ChevronRight, Plus, Trash2, Undo2 } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import { getLanguage } from 'obsidian';
+import React, { useEffect, useMemo, useState } from 'react';
 
+import { PREVIEW_VIEW_TYPE } from '../../constants';
 import { useApp } from '../../contexts/AppContext';
+import { useDiffStrategy } from '../../contexts/DiffStrategyContext';
+import { useRAG } from '../../contexts/RAGContext';
+import { useSettings } from '../../contexts/SettingsContext';
 import { CustomMode, GroupEntry, ToolGroup } from '../../database/json/custom-mode/types';
 import { useCustomModes } from '../../hooks/use-custom-mode';
+import { PreviewView, PreviewViewState } from '../../PreviewView';
 import { modes as buildinModes } from '../../utils/modes';
 import { openOrCreateMarkdownFile } from '../../utils/obsidian';
+import { PromptGenerator, getFullLanguageName } from '../../utils/prompt-generator';
+
 const CustomModeView = () => {
 	const app = useApp()
 
@@ -14,7 +22,16 @@ const CustomModeView = () => {
 		deleteCustomMode,
 		updateCustomMode,
 		customModeList,
+		customModePrompts
 	} = useCustomModes()
+	const { settings } = useSettings()
+	const { getRAGEngine } = useRAG()
+	const diffStrategy = useDiffStrategy()
+
+	const promptGenerator = useMemo(() => {
+		// @ts-expect-error
+		return new PromptGenerator(getRAGEngine, app, settings, diffStrategy, customModePrompts, customModeList)
+	}, [app, settings, diffStrategy, customModePrompts, customModeList])
 
 	// 当前选择的模式
 	const [selectedMode, setSelectedMode] = useState<string>('ask')
@@ -326,8 +343,41 @@ const CustomModeView = () => {
 					</p>
 				)}
 			</div>
+
+			{/* 预览和保存 */}
 			<div className="infio-custom-modes-actions">
-				<button className="infio-preview-btn">
+				<button
+					className="infio-preview-btn"
+					onClick={async () => {
+						let filesSearchMethod = settings.filesSearchMethod
+						if (filesSearchMethod === 'auto' && settings.embeddingModelId && settings.embeddingModelId !== '') {
+							filesSearchMethod = 'semantic'
+						}
+
+						const userLanguage = getFullLanguageName(getLanguage())
+						const systemPrompt = await promptGenerator.getSystemMessageNew(modeName, filesSearchMethod, userLanguage)
+						const existingLeaf = app.workspace
+						.getLeavesOfType(PREVIEW_VIEW_TYPE)
+						.find(
+							(leaf) =>
+								leaf.view instanceof PreviewView && leaf.view.state.title === `${modeName} system prompt`
+						)
+						if (existingLeaf) {
+							console.log(existingLeaf)
+							app.workspace.setActiveLeaf(existingLeaf, { focus: true })
+						} else {
+							app.workspace.getLeaf(true).setViewState({
+								type: PREVIEW_VIEW_TYPE,
+								active: true,
+								state: {
+									content: systemPrompt.content as string,
+									title: `${modeName} system prompt`,
+								} satisfies PreviewViewState,
+							})
+						}
+					}
+					}
+				>
 					预览
 				</button>
 				<button

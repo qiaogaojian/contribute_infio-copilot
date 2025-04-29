@@ -6,13 +6,14 @@ import { Editor, MarkdownView, Notice, Plugin, TFile } from 'obsidian'
 import { ApplyView } from './ApplyView'
 import { ChatView } from './ChatView'
 import { ChatProps } from './components/chat-view/ChatView'
-import { APPLY_VIEW_TYPE, CHAT_VIEW_TYPE } from './constants'
+import { APPLY_VIEW_TYPE, CHAT_VIEW_TYPE, PREVIEW_VIEW_TYPE } from './constants'
 import { getDiffStrategy } from "./core/diff/DiffStrategy"
 import { InlineEdit } from './core/edit/inline-edit-processor'
 import { RAGEngine } from './core/rag/rag-engine'
 import { DBManager } from './database/database-manager'
 import { migrateToJsonDatabase } from './database/json/migrateToJsonDatabase'
 import EventListener from "./event-listener"
+import { PreviewView } from './PreviewView'
 import CompletionKeyWatcher from "./render-plugin/completion-key-watcher"
 import DocumentChangesListener, {
 	DocumentChanges,
@@ -62,6 +63,7 @@ export default class InfioPlugin extends Plugin {
 		// register views
 		this.registerView(CHAT_VIEW_TYPE, (leaf) => new ChatView(leaf, this))
 		this.registerView(APPLY_VIEW_TYPE, (leaf) => new ApplyView(leaf))
+		this.registerView(PREVIEW_VIEW_TYPE, (leaf) => new PreviewView(leaf))
 
 		// register markdown processor for Inline Edit
 		this.inlineEdit = new InlineEdit(this, this.settings);

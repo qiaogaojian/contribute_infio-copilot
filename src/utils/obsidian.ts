@@ -1,6 +1,6 @@
-import { App, Editor, MarkdownView, TFile, TFolder, Vault, WorkspaceLeaf } from 'obsidian'
-
 import * as path from 'path'
+
+import { App, Editor, MarkdownView, TFile, TFolder, Vault, WorkspaceLeaf } from 'obsidian'
 
 import { MentionableBlockData } from '../types/mentionable'
 

@@ -2,6 +2,7 @@ import { LLMModel } from './types/llm/model'
 // import { ApiProvider } from './utils/api'
 export const CHAT_VIEW_TYPE = 'infio-chat-view'
 export const APPLY_VIEW_TYPE = 'infio-apply-view'
+export const PREVIEW_VIEW_TYPE = 'infio-preview-view'
 
 export const DEFAULT_MODELS: LLMModel[] = []
 
