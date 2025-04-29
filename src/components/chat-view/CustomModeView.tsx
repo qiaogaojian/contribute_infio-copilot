@@ -332,54 +332,54 @@ const CustomModeView = () => {
 				>
 					<div className="infio-section-header-title-container">
 						{isAdvancedCollapsed ? <ChevronRight size={16} /> : <ChevronDown size={16} />}
-						<h6>覆盖系统提示词</h6>
+						<h6 className="infio-section-header-title">覆盖系统提示词</h6>
 					</div>
 				</div>
 				{!isAdvancedCollapsed && (
-					<p className="infio-section-subtitle">
-						您可以通过在工作区创建文件
-						<a href="#" className="infio-link" onClick={() => openOrCreateMarkdownFile(app, `_infio_prompts/${modeName}/system-prompt.md`, 0)}>_infio_prompts/{modeName}/system-prompt</a>
-						，完全替换此模式的系统提示（角色定义和自定义指令除外）。这是一个非常高级的功能，会覆盖工具使用等全部内置提示, 请谨慎操作
-					</p>
+					<>
+						<p className="infio-section-subtitle">
+							您可以通过在工作区创建文件
+							<a href="#" className="infio-link" onClick={() => openOrCreateMarkdownFile(app, `_infio_prompts/${modeName}/system-prompt.md`, 0)}>_infio_prompts/{modeName}/system-prompt</a>
+							，完全替换此模式的系统提示（角色定义和自定义指令除外）。这是一个非常高级的功能，会覆盖工具使用等全部内置提示, 请谨慎操作						<button
+								className="infio-preview-btn"
+								onClick={async () => {
+									let filesSearchMethod = settings.filesSearchMethod
+									if (filesSearchMethod === 'auto' && settings.embeddingModelId && settings.embeddingModelId !== '') {
+										filesSearchMethod = 'semantic'
+									}
+
+									const userLanguage = getFullLanguageName(getLanguage())
+									const systemPrompt = await promptGenerator.getSystemMessageNew(modeName, filesSearchMethod, userLanguage)
+									const existingLeaf = app.workspace
+										.getLeavesOfType(PREVIEW_VIEW_TYPE)
+										.find(
+											(leaf) =>
+												leaf.view instanceof PreviewView && leaf.view.state.title === `${modeName} system prompt`
+										)
+									if (existingLeaf) {
+										console.log(existingLeaf)
+										app.workspace.setActiveLeaf(existingLeaf, { focus: true })
+									} else {
+										app.workspace.getLeaf(true).setViewState({
+											type: PREVIEW_VIEW_TYPE,
+											active: true,
+											state: {
+												content: systemPrompt.content as string,
+												title: `${modeName} system prompt`,
+											} satisfies PreviewViewState,
+										})
+									}
+								}
+								}
+							>
+								预览系统提示词
+							</button>
+						</p></>
 				)}
 			</div>
 
-			{/* 预览和保存 */}
+			{/* 保存 */}
 			<div className="infio-custom-modes-actions">
-				<button
-					className="infio-preview-btn"
-					onClick={async () => {
-						let filesSearchMethod = settings.filesSearchMethod
-						if (filesSearchMethod === 'auto' && settings.embeddingModelId && settings.embeddingModelId !== '') {
-							filesSearchMethod = 'semantic'
-						}
-
-						const userLanguage = getFullLanguageName(getLanguage())
-						const systemPrompt = await promptGenerator.getSystemMessageNew(modeName, filesSearchMethod, userLanguage)
-						const existingLeaf = app.workspace
-						.getLeavesOfType(PREVIEW_VIEW_TYPE)
-						.find(
-							(leaf) =>
-								leaf.view instanceof PreviewView && leaf.view.state.title === `${modeName} system prompt`
-						)
-						if (existingLeaf) {
-							console.log(existingLeaf)
-							app.workspace.setActiveLeaf(existingLeaf, { focus: true })
-						} else {
-							app.workspace.getLeaf(true).setViewState({
-								type: PREVIEW_VIEW_TYPE,
-								active: true,
-								state: {
-									content: systemPrompt.content as string,
-									title: `${modeName} system prompt`,
-								} satisfies PreviewViewState,
-							})
-						}
-					}
-					}
-				>
-					预览
-				</button>
 				<button
 					className="infio-preview-btn"
 					onClick={() => {
@@ -630,6 +630,10 @@ const CustomModeView = () => {
 					display: flex;
 					align-items: center;
 					gap: 4px;
+				}
+
+				.infio-section-header-title {
+					margin: 0;
 				}
 				`}
 			</style>
