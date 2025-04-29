@@ -36,7 +36,7 @@ const CustomModeView = () => {
 	// 当前选择的模式
 	const [selectedMode, setSelectedMode] = useState<string>('ask')
 	const [isBuiltinMode, setIsBuiltinMode] = useState<boolean>(true)
-	const [isAdvancedCollapsed, setIsAdvancedCollapsed] = useState(true);
+	const [isAdvancedCollapsed, setIsAdvancedCollapsed] = useState(false);
 
 	const isNewMode = React.useMemo(() => selectedMode === "add_new_mode", [selectedMode])
 
@@ -220,6 +220,11 @@ const CustomModeView = () => {
 						</button>
 					)}
 				</div>
+				{
+					isBuiltinMode && (
+						<p className="infio-section-subtitle">内置模式名称不能被修改</p>
+					)
+				}
 				<input
 					type="text"
 					value={modeName}
@@ -263,16 +268,23 @@ const CustomModeView = () => {
 			<div className="infio-custom-modes-section">
 				<div className="infio-section-header">
 					<h3>可用功能</h3>
+					{/* {!isBuiltinMode && (
 					<button className="infio-section-btn">
 						<Undo2 size={16} />
-					</button>
+						</button>
+					)} */}
 				</div>
-				<p className="infio-section-subtitle">内置模式的可用功能不能被修改</p>
+				{
+					isBuiltinMode && (
+						<p className="infio-section-subtitle">内置模式的可用功能不能被修改</p>
+					)
+				}
 				<div className="infio-tools-list">
 					<div className="infio-tool-item">
 						<label>
 							<input
 								type="checkbox"
+								disabled={isBuiltinMode}
 								checked={selectedTools.includes('read')}
 								onChange={() => handleToolChange('read')}
 							/>
@@ -283,6 +295,7 @@ const CustomModeView = () => {
 						<label>
 							<input
 								type="checkbox"
+								disabled={isBuiltinMode}
 								checked={selectedTools.includes('edit')}
 								onChange={() => handleToolChange('edit')}
 							/>
@@ -293,6 +306,7 @@ const CustomModeView = () => {
 						<label>
 							<input
 								type="checkbox"
+								disabled={isBuiltinMode}
 								checked={selectedTools.includes('research')}
 								onChange={() => handleToolChange('research')}
 							/>
@@ -339,7 +353,7 @@ const CustomModeView = () => {
 					<>
 						<p className="infio-section-subtitle">
 							您可以通过在工作区创建文件
-							<a href="#" className="infio-link" onClick={() => openOrCreateMarkdownFile(app, `_infio_prompts/${modeName}/system-prompt.md`, 0)}>_infio_prompts/{modeName}/system-prompt</a>
+							<a href="#" className="infio-link" onClick={() => openOrCreateMarkdownFile(app, `_infio_prompts/${modeName}/system_prompt.md`, 0)}>_infio_prompts/{modeName}/system_prompt</a>
 							，完全替换此模式的系统提示（角色定义和自定义指令除外）。这是一个非常高级的功能，会覆盖工具使用等全部内置提示, 请谨慎操作						<button
 								className="infio-preview-btn"
 								onClick={async () => {
