@@ -53,8 +53,11 @@ export default function ApplyViewRoot({
 			}
 			return result;
 		}, '')
-		
-    await app.vault.modify(state.file, newContent)
+		const file = app.vault.getFileByPath(state.file)
+    if (!file) {
+      throw new Error('File not found')
+    }
+    await app.vault.modify(file, newContent)
     if (state.onClose) {
       state.onClose(true)
     }

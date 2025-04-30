@@ -7,7 +7,7 @@ import { APPLY_VIEW_TYPE } from './constants'
 import { AppProvider } from './contexts/AppContext'
 
 export type ApplyViewState = {
-	file: TFile
+	file: string
 	oldContent: string
 	newContent: string
 	onClose: (applied: boolean) => void

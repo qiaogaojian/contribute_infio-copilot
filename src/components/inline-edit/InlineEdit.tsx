@@ -11,7 +11,7 @@ import { removeAITags } from '../../utils/content-filter';
 import { PromptGenerator } from '../../utils/prompt-generator';
 
 type InlineEditProps = {
-	source: string;
+	source?: string;
 	secStartLine: number;
 	secEndLine: number;
 	plugin: Plugin;
@@ -173,20 +173,14 @@ export const InlineEdit: React.FC<InlineEditProps> = ({
 	};
 
 	const parseSmartComposeBlock = (content: string) => {
-		const match = /<infio_block[^>]*>([\s\S]*?)<\/infio_block>/.exec(content);
+		const match = /<response>([\s\S]*?)<\/response>/.exec(content);
 		if (!match) {
 			return null;
 		}
 
 		const blockContent = match[1].trim();
-		const attributes = /startLine="(\d+)"/.exec(match[0]);
-		const startLine = attributes ? parseInt(attributes[1]) : undefined;
-		const endLineMatch = /endLine="(\d+)"/.exec(match[0]);
-		const endLine = endLineMatch ? parseInt(endLineMatch[1]) : undefined;
 
 		return {
-			startLine,
-			endLine,
 			content: blockContent,
 		};
 	};
@@ -196,6 +190,7 @@ export const InlineEdit: React.FC<InlineEditProps> = ({
 		try {
 			const { activeFile, editor, selection } = await getActiveContext();
 			if (!activeFile || !editor || !selection) {
+				console.error("No active file, editor, or selection");
 				setIsSubmitting(false);
 				return;
 			}
@@ -237,14 +232,26 @@ export const InlineEdit: React.FC<InlineEditProps> = ({
 				response.choices[0].message.content
 			);
 			const finalContent = parsedBlock?.content || response.choices[0].message.content;
-			const startLine = parsedBlock?.startLine || defaultStartLine;
-			const endLine = parsedBlock?.endLine || defaultEndLine;
+
+			if (!activeFile || !(activeFile.path && typeof activeFile.path === 'string')) {
+				setIsSubmitting(false);
+				throw new Error("Invalid active file");
+			}
+
+			let fileContent: string;
+			try {
+				fileContent = await plugin.app.vault.cachedRead(activeFile);
+			} catch (error) {
+				console.error("Failed to read file:", error);
+				setIsSubmitting(false);
+				return;
+			}
 
 			const updatedContent = await ApplyEditToFile(
-				await plugin.app.vault.cachedRead(activeFile),
+				fileContent,
 				finalContent,
-				startLine,
-				endLine
+				defaultStartLine,
+				defaultEndLine
 			);
 
 			if (!updatedContent) {
@@ -258,7 +265,7 @@ export const InlineEdit: React.FC<InlineEditProps> = ({
 				type: APPLY_VIEW_TYPE,
 				active: true,
 				state: {
-					file: activeFile,
+					file: activeFile.path,
 					oldContent: removeAITags(oldContent),
 					newContent: removeAITags(updatedContent),
 				},
@@ -277,8 +284,8 @@ export const InlineEdit: React.FC<InlineEditProps> = ({
 			<InputArea value={instruction} onChange={setInstruction} handleSubmit={handleSubmit} handleClose={handleClose} />
 			<button className="infio-ai-block-close-button" onClick={handleClose}>
 				<svg
-					width="14"
-					height="14"
+					width="16"
+					height="16"
 					viewBox="0 0 24 24"
 					fill="none"
 					stroke="currentColor"

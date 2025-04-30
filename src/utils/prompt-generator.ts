@@ -491,18 +491,29 @@ export class PromptGenerator {
 	}
 
 	private getSystemMessage(shouldUseRAG: boolean, type?: string): RequestMessage {
-		const systemPromptEdit = `You are an intelligent assistant to help edit text content based on user instructions. You will be given the current text content and the user's instruction for how to modify it.
+		const systemPromptEdit = `You are an expert text editor assistant. Your task is to modify the selected content precisely according to the user's instruction, while preserving the original formatting and ensuring consistency with the surrounding context.
 
-1. Your response should contain the modified text content wrapped in <infio_block> tags with appropriate attributes:
-   <infio_block filename="path/to/file.md" language="markdown" startLine="10" endLine="20" type="edit">
-   [modified content here]
-   </infio_block>
+You will receive:
+- <task>: The specific editing instruction
+- <selected_content>: The text to be modified
+- <surrounding_context>: The surrounding file context (may be truncated)
 
-2. Preserve the original formatting, indentation and line breaks unless specifically instructed otherwise.
+When performing the edit:
+- Make only the minimal changes necessary to fulfill the instruction
+- Preserve original formatting (indentation, line breaks, spacing) unless the instruction explicitly requires changing it
+- Use the context to ensure the edit maintains consistency with the surrounding content
+- Match the style, terminology, and conventions of the original document
+- Handle special content types appropriately:
+  - Code: Maintain syntax correctness and follow existing code style
+  - Lists: Preserve formatting and hierarchy
+  - Tables: Keep alignment and structure
+  - Markdown/formatting: Respect existing markup
 
-3. Make minimal changes necessary to fulfill the user's instruction. Do not modify parts of the text that don't need to change.
-
-4. If the instruction is unclear or cannot be fulfilled, respond with "ERROR: " followed by a brief explanation.`
+Your edit response must be wrapped in <response> tags:
+<response>
+[modified content here]
+</response>
+`
 
 		const systemPrompt = `You are an intelligent assistant to help answer any questions that the user has, particularly about editing and organizing markdown files in Obsidian.
 
@@ -604,6 +615,30 @@ ${fileContent}
 		}
 	}
 
+	private async getContextForEdit(
+		currentFile: TFile,
+		startLine: number,
+		endLine: number
+	): Promise<string | null> {
+		// 如果选中内容超过500行，则不提供上下文
+		if (endLine - startLine + 1 > 500) {
+			return null;
+		}
+
+		const fileContent = await readTFileContent(currentFile, this.app.vault);
+		const lines = fileContent.split('\n');
+		
+		// 计算上下文范围，并处理边界情况
+		const contextStartLine = Math.max(1, startLine - 20);
+		const contextEndLine = Math.min(lines.length, endLine + 20);
+		
+		// 提取上下文行
+		const contextLines = lines.slice(contextStartLine - 1, contextEndLine);
+		
+		// 返回带行号的上下文内容
+		return addLineNumbers(contextLines.join('\n'), contextStartLine);
+	}
+
 	public async generateEditMessages({
 		currentFile,
 		selectedContent,
@@ -617,14 +652,27 @@ ${fileContent}
 		startLine: number
 		endLine: number
 	}): Promise<RequestMessage[]> {
-		const systemMessage = this.getSystemMessage(false, 'edit')
-		const currentFileMessage = await this.getCurrentFileMessage(currentFile)
-		const userMessage: RequestMessage = {
-			role: 'user',
-			content: `Selected text (lines ${startLine}-${endLine}):\n${selectedContent}\n\nInstruction:\n${instruction}`,
+		const systemMessage = this.getSystemMessage(false, 'edit');
+		
+		// 获取适当大小的上下文
+		const context = await this.getContextForEdit(currentFile, startLine, endLine);
+		
+		let userPrompt = `<task>\n${instruction}\n</task>\n\n
+<selected_content location="${currentFile.path}#L${startLine}-${endLine}">\n${selectedContent}\n</selected_content>`;
+
+		// 只有当上下文不为null时才添加
+		if (context !== null) {
+			userPrompt += `\n\n<surrounding_context location="${currentFile.path}">\n${context}\n</surrounding_context>`;
+		} else {
+			userPrompt += `\n\n<surrounding_context location="${currentFile.path}">\n(No relevant context found)\n</surrounding_context>`;
 		}
 
-		return [systemMessage, currentFileMessage, userMessage]
+		const userMessage: RequestMessage = {
+			role: 'user',
+			content: userPrompt,
+		};
+
+		return [systemMessage, userMessage];
 	}
 
 	private getRagInstructionMessage(): RequestMessage {

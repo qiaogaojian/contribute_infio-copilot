@@ -98,7 +98,7 @@ const CustomModeView = () => {
 				setCustomInstructions(customMode.customInstructions || '');
 				setSelectedTools(customMode.groups);
 			} else {
-				console.log("error, custom mode not found")
+				console.error("custom mode not found")
 			}
 		}
 	}, [selectedMode, customModeList]);

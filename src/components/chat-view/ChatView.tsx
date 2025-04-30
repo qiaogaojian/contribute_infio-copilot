@@ -401,7 +401,7 @@ const Chat = forwardRef<ChatRef, ChatProps>((props, ref) => {
 							type: APPLY_VIEW_TYPE,
 							active: true,
 							state: {
-								file: opFile,
+								file: opFile.path,
 								oldContent: '',
 								newContent: toolArgs.content,
 								onClose: (applied: boolean) => {
@@ -452,7 +452,7 @@ const Chat = forwardRef<ChatRef, ChatProps>((props, ref) => {
 							type: APPLY_VIEW_TYPE,
 							active: true,
 							state: {
-								file: opFile,
+								file: opFile.path,
 								oldContent: fileContent,
 								newContent: appliedFileContent,
 								onClose: (applied: boolean) => {
@@ -494,7 +494,7 @@ const Chat = forwardRef<ChatRef, ChatProps>((props, ref) => {
 							type: APPLY_VIEW_TYPE,
 							active: true,
 							state: {
-								file: opFile,
+								file: opFile.path,
 								oldContent: fileContent,
 								newContent: appliedFileContent,
 								onClose: (applied: boolean) => {
@@ -536,7 +536,7 @@ const Chat = forwardRef<ChatRef, ChatProps>((props, ref) => {
 							type: APPLY_VIEW_TYPE,
 							active: true,
 							state: {
-								file: opFile,
+								file: opFile.path,
 								oldContent: fileContent,
 								newContent: appliedResult.content,
 								onClose: (applied: boolean) => {
