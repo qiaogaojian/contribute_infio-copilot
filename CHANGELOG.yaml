@@ -1,4 +1,8 @@
 releases:
+  - version: "0.2.3"
+    features:
+      - "fix apply view error"
+      - "update edit line prompt for google gemini model"
   - version: "0.2.2"
     features:
       - hotfix, fix default view to chat view
