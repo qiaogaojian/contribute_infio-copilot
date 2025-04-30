@@ -1,4 +1,7 @@
 releases:
+  - version: "0.2.2"
+    features:
+      - hotfix, fix default view to chat view
   - version: "0.2.1"
     features:
       - "Added custom mode functionality, allowing users to create their own modes"

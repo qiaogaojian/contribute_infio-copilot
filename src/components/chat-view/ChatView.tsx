@@ -165,7 +165,7 @@ const Chat = forwardRef<ChatRef, ChatProps>((props, ref) => {
 		}
 	}
 
-	const [tab, setTab] = useState<'chat' | 'commands' | 'custom-mode'>('custom-mode')
+	const [tab, setTab] = useState<'chat' | 'commands' | 'custom-mode'>('chat')
 	const [selectedSerializedNodes, setSelectedSerializedNodes] = useState<BaseSerializedNode[]>([])
 
 	useEffect(() => {
