@@ -128,7 +128,7 @@ export default function ApplyViewRoot({
         </div>
         <div className="view-header-title-container mod-at-start">
           <div className="view-header-title">
-            Applying: {state?.file?.name ?? ''}
+            Applying: {state?.file ?? ''}
           </div>
           <div className="view-actions">
             <button
@@ -157,8 +157,8 @@ export default function ApplyViewRoot({
             <div className="cm-scroller">
               <div className="cm-sizer">
                 <div className="infio-inline-title">
-                  {state?.file?.name
-                    ? state.file.name.replace(/\.[^/.]+$/, '')
+                  {state?.file
+                    ? state.file.replace(/\.[^/.]+$/, '')
                     : ''}
                 </div>
 

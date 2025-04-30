@@ -33,12 +33,37 @@ class LLMClient {
 	}
 
 	async queryChatModel(messages: RequestMessage[]): Promise<Result<string, Error>> {
-		const data = await this.llm.generateResponse(this.model, {
+		const stream = await this.llm.streamResponse(
+			this.model,
+			{
+				messages: messages,
+				model: this.model.modelId,
+				stream: true,
+			}
+		)
+
+		let response_content = ""
+		for await (const chunk of stream) {
+			const content = chunk.choices[0]?.delta?.content ?? ''
+			response_content += content
+		}
+		return ok(response_content);
+	}
+
+	async queryChatModelStream(messages: RequestMessage[]): Promise<AsyncIterable<string>> {
+		const stream = await this.llm.streamResponse(this.model, {
 			model: this.model.modelId,
 			messages: messages,
-			stream: false,
+			stream: true,
 		})
-		return ok(data.choices[0].message.content);
+		// eslint-disable-next-line no-inner-declarations
+		async function* streamResponse(): AsyncIterable<string> {
+			for await (const chunk of stream) {
+				yield chunk.choices[0].delta.content;
+			}
+		}
+
+		return streamResponse()
 	}
 }
 

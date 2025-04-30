@@ -1,4 +1,4 @@
-import { TFile, View, WorkspaceLeaf } from 'obsidian'
+import { View, WorkspaceLeaf } from 'obsidian'
 import { Root, createRoot } from 'react-dom/client'
 
 import ApplyViewRoot from './components/apply-view/ApplyViewRoot'
@@ -27,7 +27,7 @@ export class ApplyView extends View {
 	}
 
 	getDisplayText() {
-		return `Applying: ${this.state?.file?.name ?? ''}`
+		return `Applying: ${this.state?.file ?? ''}`
 	}
 
 	async setState(state: ApplyViewState) {

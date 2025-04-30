@@ -217,21 +217,34 @@ export const InlineEdit: React.FC<InlineEditProps> = ({
 				endLine: defaultEndLine,
 			});
 
-			const response = await llmManager.generateResponse(chatModel, {
-				model: chatModel.modelId,
-				messages: requestMessages,
-				stream: false,
-			});
+			const stream = await llmManager.streamResponse(
+				chatModel,
+				{
+					messages: requestMessages,
+					model: chatModel.modelId,
+					max_tokens: settings.modelOptions.max_tokens,
+					temperature: settings.modelOptions.temperature,
+					// top_p: settings.modelOptions.top_p,
+					// frequency_penalty: settings.modelOptions.frequency_penalty,
+					// presence_penalty: settings.modelOptions.presence_penalty,
+					stream: true,
+				}
+			)
 
-			if (!response.choices[0].message.content) {
+			let response_content = ""
+			for await (const chunk of stream) {
+				const content = chunk.choices[0]?.delta?.content ?? ''
+				response_content += content
+			}
+			if (!response_content) {
 				setIsSubmitting(false);
 				throw new Error("Empty response from LLM");
 			}
 
 			const parsedBlock = parseSmartComposeBlock(
-				response.choices[0].message.content
+				response_content
 			);
-			const finalContent = parsedBlock?.content || response.choices[0].message.content;
+			const finalContent = parsedBlock?.content || response_content;
 
 			if (!activeFile || !(activeFile.path && typeof activeFile.path === 'string')) {
 				setIsSubmitting(false);
