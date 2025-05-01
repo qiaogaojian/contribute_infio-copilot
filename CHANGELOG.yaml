@@ -1,4 +1,7 @@
 releases:
+  - version: "0.2.4"
+    features:
+      - "Added multilingual support, now only support English and Chinese"
   - version: "0.2.3"
     features:
       - "fix apply view error"
