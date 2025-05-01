@@ -2,6 +2,8 @@ import { App, Modal, TFile } from 'obsidian'
 import React, { useEffect, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 
+import { t } from '../../lang/helpers'
+
 type ImageSelectorProps = {
   onClose: () => void
   onSelectImages: (files: File[]) => void
@@ -46,7 +48,7 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
           className="infio-image-search"
         />
         <label className="infio-upload-button">
-          Upload New Image
+          {t('chat.input.uploadNewImage')}
           <input
             type="file"
             accept="image/*"

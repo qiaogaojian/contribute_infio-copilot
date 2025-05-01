@@ -81,7 +81,8 @@ export default {
 			collectedModels: "Collected Models",
 			loading: "Loading...",
 			image: "Image",
-			createCommand: "Create Command"
+			createCommand: "Create Command",
+			uploadNewImage: "Upload New Image"
 		}
 	},
 	inlineEdit: {
@@ -173,5 +174,8 @@ export default {
 		fileNotFound: 'File not found',
 		acceptLine: 'Accept line',
 		excludeLine: 'Exclude line',
+	},
+	previewView: {
+		close: 'Close',
 	}
 }

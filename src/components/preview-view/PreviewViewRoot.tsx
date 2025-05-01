@@ -1,6 +1,7 @@
 import { getIcon } from 'obsidian'
 import { useEffect, useRef } from 'react'
 
+import { t } from '../../lang/helpers'
 import { PreviewViewState } from '../../PreviewView'
 
 export default function PreviewViewRoot({
@@ -46,7 +47,7 @@ export default function PreviewViewRoot({
 							onClick={close}
 						>
 							{closeIcon && '✕'}
-							Close
+							{t('previewView.close')}
 						</button>
 					</div>
 				</div>

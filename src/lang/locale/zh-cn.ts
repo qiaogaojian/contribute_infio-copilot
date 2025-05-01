@@ -84,7 +84,8 @@ export default {
 			collectedModels: "收集的模型",
 			loading: "加载中...",
 			image: "图片",
-			createCommand: "创建命令"
+			createCommand: "创建命令",
+			uploadNewImage: "上传新图片"
 		}
 	},
 	inlineEdit: {
@@ -176,5 +177,8 @@ export default {
 		fileNotFound: '文件未找到',
 		acceptLine: '接受此行',
 		excludeLine: '排除此行',
+	},
+	previewView: {
+		close: '关闭预览',
 	}
 };
