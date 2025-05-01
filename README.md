@@ -5,6 +5,8 @@
 [中文文档](README_zh-CN.md)
 
 ## New Version
+[0.2.3](https://github.com/infiolab/infio-copilot/releases/tag/0.2.3) Add custom mode config, you can't create you own agent now
+
 [0.1.7](https://github.com/infiolab/infio-copilot/releases/tag/0.1.7) Added image selector modal, allowing users to search, select, and upload images in obsidian vault or local file browser
 
 [0.1.6](https://github.com/infiolab/infio-copilot/releases/tag/0.1.6) update apply view, you can edit content in apply view
