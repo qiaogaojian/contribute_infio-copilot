@@ -1,5 +1,3 @@
-// import { APPNAME, MINEXCALIDRAWVERSION } from "src/constants/constants";
-
 // 简体中文
 export default {
 	chat: {
@@ -191,7 +189,7 @@ export default {
 		},
 		Models: {
 			chatModel: '聊天模型：',
-			autocompleteModel: '自动完成模型：',
+			autocompleteModel: '自动补全模型：',
 			embeddingModel: '嵌入模型：',
 		},
 		
@@ -202,11 +200,11 @@ export default {
 			temperatureDescription: '此参数影响采样中的随机性。较低的值会导致更重复和确定性的响应。较高的温度将导致更意外或创造性的响应。默认值：0.0，如果您不确定自己在做什么，请不要更改此值。',
 			topP: 'TopP',
 			topPDescription: '与 temperature 参数类似，Top P 参数影响采样中的随机性。降低该值将限制模型的标记选择为更可能的标记，而增加该值则会扩展模型对较低可能性标记的选择。默认值：1，如果您不确定自己在做什么，请不要更改此值。',
-			frequencyPenalty: '频率惩罚',
+			frequencyPenalty: 'frequencyPenalty',
 			frequencyPenaltyDescription: '此参数根据标记在文本中出现的频率成比例地降低重复该标记的几率。这降低了在响应中重复完全相同文本的可能性。默认值：0.25',
-			presencePenalty: '存在惩罚',
+			presencePenalty: 'presencePenalty',
 			presencePenaltyDescription: '此参数降低重复文本中任何已出现标记的几率。这增加了在响应中引入新主题的可能性。默认值：2',
-			maxTokens: '最大 Tokens',
+			maxTokens: 'maxTokens',
 			maxTokensDescription: '此参数更改模型允许生成的最大 Tokens 数。默认值：4096',
 		},
 		
@@ -248,7 +246,7 @@ export default {
 		
 		// RAG 部分
 		RAG: {
-			title: 'RAG',
+			title: 'RAG(高级)',
 			includePatterns: '包含模式',
 			includePatternsDescription: '如果指定了任何模式，则只有匹配至少一个模式的文件才会被包含在索引中。每行一个模式。使用 glob 模式（例如，"notes/*", "*.md"）。留空以包含所有未被排除模式排除的文件。更改后，请使用命令 "重建整个 Vault 索引" 来应用更改。',
 			testPatterns: '测试模式',
@@ -272,7 +270,7 @@ export default {
 		// 自动完成部分
 		AutoComplete: {
 			// 基本自动完成设置
-			title: '自动完成',
+			title: '自动补全(高级)',
 			enable: '启用',
 			enableDescription: '如果禁用，任何操作都不会触发扩展或导致 API 调用。',
 			cacheCompletions: '缓存补全',

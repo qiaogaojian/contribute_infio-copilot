@@ -14,9 +14,9 @@ import InfioPlugin from '../main';
 import { InfioSettings } from '../types/settings';
 import { findFilesMatchingPatterns } from '../utils/glob-utils';
 
-import AdvancedSettings from './components/AdvancedSettings';
+// import AdvancedSettings from './components/AdvancedSettings';
 import BasicAutoCompleteSettings from './components/BasicAutoCompleteSettings';
-import DangerZoneSettings from './components/DangerZoneSettings';
+// import DangerZoneSettings from './components/DangerZoneSettings';
 import CustomProviderSettings from './components/ModelProviderSettings';
 import PostprocessingSettings from './components/PostprocessingSettings';
 import PreprocessingSettings from './components/PreprocessingSettings';
@@ -284,8 +284,55 @@ export class InfioSettingTab extends PluginSettingTab {
 	}
 
 	renderRAGSection(containerEl: HTMLElement): void {
-		new Setting(containerEl).setHeading().setName(t('settings.RAG.title'))
-		new Setting(containerEl)
+		// 创建一个折叠区域的容器
+		const ragContainer = containerEl.createDiv("rag-settings-container");
+		
+		// 创建标题元素，添加折叠控件
+		const headerEl = ragContainer.createEl("div", { cls: "infio-collapsible-heading" });
+		
+		// 添加展开/折叠指示器
+		const toggleIcon = headerEl.createEl("span", { cls: "infio-toggle-icon" });
+		toggleIcon.textContent = "▶"; // 默认为折叠状态，使用右箭头
+		
+		// 添加标题文本
+		const titleEl = headerEl.createEl("h3", { text: t('settings.RAG.title') });
+		
+		// 创建内容容器
+		const contentContainer = ragContainer.createEl("div", { cls: "infio-collapsible-content" });
+		
+		// 默认设置为隐藏状态
+		contentContainer.style.display = "none";
+		
+		// 添加点击事件处理
+		headerEl.addEventListener("click", () => {
+			if (contentContainer.style.display === "none") {
+				contentContainer.style.display = "block";
+				toggleIcon.textContent = "▼"; // 展开状态使用下箭头
+				toggleIcon.style.transform = "rotate(0deg)";
+			} else {
+				contentContainer.style.display = "none";
+				toggleIcon.textContent = "▶"; // 折叠状态使用右箭头
+				toggleIcon.style.transform = "rotate(0deg)";
+			}
+		});
+		
+		// 添加样式
+		headerEl.style.cursor = "pointer";
+		headerEl.style.display = "flex";
+		headerEl.style.alignItems = "center";
+		headerEl.style.marginBottom = "10px";
+		headerEl.style.padding = "6px 0";
+		
+		toggleIcon.style.marginRight = "5px";
+		toggleIcon.style.fontSize = "10px";
+		toggleIcon.style.transition = "transform 0.15s ease";
+		
+		titleEl.style.margin = "0";
+		titleEl.style.fontSize = "16px";
+		titleEl.style.fontWeight = "600";
+		
+		// 以下是原有的设置内容，移动到内容容器中
+		new Setting(contentContainer)
 			.setName(t('settings.RAG.includePatterns'))
 			.setDesc(
 				t('settings.RAG.includePatternsDescription'),
@@ -300,7 +347,7 @@ export class InfioSettingTab extends PluginSettingTab {
 					new IncludedFilesModal(this.app, includedFiles, patterns).open()
 				}),
 			)
-		new Setting(containerEl)
+		new Setting(contentContainer)
 			.setClass('infio-chat-settings-textarea')
 			.addTextArea((text) =>
 				text
@@ -320,7 +367,7 @@ export class InfioSettingTab extends PluginSettingTab {
 					}),
 			)
 
-		new Setting(containerEl)
+		new Setting(contentContainer)
 			.setName(t('settings.RAG.excludePatterns'))
 			.setDesc(
 				t('settings.RAG.excludePatternsDescription'),
@@ -335,7 +382,7 @@ export class InfioSettingTab extends PluginSettingTab {
 					new ExcludedFilesModal(this.app, excludedFiles).open()
 				}),
 			)
-		new Setting(containerEl)
+		new Setting(contentContainer)
 			.setClass('infio-chat-settings-textarea')
 			.addTextArea((text) =>
 				text
@@ -355,7 +402,7 @@ export class InfioSettingTab extends PluginSettingTab {
 					}),
 			)
 
-		new Setting(containerEl)
+		new Setting(contentContainer)
 			.setName(t('settings.RAG.chunkSize'))
 			.setDesc(
 				t('settings.RAG.chunkSizeDescription'),
@@ -378,7 +425,7 @@ export class InfioSettingTab extends PluginSettingTab {
 					}),
 			)
 
-		new Setting(containerEl)
+		new Setting(contentContainer)
 			.setName(t('settings.RAG.thresholdTokens'))
 			.setDesc(
 				t('settings.RAG.thresholdTokensDescription'),
@@ -401,7 +448,7 @@ export class InfioSettingTab extends PluginSettingTab {
 					}),
 			)
 
-		new Setting(containerEl)
+		new Setting(contentContainer)
 			.setName(t('settings.RAG.minSimilarity'))
 			.setDesc(
 				t('settings.RAG.minSimilarityDescription'),
@@ -424,7 +471,7 @@ export class InfioSettingTab extends PluginSettingTab {
 					}),
 			)
 
-		new Setting(containerEl)
+		new Setting(contentContainer)
 			.setName(t('settings.RAG.limit'))
 			.setDesc(
 				t('settings.RAG.limitDescription'),
@@ -449,10 +496,58 @@ export class InfioSettingTab extends PluginSettingTab {
 	}
 
 	renderAutoCompleteSection(containerEl: HTMLElement): void {
-		// 创建一个专门的容器来存放 AutoComplete 相关的组件
-		const autoCompleteDiv = containerEl.createDiv("auto-complete-section");
-		this.autoCompleteContainer = autoCompleteDiv;
-		this.renderAutoCompleteContent(autoCompleteDiv);
+		// 创建一个折叠区域的容器
+		const autoCompleteContainer = containerEl.createDiv("auto-complete-settings-container");
+		
+		// 创建标题元素，添加折叠控件
+		const headerEl = autoCompleteContainer.createEl("div", { cls: "infio-collapsible-heading" });
+		
+		// 添加展开/折叠指示器
+		const toggleIcon = headerEl.createEl("span", { cls: "infio-toggle-icon" });
+		toggleIcon.textContent = "▶"; // 默认为折叠状态，使用右箭头
+		
+		// 添加标题文本
+		const titleEl = headerEl.createEl("h3", { text: t('settings.AutoComplete.title') });
+		
+		// 创建内容容器
+		const contentContainer = autoCompleteContainer.createEl("div", { cls: "infio-collapsible-content" });
+		
+		// 保存容器引用
+		this.autoCompleteContainer = contentContainer;
+		
+		// 默认设置为隐藏状态
+		contentContainer.style.display = "none";
+		
+		// 添加点击事件处理
+		headerEl.addEventListener("click", () => {
+			if (contentContainer.style.display === "none") {
+				contentContainer.style.display = "block";
+				toggleIcon.textContent = "▼"; // 展开状态使用下箭头
+				toggleIcon.style.transform = "rotate(0deg)";
+			} else {
+				contentContainer.style.display = "none";
+				toggleIcon.textContent = "▶"; // 折叠状态使用右箭头
+				toggleIcon.style.transform = "rotate(0deg)";
+			}
+		});
+		
+		// 添加样式
+		headerEl.style.cursor = "pointer";
+		headerEl.style.display = "flex";
+		headerEl.style.alignItems = "center";
+		headerEl.style.marginBottom = "10px";
+		headerEl.style.padding = "6px 0";
+		
+		toggleIcon.style.marginRight = "5px";
+		toggleIcon.style.fontSize = "10px";
+		toggleIcon.style.transition = "transform 0.15s ease";
+		
+		titleEl.style.margin = "0";
+		titleEl.style.fontSize = "16px";
+		titleEl.style.fontWeight = "600";
+		
+		// 在内容容器中渲染AutoComplete设置
+		this.renderAutoCompleteContent(contentContainer);
 	}
 
 	private renderAutoCompleteContent(containerEl: HTMLElement): void {
@@ -472,7 +567,7 @@ export class InfioSettingTab extends PluginSettingTab {
 		const errors = new Map();
 
 		// AutoComplete base
-		new Setting(containerEl).setName(t('settings.AutoComplete.title')).setHeading();
+		// new Setting(containerEl).setName(t('settings.AutoComplete.title')).setHeading();
 		this.renderComponent(containerEl,
 			<BasicAutoCompleteSettings
 				settings={this.plugin.settings}
@@ -519,29 +614,30 @@ export class InfioSettingTab extends PluginSettingTab {
 			/>
 		);
 
-		// Danger zone
-		new Setting(containerEl).setName(t('settings.AutoComplete.dangerZone.title')).setHeading();
-		this.renderComponent(containerEl,
-			<DangerZoneSettings
-				settings={this.plugin.settings}
-				updateSettings={updateSettings}
-				onReset={() => {
-					new Notice(t('settings.AutoComplete.dangerZone.resetComplete'));
-				}}
-			/>
-		);
+		// // Danger zone
+		// new Setting(containerEl).setName(t('settings.AutoComplete.dangerZone.title')).setHeading();
+		// this.renderComponent(containerEl,
+		// 	<DangerZoneSettings
+		// 		settings={this.plugin.settings}
+		// 		updateSettings={updateSettings}
+		// 		onReset={() => {
+		// 			new Notice(t('settings.AutoComplete.dangerZone.resetComplete'));
+		// 		}}
+		// 	/>
+		// );
 
-		// Advanced
-		if (this.plugin.settings.advancedMode) {
-			new Setting(containerEl).setName(t('settings.AutoComplete.advanced.title')).setHeading();
-			this.renderComponent(containerEl,
-				<AdvancedSettings
-					settings={this.plugin.settings}
-					updateSettings={updateSettings}
-					errors={errors}
-				/>
-			);
-		}
+		// // Advanced
+		
+		// if (this.plugin.settings.advancedMode) {
+		// 	new Setting(containerEl).setName(t('settings.AutoComplete.advanced.title')).setHeading();
+		// 	this.renderComponent(containerEl,
+		// 		<AdvancedSettings
+		// 			settings={this.plugin.settings}
+		// 			updateSettings={updateSettings}
+		// 			errors={errors}
+		// 		/>
+		// 	);
+		// }
 	}
 
 	private renderComponent(containerEl: HTMLElement, component: React.ReactNode) {

@@ -245,7 +245,7 @@ export default {
 		
 		// RAG Section
 		RAG: {
-			title: 'RAG',
+			title: 'RAG(advanced)',
 			includePatterns: 'Include patterns',
 			includePatternsDescription: 'If any patterns are specified, ONLY files matching at least one pattern will be included in indexing. One pattern per line. Uses glob patterns (e.g., "notes/*", "*.md"). Leave empty to include all files not excluded by exclude patterns. After changing this, use the command "Rebuild entire vault index" to apply changes.',
 			testPatterns: 'Test patterns',
@@ -269,7 +269,7 @@ export default {
 		// AutoComplete Section
 		AutoComplete: {
 			// Basic AutoComplete Settings
-			title: 'AutoComplete',
+			title: 'AutoComplete(advanced)',
 			enable: 'Enable',
 			enableDescription: 'If disabled, nothing will trigger the extension or can result in an API call.',
 			cacheCompletions: 'Cache completions',
