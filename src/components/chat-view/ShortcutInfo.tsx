@@ -1,20 +1,22 @@
 import { Platform } from 'obsidian';
 import React from 'react';
 
+import { t } from '../../lang/helpers'
+
 const ShortcutInfo: React.FC = () => {
 	const modKey = Platform.isMacOS ? 'Cmd' : 'Ctrl';
 
 	const shortcuts = [
 		{
-			label: 'Edit inline',
+			label: t('chat.shortcutInfo.editInline'),
 			shortcut: `${modKey}+Shift+K`,
 		},
 		{
-			label: 'Chat with select',
+			label: t('chat.shortcutInfo.chatWithSelect'),
 			shortcut: `${modKey}+Shift+L`,
 		},
 		{
-			label: 'Submit with vault',
+			label: t('chat.shortcutInfo.submitWithVault'),
 			shortcut: `${modKey}+Shift+Enter`,
 		}
 	];

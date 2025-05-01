@@ -2,6 +2,7 @@ import { Check, Loader2, Search, X } from 'lucide-react'
 import React from 'react'
 
 import { useSettings } from "../../../contexts/SettingsContext"
+import { t } from '../../../lang/helpers'
 import { ApplyStatus, SearchWebToolArgs } from "../../../types/apply"
 
 export default function MarkdownWebSearchBlock({
@@ -46,7 +47,7 @@ export default function MarkdownWebSearchBlock({
 			<div className={'infio-chat-code-block-header'}>
 				<div className={'infio-chat-code-block-header-filename'}>
 					<Search size={14} className="infio-chat-code-block-header-icon" />
-					Web search: {query}
+					{t('chat.reactMarkdown.webSearch').replace('{query}', query)}
 				</div>
 				<div className={'infio-chat-code-block-header-button'}>
 					<button
@@ -56,15 +57,15 @@ export default function MarkdownWebSearchBlock({
 						{
 							!finish || applyStatus === ApplyStatus.Idle ? (
 								<>
-									<Loader2 className="spinner" size={14} /> Searching...
+									<Loader2 className="spinner" size={14} /> {t('chat.reactMarkdown.searching')}
 								</>
 							) : applyStatus === ApplyStatus.Applied ? (
 								<>
-									<Check size={14} /> Done
+									<Check size={14} /> {t('chat.reactMarkdown.done')}
 								</>
 							) : (
 								<>
-									<X size={14} /> Failed
+									<X size={14} /> {t('chat.reactMarkdown.failed')}
 								</>
 							)}
 					</button>

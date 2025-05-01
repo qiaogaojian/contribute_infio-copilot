@@ -8,6 +8,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { TemplateContent } from '../../database/schema'
 import { useCommands } from '../../hooks/use-commands'
+import { t } from '../../lang/helpers'
 
 import LexicalContentEditable from './chat-input/LexicalContentEditable'
 
@@ -107,11 +108,11 @@ const CommandsView = (
 		const serializedEditorState = editorRef.current.toJSON()
 		const nodes = serializedEditorState.editorState.root.children
 		if (nodes.length === 0) {
-			new Notice('Please enter a content for your template')
+			new Notice(String(t('command.errorContentRequired')))
 			return
 		}
 		if (newCommandName.trim().length === 0) {
-			new Notice('Please enter a name for your template')
+			new Notice(String(t('command.errorNameRequired')))
 			return
 		}
 		
@@ -140,13 +141,13 @@ const CommandsView = (
 		const nameInput = nameInputRefs.current.get(id)
 		const currContentEditorRef = contentEditorRefs.current.get(id)
 		if (!currContentEditorRef) {
-			new Notice('Please enter a content for your template')
+			new Notice(String(t('command.errorContentRequired')))
 			return
 		}
 		const serializedEditorState = currContentEditorRef.toJSON()
 		const nodes = serializedEditorState.editorState.root.children
 		if (nodes.length === 0) {
-			new Notice('Please enter a content for your template')
+			new Notice(String(t('command.errorContentRequired')))
 			return
 		}
 		await updateCommand(
@@ -190,15 +191,15 @@ const CommandsView = (
 			{/* header */}
 			<div className="infio-commands-header">
 				<div className="infio-commands-new">
-					<h2 className="infio-commands-header-title">Create Quick Command</h2>
-					<div className="infio-commands-label">Name</div>
+					<h2 className="infio-commands-header-title">{t('command.createQuickCommand')}</h2>
+					<div className="infio-commands-label">{t('command.name')}</div>
 					<input
 						type="text"
 						value={newCommandName}
 						onChange={(e) => setNewCommandName(e.target.value)}
 						className="infio-commands-input"
 					/>
-					<div className="infio-commands-label">Content</div>
+					<div className="infio-commands-label">{t('command.content')}</div>
 					<div className="infio-commands-textarea">
 						<LexicalContentEditable
 							initialEditorState={initialEditorState}
@@ -211,7 +212,7 @@ const CommandsView = (
 						className="infio-commands-add-btn"
 						disabled={!newCommandName.trim()}
 					>
-						<span>Create Command</span>
+						<span>{t('command.createCommand')}</span>
 					</button>
 				</div>
 			</div>
@@ -221,7 +222,7 @@ const CommandsView = (
 				<Search size={18} className="infio-commands-search-icon" />
 				<input
 					type="text"
-					placeholder="Search Command..."
+					placeholder={t('command.searchPlaceholder')}
 					value={searchTerm}
 					onChange={handleSearch}
 					className="infio-commands-search-input"
@@ -232,7 +233,7 @@ const CommandsView = (
 			<div className="infio-commands-list">
 				{filteredCommands.length === 0 ? (
 					<div className="infio-commands-empty">
-						<p>No commands found</p>
+						<p>{t('command.noCommandsFound')}</p>
 					</div>
 				) : (
 					filteredCommands.map(command => (
@@ -260,7 +261,7 @@ const CommandsView = (
 											onClick={() => handleSaveEdit(command.id)}
 											className="infio-commands-add-btn"
 										>
-											<span>Update Command</span>
+											<span>{t('command.updateCommand')}</span>
 										</button>
 									</div>
 								</div>

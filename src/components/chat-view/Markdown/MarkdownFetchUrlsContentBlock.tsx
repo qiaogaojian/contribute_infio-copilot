@@ -1,6 +1,7 @@
 import { Check, ChevronDown, ChevronRight, Globe, Loader2, X } from 'lucide-react'
 import React, { useEffect, useRef, useState } from 'react'
 
+import { t } from '../../../lang/helpers'
 import { ApplyStatus, FetchUrlsContentToolArgs } from "../../../types/apply"
 
 export default function MarkdownFetchUrlsContentBlock({
@@ -38,7 +39,7 @@ export default function MarkdownFetchUrlsContentBlock({
 				<div className="infio-chat-code-block-header">
 					<div className="infio-chat-code-block-header-filename">
 						<Globe size={10} className="infio-chat-code-block-header-icon" />
-						Fetch URLs Content
+						{t('chat.reactMarkdown.fetchUrlsContent')}
 					</div>
 					<div className="infio-chat-code-block-header-button">
 						<button
@@ -48,15 +49,15 @@ export default function MarkdownFetchUrlsContentBlock({
 							{
 								!finish || applyStatus === ApplyStatus.Idle ? (
 									<>
-										<Loader2 className="spinner" size={14} /> Fetching...
+										<Loader2 className="spinner" size={14} /> {t('chat.reactMarkdown.fetching')}
 									</>
 								) : applyStatus === ApplyStatus.Applied ? (
 									<>
-										<Check size={14} /> Done
+										<Check size={14} /> {t('chat.reactMarkdown.done')}
 									</>
 								) : (
 									<>
-										<X size={14} /> Failed
+										<X size={14} /> {t('chat.reactMarkdown.failed')}
 									</>
 								)}
 						</button>

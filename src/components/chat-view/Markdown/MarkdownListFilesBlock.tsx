@@ -2,6 +2,7 @@ import { FolderOpen } from 'lucide-react'
 import React from 'react'
 
 import { useApp } from "../../../contexts/AppContext"
+import { t } from '../../../lang/helpers'
 import { ApplyStatus, ListFilesToolArgs } from "../../../types/apply"
 import { openMarkdownFile } from "../../../utils/obsidian"
 
@@ -42,7 +43,7 @@ export default function MarkdownListFilesBlock({
 			<div className={'infio-chat-code-block-header'}>
 				<div className={'infio-chat-code-block-header-filename'}>
 					<FolderOpen size={14} className="infio-chat-code-block-header-icon" />
-					List files: {path}
+					{t('chat.reactMarkdown.listFiles').replace('{path}', path)}
 				</div>
 			</div>
 		</div>

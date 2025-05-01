@@ -3,6 +3,7 @@ import React from 'react'
 
 import { useApp } from '../../../contexts/AppContext'
 import { useDarkModeContext } from '../../../contexts/DarkModeContext'
+import { t } from '../../../lang/helpers'
 import { ApplyStatus, SearchAndReplaceToolArgs } from '../../../types/apply'
 import { openMarkdownFile } from '../../../utils/obsidian'
 
@@ -52,7 +53,7 @@ export default function MarkdownSearchAndReplace({
 			<div className={'infio-chat-code-block-header'}>
 				<div className={'infio-chat-code-block-header-filename'}>
 					<Replace size={10} className="infio-chat-code-block-header-icon" />
-					Search and replace in {path}
+					{t('chat.reactMarkdown.searchAndReplaceInPath').replace('{path}', path)}
 				</div>
 				<div className={'infio-chat-code-block-header-button'}>
 					<button
@@ -66,18 +67,18 @@ export default function MarkdownSearchAndReplace({
 						) : applyStatus === ApplyStatus.Idle ? (
 							applying ? (
 								<>
-									<Loader2 className="spinner" size={14} /> Applying...
+									<Loader2 className="spinner" size={14} /> {t('chat.reactMarkdown.applying')}
 								</>
 							) : (
-								'Apply'
+								t('chat.reactMarkdown.apply')
 							)
 						) : applyStatus === ApplyStatus.Applied ? (
 							<>
-								<Check size={14} /> Success
+								<Check size={14} /> {t('chat.reactMarkdown.success')}
 							</>
 						) : (
 							<>
-								<X size={14} /> Failed
+								<X size={14} /> {t('chat.reactMarkdown.failed')}
 							</>
 						)}
 					</button>

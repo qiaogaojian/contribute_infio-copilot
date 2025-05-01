@@ -2,6 +2,7 @@ import { Check, Loader2, Settings2, X } from 'lucide-react'
 import { PropsWithChildren, useState } from 'react'
 
 import { useDarkModeContext } from "../../../contexts/DarkModeContext"
+import { t } from '../../../lang/helpers'
 import { ApplyStatus, ToolArgs } from "../../../types/apply"
 
 import { MemoizedSyntaxHighlighterWrapper } from "./SyntaxHighlighterWrapper"
@@ -40,7 +41,7 @@ export default function MarkdownSwitchModeBlock({
 			<div className={'infio-chat-code-block-header'}>
 				<div className={'infio-chat-code-block-header-filename'}>
 					<Settings2 size={10} className="infio-chat-code-block-header-icon" />
-					Switch to &quot;{mode.charAt(0).toUpperCase() + mode.slice(1)}&quot; mode
+					{t('chat.reactMarkdown.switchToMode').replace('{mode}', mode.charAt(0).toUpperCase() + mode.slice(1))}
 				</div>
 				<div className={'infio-chat-code-block-header-button'}>
 					<button
@@ -51,18 +52,18 @@ export default function MarkdownSwitchModeBlock({
 						{applyStatus === ApplyStatus.Idle ? (
 							applying ? (
 								<>
-									<Loader2 className="spinner" size={14} /> Allowing...
+									<Loader2 className="spinner" size={14} /> {t('chat.reactMarkdown.allowing')}
 								</>
 							) : (
-								'Allow'
+								t('chat.reactMarkdown.allow')
 							)
 						) : applyStatus === ApplyStatus.Applied ? (
 							<>
-								<Check size={14} /> Success
+								<Check size={14} /> {t('chat.reactMarkdown.success')}
 							</>
 						) : (
 							<>
-								<X size={14} /> Failed
+								<X size={14} /> {t('chat.reactMarkdown.failed')}
 							</>
 						)}
 					</button>

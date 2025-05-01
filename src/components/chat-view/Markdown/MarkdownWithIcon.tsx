@@ -5,6 +5,8 @@ import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import { useApp } from 'src/contexts/AppContext';
 
+import { t } from '../../../lang/helpers'
+
 function CopyButton({ message }: { message: string }) {
 	const [copied, setCopied] = useState(false)
 
@@ -33,7 +35,7 @@ function CopyButton({ message }: { message: string }) {
 				</Tooltip.Trigger>
 				<Tooltip.Portal>
 					<Tooltip.Content className="infio-tooltip-content">
-						Copy message
+						{t('chat.reactMarkdown.copyMsg')}
 					</Tooltip.Content>
 				</Tooltip.Portal>
 			</Tooltip.Root>
@@ -77,7 +79,7 @@ function CreateNewFileButton({ message }: { message: string }) {
 				</Tooltip.Trigger>
 				<Tooltip.Portal>
 					<Tooltip.Content className="infio-tooltip-content">
-						Create new note
+						{t('chat.reactMarkdown.createNewNote')}
 					</Tooltip.Content>
 				</Tooltip.Portal>
 			</Tooltip.Root>
@@ -123,9 +125,9 @@ const MarkdownWithIcons = ({
 
 		switch (iconName) {
 			case 'ask_followup_question':
-				return 'Ask Followup Question:';
+				return t('chat.reactMarkdown.askFollowupQuestion');
 			case 'attempt_completion':
-				return 'Task Completion';
+				return t('chat.reactMarkdown.taskCompletion');
 			default:
 				return null;
 		}

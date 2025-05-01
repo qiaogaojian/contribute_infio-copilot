@@ -2,6 +2,108 @@
 
 // 简体中文
 export default {
+	chat: {
+		stop: "停止",
+		errors: {
+			failedToLoadConversation: "加载对话失败",
+			failedToSaveHistory: "保存聊天记录失败",
+			failedToApplyChanges: "应用更改失败",
+			conversationNotFound: "未找到对话",
+			fileNotFound: "未找到文件：{{path}}",
+			failedToApplyEditChanges: "应用编辑更改失败",
+			failedToSearchAndReplace: "搜索和替换失败"
+		},
+		apply: {
+			changesApplied: "更改已成功应用",
+			changesRejected: "用户拒绝了更改"
+		},
+		search: {
+			noResultsFound: "未找到 '{{query}}' 的结果"
+		},
+		history: {
+			noConversations: "没有对话"
+		},
+		shortcutInfo: {
+			editInline: "行内编辑",
+			chatWithSelect: "与选定文本聊天",
+			submitWithVault: "使用 Vault 提交"
+		},
+		searchResults: {
+			showReferencedDocuments: "显示引用的文档"
+		},
+		LLMResponseInfoPopover: {
+			header: "LLM 响应信息",
+			tokenCount: "Token 数量",
+			promptTokens: "提示 Tokens",
+			completionTokens: "补全 Tokens",
+			totalTokens: "总 Tokens",
+			model: "模型",
+			estimatedPrice: "预估价格",
+			usageNotAvailable: "此模型无法获取使用统计信息",
+			notAvailable: "不可用"
+		},
+		queryProgress: {
+			readingMentionableFiles: "正在读取提及的文件",
+			indexing: "正在索引",
+			file: "文件",
+			chunkIndexed: "块已索引",
+			queryingVault: "正在查询 Vault",
+			readingRelatedFiles: "正在读取相关文件"
+		},
+		reactMarkdown: {
+			allow: "允许",
+			allowing: "正在允许...",
+			success: "成功",
+			failed: "失败",
+			switchToMode: '切换到 "{mode}" 模式',
+			semanticSearchInPath: '在 {path} 中语义搜索文件 "{query}"',
+			webSearch: "网页搜索：{query}",
+			searching: "正在搜索...",
+			done: "完成",
+			searchAndReplaceInPath: "在 {path} 中搜索和替换",
+			applying: "正在应用...",
+			apply: "应用",
+			reasoning: "推理",
+			readFile: "读取文件：{path}",
+			listFiles: "列出文件：{path}",
+			fetchUrlsContent: "获取 URL 内容",
+			fetching: "正在获取...",
+			copied: "已复制",
+			copy: "复制",
+			editOrApplyDiff: "{mode}：{path}",
+			loading: "加载中...",
+			regexSearchInPath: '在 {path} 中正则搜索文件 "{regex}"',
+			createNewNote: "创建新笔记",
+			copyMsg: "复制消息",
+			taskCompletion: "任务完成",
+			askFollowupQuestion: "询问后续问题：",
+			viewDetails: "查看详情"
+		},
+		input: {
+			submit: "提交",
+			collectedModels: "收集的模型",
+			loading: "加载中...",
+			image: "图片",
+			createCommand: "创建命令"
+		}
+	},
+	inlineEdit: {
+		placeholder: "输入指令，Enter 提交，Esc 关闭",
+		fetchModelsError: "获取 Provider 模型失败：",
+		submitting: "提交中...",
+		submit: "提交",
+		ragNotNeeded: "行内编辑不需要 RAG",
+		noActiveFile: "没有活动文件",
+		noActiveEditor: "没有活动编辑器",
+		noTextSelected: "未选择文本",
+		noActiveContext: "没有活动文件、编辑器或选区",
+		invalidChatModel: "无效的聊天模型",
+		emptyLLMResponse: "LLM 返回空响应",
+		invalidActiveFile: "无效的活动文件",
+		readFileError: "读取文件失败：",
+		applyChangesError: "应用更改失败",
+		inlineEditError: "行内编辑出错：",
+	},
 	prompt: {
 		"title": "模型提示词设置",
 		"description": "点击 + 创建新模式",
@@ -28,5 +130,16 @@ export default {
 		"overrideWarning": "。这是一个非常高级的功能，将覆盖所有内置提示，包括工具使用，请谨慎使用",
 		"previewSystemPrompt": "预览系统提示",
 		"save": "保存"
+	},
+	command: {
+		"createQuickCommand": "创建快捷命令",
+		"name": "名称",
+		"content": "内容",
+		"createCommand": "创建命令",
+		"searchPlaceholder": "搜索命令...",
+		"noCommandsFound": "未找到命令",
+		"updateCommand": "更新命令",
+		"errorContentRequired": "请输入模板内容",
+		"errorNameRequired": "请输入模板名称"
 	}
 };

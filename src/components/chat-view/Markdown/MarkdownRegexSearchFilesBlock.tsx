@@ -2,6 +2,7 @@ import { FileSearch } from 'lucide-react'
 import React from 'react'
 
 import { useApp } from "../../../contexts/AppContext"
+import { t } from '../../../lang/helpers'
 import { ApplyStatus, RegexSearchFilesToolArgs } from "../../../types/apply"
 import { openMarkdownFile } from "../../../utils/obsidian"
 
@@ -43,7 +44,7 @@ export default function MarkdownRegexSearchFilesBlock({
 			<div className={'infio-chat-code-block-header'}>
 				<div className={'infio-chat-code-block-header-filename'}>
 					<FileSearch size={14} className="infio-chat-code-block-header-icon" />
-					<span>regex search files &quot;{regex}&quot; in {path}</span>
+					<span>{t('chat.reactMarkdown.regexSearchInPath').replace('{regex}', regex).replace('{path}', path)}</span>
 				</div>
 			</div>
 		</div>

@@ -1,5 +1,5 @@
 import { SelectVector } from '../../database/schema'
-
+import { t } from '../../lang/helpers'
 export type QueryProgressState =
 	| {
 		type: 'reading-mentionables'
@@ -38,7 +38,7 @@ export default function QueryProgress({
 			return (
 				<div className="infio-query-progress">
 					<p>
-						Reading mentioned files
+						{t('chat.queryProgress.readingMentionableFiles')}
 						<DotLoader />
 					</p>
 				</div>
@@ -47,17 +47,17 @@ export default function QueryProgress({
 			return (
 				<div className="infio-query-progress">
 					<p>
-						{`Indexing ${state.indexProgress.totalFiles} file`}
+						{`${t('chat.queryProgress.indexing')} ${state.indexProgress.totalFiles} ${t('chat.queryProgress.file')}`}
 						<DotLoader />
 					</p>
-					<p className="infio-query-progress-detail">{`${state.indexProgress.completedChunks}/${state.indexProgress.totalChunks} chunks indexed`}</p>
+					<p className="infio-query-progress-detail">{`${state.indexProgress.completedChunks}/${state.indexProgress.totalChunks} ${t('chat.queryProgress.chunkIndexed')}`}</p>
 				</div>
 			)
 		case 'querying':
 			return (
 				<div className="infio-query-progress">
 					<p>
-						Querying the vault
+						{t('chat.queryProgress.queryingVault')}
 						<DotLoader />
 					</p>
 				</div>
@@ -66,7 +66,7 @@ export default function QueryProgress({
 			return (
 				<div className="infio-query-progress">
 					<p>
-						Reading related files
+						{t('chat.queryProgress.readingRelatedFiles')}
 						<DotLoader />
 					</p>
 					{state.queryResult.map((result) => (

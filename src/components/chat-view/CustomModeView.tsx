@@ -9,12 +9,11 @@ import { useRAG } from '../../contexts/RAGContext';
 import { useSettings } from '../../contexts/SettingsContext';
 import { CustomMode, GroupEntry, ToolGroup } from '../../database/json/custom-mode/types';
 import { useCustomModes } from '../../hooks/use-custom-mode';
+import { t } from '../../lang/helpers';
 import { PreviewView, PreviewViewState } from '../../PreviewView';
 import { modes as buildinModes } from '../../utils/modes';
 import { openOrCreateMarkdownFile } from '../../utils/obsidian';
 import { PromptGenerator, getFullLanguageName } from '../../utils/prompt-generator';
-
-import { t } from '../../lang/helpers';
 
 const CustomModeView = () => {
 	const app = useApp()

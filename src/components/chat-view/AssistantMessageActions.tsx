@@ -2,6 +2,7 @@ import * as Tooltip from '@radix-ui/react-tooltip'
 import { Check, CopyIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
+import { t } from '../../lang/helpers'
 import { ChatAssistantMessage } from '../../types/chat'
 import { calculateLLMCost } from '../../utils/price-calculator'
 
@@ -35,7 +36,7 @@ function CopyButton({ message }: { message: ChatAssistantMessage }) {
         </Tooltip.Trigger>
         <Tooltip.Portal>
           <Tooltip.Content className="infio-tooltip-content">
-            Copy message
+            {t('chat.reactMarkdown.copyMsg')}
           </Tooltip.Content>
         </Tooltip.Portal>
       </Tooltip.Root>
@@ -76,7 +77,7 @@ function LLMResponesInfoButton({ message }: { message: ChatAssistantMessage }) {
         </Tooltip.Trigger>
         <Tooltip.Portal>
           <Tooltip.Content className="infio-tooltip-content">
-            View details
+            {t('chat.reactMarkdown.viewDetails')}
           </Tooltip.Content>
         </Tooltip.Portal>
       </Tooltip.Root>

@@ -8,6 +8,8 @@ import {
 } from 'lexical'
 import { CSSProperties, useCallback, useEffect, useRef, useState } from 'react'
 
+import { t } from '../../../../../lang/helpers'
+
 export default function CreateCommandPopoverPlugin({
   anchorElement,
   contentEditableElement,
@@ -121,7 +123,7 @@ export default function CreateCommandPopoverPlugin({
 				setIsPopoverOpen(false)
 			}}
 		>
-			create command
+			{t('chat.input.createCommand')}
 		</button>
   )
 }

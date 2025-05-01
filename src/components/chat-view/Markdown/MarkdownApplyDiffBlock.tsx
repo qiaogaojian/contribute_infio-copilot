@@ -2,6 +2,7 @@ import { Check, Diff, Loader2, X } from 'lucide-react'
 import { PropsWithChildren, useState } from 'react'
 
 import { useDarkModeContext } from "../../../contexts/DarkModeContext"
+import { t } from '../../../lang/helpers'
 import { ApplyStatus, ToolArgs } from "../../../types/apply"
 
 import { MemoizedSyntaxHighlighterWrapper } from "./SyntaxHighlighterWrapper"
@@ -55,23 +56,23 @@ export default function MarkdownApplyDiffBlock({
 						{
 							!finish ? (
 								<>
-									<Loader2 className="spinner" size={14} /> Loading...
+									<Loader2 className="spinner" size={14} /> {t('chat.reactMarkdown.loading')}
 								</>
 							) : applyStatus === ApplyStatus.Idle ? (
 								applying ? (
 									<>
-										<Loader2 className="spinner" size={14} /> Applying...
+										<Loader2 className="spinner" size={14} /> {t('chat.reactMarkdown.applying')}
 									</>
 								) : (
-									'Apply'
+									t('chat.reactMarkdown.apply')
 								)
 							) : applyStatus === ApplyStatus.Applied ? (
 								<>
-									<Check size={14} /> Success
+									<Check size={14} /> {t('chat.reactMarkdown.success')}
 								</>
 							) : (
 								<>
-									<X size={14} /> Failed
+									<X size={14} /> {t('chat.reactMarkdown.failed')}
 								</>
 							)}
 					</button>

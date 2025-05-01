@@ -31,6 +31,7 @@ import {
 import { regexSearchFiles } from '../../core/ripgrep'
 import { useChatHistory } from '../../hooks/use-chat-history'
 import { useCustomModes } from '../../hooks/use-custom-mode'
+import { t } from '../../lang/helpers'
 import { ApplyStatus, ToolArgs } from '../../types/apply'
 import { ChatMessage, ChatUserMessage } from '../../types/chat'
 import {
@@ -165,7 +166,7 @@ const Chat = forwardRef<ChatRef, ChatProps>((props, ref) => {
 		}
 	}
 
-	const [tab, setTab] = useState<'chat' | 'commands' | 'custom-mode'>('custom-mode')
+	const [tab, setTab] = useState<'chat' | 'commands' | 'custom-mode'>('chat')
 	const [selectedSerializedNodes, setSelectedSerializedNodes] = useState<BaseSerializedNode[]>([])
 
 	useEffect(() => {
@@ -216,7 +217,7 @@ const Chat = forwardRef<ChatRef, ChatProps>((props, ref) => {
 			abortActiveStreams()
 			const conversation = await getChatMessagesById(conversationId)
 			if (!conversation) {
-				throw new Error('Conversation not found')
+				throw new Error(t('chat.errors.conversationNotFound'))
 			}
 			setCurrentConversationId(conversationId)
 			setChatMessages(conversation)
@@ -227,8 +228,8 @@ const Chat = forwardRef<ChatRef, ChatProps>((props, ref) => {
 				type: 'idle',
 			})
 		} catch (error) {
-			new Notice('Failed to load conversation')
-			console.error('Failed to load conversation', error)
+			new Notice(t('chat.errors.failedToLoadConversation'))
+			console.error(t('chat.errors.failedToLoadConversation'), error)
 		}
 	}
 
@@ -1031,7 +1032,7 @@ const Chat = forwardRef<ChatRef, ChatProps>((props, ref) => {
 						{submitMutation.isPending && (
 							<button onClick={abortActiveStreams} className="infio-stop-gen-btn">
 								<CircleStop size={16} />
-								<div>Stop generation</div>
+								<div>{t('chat.stop')}</div>
 							</button>
 						)}
 					</div>

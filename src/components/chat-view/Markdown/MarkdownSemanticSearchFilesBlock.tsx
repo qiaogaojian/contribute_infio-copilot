@@ -2,6 +2,7 @@ import { FileSearch } from 'lucide-react'
 import React from 'react'
 
 import { useApp } from "../../../contexts/AppContext"
+import { t } from '../../../lang/helpers'
 import { ApplyStatus, SemanticSearchFilesToolArgs } from "../../../types/apply"
 import { openMarkdownFile } from "../../../utils/obsidian"
 
@@ -42,7 +43,7 @@ export default function MarkdownSemanticSearchFilesBlock({
 			<div className={'infio-chat-code-block-header'}>
 				<div className={'infio-chat-code-block-header-filename'}>
 					<FileSearch size={14} className="infio-chat-code-block-header-icon" />
-					<span>semantic search files &quot;{query}&quot; in {path}</span>
+					<span>{t('chat.reactMarkdown.semanticSearchInPath').replace('{query}', query).replace('{path}', path)}</span>
 				</div>
 			</div>
 		</div>

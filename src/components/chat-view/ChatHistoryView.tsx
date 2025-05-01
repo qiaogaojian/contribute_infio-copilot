@@ -2,7 +2,9 @@ import * as Popover from '@radix-ui/react-popover'
 import { Pencil, Trash2 } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
+import { t } from '../../lang/helpers'
 import { ChatConversationMeta } from '../../types/chat'
+
 
 function TitleInput({
   title,
@@ -165,7 +167,7 @@ export function ChatHistory({
           <ul>
             {chatList.length === 0 ? (
               <li className="infio-chat-list-dropdown-empty">
-                No conversations
+                {t('chat.history.noConversations')}
               </li>
             ) : (
               chatList.map((chat, index) => (

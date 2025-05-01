@@ -2,6 +2,7 @@ import { ImageIcon } from 'lucide-react'
 import { TFile } from 'obsidian'
 
 import { useApp } from '../../../contexts/AppContext'
+import { t } from '../../../lang/helpers'
 import { ImageSelectorModal } from '../../modals/ImageSelectorModal'
 
 export function ImageUploadButton({
@@ -34,7 +35,7 @@ export function ImageUploadButton({
       <div className="infio-chat-user-input-submit-button-icons">
         <ImageIcon size={12} />
       </div>
-      <div>Image</div>
+      <div>{t('chat.input.image')}</div>
     </button>
   )
 }

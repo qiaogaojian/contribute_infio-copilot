@@ -2,6 +2,7 @@ import { ExternalLink } from 'lucide-react'
 import React from 'react'
 
 import { useApp } from "../../../contexts/AppContext"
+import { t } from '../../../lang/helpers'
 import { ApplyStatus, ReadFileToolArgs } from "../../../types/apply"
 import { openMarkdownFile } from "../../../utils/obsidian"
 
@@ -39,7 +40,7 @@ export default function MarkdownReadFileBlock({
 			<div className={'infio-chat-code-block-header'}>
 				<div className={'infio-chat-code-block-header-filename'}>
 					<ExternalLink size={10} className="infio-chat-code-block-header-icon" />
-					Read file: {path}
+					{t('chat.reactMarkdown.readFile').replace('{path}', path)}
 				</div>
 			</div>
 		</div>

@@ -4,6 +4,7 @@ import { ChevronDown, ChevronUp, Star, StarOff } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { useSettings } from '../../../contexts/SettingsContext'
+import { t } from '../../../lang/helpers'
 import { ApiProvider } from '../../../types/llm/model'
 import { GetAllProviders, GetProviderModelIds } from "../../../utils/api"
 
@@ -256,7 +257,7 @@ export function ModelSelect() {
 						{settings.collectedChatModels?.length > 0 && (
 							<div className="infio-model-section">
 								<div className="infio-model-section-title">
-									<Star size={12} className="infio-star-active" /> collected models
+									<Star size={12} className="infio-star-active" /> {t('chat.input.collectedModels')}
 								</div>
 								<ul className="infio-collected-models-list">
 									{settings.collectedChatModels.map((collectedModel, index) => (
@@ -415,7 +416,7 @@ export function ModelSelect() {
 							)}
 						</div>
 						{isLoading ? (
-							<div className="infio-loading">loading...</div>
+							<div className="infio-loading">{t('chat.input.loading')}</div>
 						) : (
 							<div className="infio-model-section">
 								<ul>

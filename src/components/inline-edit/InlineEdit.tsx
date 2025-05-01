@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import { APPLY_VIEW_TYPE } from '../../constants';
 import LLMManager from '../../core/llm/manager';
+import { t } from '../../lang/helpers';
 import { InfioSettings } from '../../types/settings';
 import { GetProviderModelIds } from '../../utils/api';
 import { ApplyEditToFile } from '../../utils/apply';
@@ -52,7 +53,7 @@ const InputArea: React.FC<InputAreaProps> = ({ value, onChange, handleSubmit, ha
 			<textarea
 				ref={textareaRef}
 				className="infio-ai-block-content"
-				placeholder="Input instruction, Enter to submit, Esc to close"
+				placeholder={t('inlineEdit.placeholder')}
 				value={value}
 				onChange={(e) => onChange(e.target.value)}
 				onKeyDown={handleKeyDown}
@@ -83,8 +84,9 @@ const ControlArea: React.FC<ControlAreaProps> = ({
 			try {
 				const models = await GetProviderModelIds(settings.chatModelProvider);
 				setProviderModels(models);
-			} catch (error) {
-				console.error("Failed to fetch provider models:", error);
+			} catch (err) {
+				const error = err as Error;
+				console.error(t("inlineEdit.fetchModelsError"), error.message);
 			}
 		};
 		fetchModels();
@@ -109,9 +111,9 @@ const ControlArea: React.FC<ControlAreaProps> = ({
 				onClick={onSubmit}
 				disabled={isSubmitting}
 			>
-				{isSubmitting ? "submitting..." : (
+				{isSubmitting ? t("inlineEdit.submitting") : (
 					<>
-						submit 
+						{t("inlineEdit.submit")}
 						<CornerDownLeft size={11} className="infio-ai-block-submit-icon" />
 					</>
 				)}
@@ -134,7 +136,7 @@ export const InlineEdit: React.FC<InlineEditProps> = ({
 
 	const promptGenerator = new PromptGenerator(
 		async () => {
-			throw new Error("RAG not needed for inline edit");
+			throw new Error(t("inlineEdit.ragNotNeeded"));
 		},
 		plugin.app,
 		settings
@@ -153,19 +155,19 @@ export const InlineEdit: React.FC<InlineEditProps> = ({
 	const getActiveContext = async () => {
 		const activeFile = plugin.app.workspace.getActiveFile();
 		if (!activeFile) {
-			console.error("No active file");
+			console.error(t("inlineEdit.noActiveFile"));
 			return {};
 		}
 
 		const editor = plugin.app.workspace.getActiveViewOfType(MarkdownView)?.editor;
 		if (!editor) {
-			console.error("No active editor");
+			console.error(t("inlineEdit.noActiveEditor"));
 			return { activeFile };
 		}
 
 		const selection = editor.getSelection();
 		if (!selection) {
-			console.error("No text selected");
+			console.error(t("inlineEdit.noTextSelected"));
 			return { activeFile, editor };
 		}
 
@@ -190,7 +192,7 @@ export const InlineEdit: React.FC<InlineEditProps> = ({
 		try {
 			const { activeFile, editor, selection } = await getActiveContext();
 			if (!activeFile || !editor || !selection) {
-				console.error("No active file, editor, or selection");
+				console.error(t("inlineEdit.noActiveContext"));
 				setIsSubmitting(false);
 				return;
 			}
@@ -201,7 +203,7 @@ export const InlineEdit: React.FC<InlineEditProps> = ({
 			};
 			if (!chatModel) {
 				setIsSubmitting(false);
-				throw new Error("Invalid chat model");
+				throw new Error(t("inlineEdit.invalidChatModel"));
 			}
 
 			const from = editor.getCursor("from");
@@ -238,7 +240,7 @@ export const InlineEdit: React.FC<InlineEditProps> = ({
 			}
 			if (!response_content) {
 				setIsSubmitting(false);
-				throw new Error("Empty response from LLM");
+				throw new Error(t("inlineEdit.emptyLLMResponse"));
 			}
 
 			const parsedBlock = parseSmartComposeBlock(
@@ -248,14 +250,15 @@ export const InlineEdit: React.FC<InlineEditProps> = ({
 
 			if (!activeFile || !(activeFile.path && typeof activeFile.path === 'string')) {
 				setIsSubmitting(false);
-				throw new Error("Invalid active file");
+				throw new Error(t("inlineEdit.invalidActiveFile"));
 			}
 
 			let fileContent: string;
 			try {
 				fileContent = await plugin.app.vault.cachedRead(activeFile);
-			} catch (error) {
-				console.error("Failed to read file:", error);
+			} catch (err) {
+				const error = err as Error;
+				console.error(t("inlineEdit.readFileError"), error.message);
 				setIsSubmitting(false);
 				return;
 			}
@@ -268,7 +271,7 @@ export const InlineEdit: React.FC<InlineEditProps> = ({
 			);
 
 			if (!updatedContent) {
-				console.error("Failed to apply changes");
+				console.error(t("inlineEdit.applyChangesError"));
 				setIsSubmitting(false);
 				return;
 			}
@@ -283,8 +286,9 @@ export const InlineEdit: React.FC<InlineEditProps> = ({
 					newContent: removeAITags(updatedContent),
 				},
 			});
-		} catch (error) {
-			console.error("Error in inline edit:", error);
+		} catch (err) {
+			const error = err as Error;
+			console.error(t("inlineEdit.inlineEditError"), error.message);
 		} finally {
 			setIsSubmitting(false);
 		}
