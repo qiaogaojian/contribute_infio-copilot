@@ -5,11 +5,9 @@ import ContentEditable from 'react-contenteditable'
 
 import { ApplyViewState } from '../../ApplyView'
 import { useApp } from '../../contexts/AppContext'
+import { t } from '../../lang/helpers'
 
-export default function ApplyViewRoot({
-	state,
-	close,
-}: {
+export default function ApplyViewRoot({ state, close }: {
 	state: ApplyViewState
 	close: () => void
 }) {
@@ -29,14 +27,14 @@ export default function ApplyViewRoot({
 
 	// Track which lines have been accepted or excluded
 	const [diffStatus, setDiffStatus] = useState<Array<'active' | 'accepted' | 'excluded'>>([])
-  
+
 	const [diff] = useState<Change[]>(() => {
 		const initialDiff = diffLines(state.oldContent, state.newContent)
 		// Initialize all lines as 'active'
 		setDiffStatus(initialDiff.map(() => 'active'))
 		return initialDiff
 	})
-  
+
 	// Store edited content for each diff part
 	const [editedContents, setEditedContents] = useState<string[]>(
 		diff.map(part => part.value)
@@ -46,170 +44,170 @@ export default function ApplyViewRoot({
 		// Filter and process content based on diffStatus
 		const newContent = diff.reduce((result, change, index) => {
 			// Keep unchanged content, non-excluded additions, or excluded removals
-			if ((!change.added && !change.removed) || 
-				(change.added && diffStatus[index] !== 'excluded') || 
+			if ((!change.added && !change.removed) ||
+				(change.added && diffStatus[index] !== 'excluded') ||
 				(change.removed && diffStatus[index] === 'excluded')) {
 				return result + editedContents[index];
 			}
 			return result;
 		}, '')
 		const file = app.vault.getFileByPath(state.file)
-    if (!file) {
-      throw new Error('File not found')
-    }
-    await app.vault.modify(file, newContent)
-    if (state.onClose) {
-      state.onClose(true)
-    }
-    close()
-  }
+		if (!file) {
+			throw new Error(String(t('applyView.fileNotFound')))
+		}
+		await app.vault.modify(file, newContent)
+		if (state.onClose) {
+			state.onClose(true)
+		}
+		close()
+	}
 
-  const handleReject = async () => {
-    if (state.onClose) {
-      state.onClose(false)
-    }
-    close()
-  }
+	const handleReject = async () => {
+		if (state.onClose) {
+			state.onClose(false)
+		}
+		close()
+	}
 
-  const excludeDiffLine = (index: number) => {
-    setDiffStatus(prevStatus => {
-      const newStatus = [...prevStatus]
-      // Mark line as excluded
-      newStatus[index] = 'excluded'
-      return newStatus
-    })
-  }
+	const excludeDiffLine = (index: number) => {
+		setDiffStatus(prevStatus => {
+			const newStatus = [...prevStatus]
+			// Mark line as excluded
+			newStatus[index] = 'excluded'
+			return newStatus
+		})
+	}
 
-  const acceptDiffLine = (index: number) => {
-    setDiffStatus(prevStatus => {
-      const newStatus = [...prevStatus]
-      // Mark line as accepted
-      newStatus[index] = 'accepted'
-      return newStatus
-    })
-  }
+	const acceptDiffLine = (index: number) => {
+		setDiffStatus(prevStatus => {
+			const newStatus = [...prevStatus]
+			// Mark line as accepted
+			newStatus[index] = 'accepted'
+			return newStatus
+		})
+	}
 
-  const handleKeyDown = (event: KeyboardEvent) => {
-    const modifierKey = Platform.isMacOS ? event.metaKey : event.ctrlKey;
-    if (modifierKey) {
-      if (event.key === 'Enter') {
-        event.preventDefault();
-        event.stopPropagation();
-        handleAccept();
-      } else if (event.key === 'Backspace') {
-        event.preventDefault();
-        event.stopPropagation();
-        handleReject();
-      }
-    }
-  }
-  
-  // Handle content editing changes
-  const handleContentChange = (index: number, evt: { target: { value: string } }) => {
-    const newEditedContents = [...editedContents];
-    newEditedContents[index] = evt.target.value;
-    setEditedContents(newEditedContents);
-  }
+	const handleKeyDown = (event: KeyboardEvent) => {
+		const modifierKey = Platform.isMacOS ? event.metaKey : event.ctrlKey;
+		if (modifierKey) {
+			if (event.key === 'Enter') {
+				event.preventDefault();
+				event.stopPropagation();
+				handleAccept();
+			} else if (event.key === 'Backspace') {
+				event.preventDefault();
+				event.stopPropagation();
+				handleReject();
+			}
+		}
+	}
 
-  // Add event listeners on mount and remove on unmount
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => handleKeyDown(e);
-    window.addEventListener('keydown', handler, true);
-    return () => {
-      window.removeEventListener('keydown', handler, true);
-    }
-  }, [handleAccept, handleReject]) // Dependencies for the effect
+	// Handle content editing changes
+	const handleContentChange = (index: number, evt: { target: { value: string } }) => {
+		const newEditedContents = [...editedContents];
+		newEditedContents[index] = evt.target.value;
+		setEditedContents(newEditedContents);
+	}
 
-  return (
-    <div id="infio-apply-view">
-      <div className="view-header">
-        <div className="view-header-left">
-          <div className="view-header-nav-buttons"></div>
-        </div>
-        <div className="view-header-title-container mod-at-start">
-          <div className="view-header-title">
-            Applying: {state?.file ?? ''}
-          </div>
-          <div className="view-actions">
-            <button
-              className="clickable-icon view-action infio-approve-button"
-              aria-label="Accept changes"
-              onClick={handleAccept}
-            >
-              {acceptIcon && '✓'}
-              Accept All {getShortcutText('accept')}
-            </button>
-            <button
-              className="clickable-icon view-action infio-reject-button"
-              aria-label="Reject changes"
-              onClick={handleReject}
-            >
-              {rejectIcon && '✗'}
-              Reject All {getShortcutText('reject')}
-            </button>
-          </div>
-        </div>
-      </div>
+	// Add event listeners on mount and remove on unmount
+	useEffect(() => {
+		const handler = (e: KeyboardEvent) => handleKeyDown(e);
+		window.addEventListener('keydown', handler, true);
+		return () => {
+			window.removeEventListener('keydown', handler, true);
+		}
+	}, [handleAccept, handleReject]) // Dependencies for the effect
 
-      <div className="view-content">
-        <div className="markdown-source-view cm-s-obsidian mod-cm6 node-insert-event is-readable-line-width is-live-preview is-folding show-properties">
-          <div className="cm-editor">
-            <div className="cm-scroller">
-              <div className="cm-sizer">
-                <div className="infio-inline-title">
-                  {state?.file
-                    ? state.file.replace(/\.[^/.]+$/, '')
-                    : ''}
-                </div>
+	return (
+		<div id="infio-apply-view">
+			<div className="view-header">
+				<div className="view-header-left">
+					<div className="view-header-nav-buttons"></div>
+				</div>
+				<div className="view-header-title-container mod-at-start">
+					<div className="view-header-title">
+						{t('applyView.applyingFile').replace('{{file}}', state?.file ?? '')}
+					</div>
+					<div className="view-actions">
+						<button
+							className="clickable-icon view-action infio-approve-button"
+							aria-label={t('applyView.acceptChanges')}
+							onClick={handleAccept}
+						>
+							{acceptIcon && '✓'}
+							{t('applyView.acceptAll').replace('{{shortcut}}', getShortcutText('accept'))}
+						</button>
+						<button
+							className="clickable-icon view-action infio-reject-button"
+							aria-label={t('applyView.rejectChanges')}
+							onClick={handleReject}
+						>
+							{rejectIcon && '✗'}
+							{t('applyView.rejectAll').replace('{{shortcut}}', getShortcutText('reject'))}
+						</button>
+					</div>
+				</div>
+			</div>
 
-                {diff.map((part, index) => {
-                  // Determine line display status based on diffStatus
-                  const status = diffStatus[index]
-                  const isHidden = 
-                    (part.added && status === 'excluded') || 
-                    (part.removed && status === 'accepted')
-                  
-                  if (isHidden) return null
+			<div className="view-content">
+				<div className="markdown-source-view cm-s-obsidian mod-cm6 node-insert-event is-readable-line-width is-live-preview is-folding show-properties">
+					<div className="cm-editor">
+						<div className="cm-scroller">
+							<div className="cm-sizer">
+								<div className="infio-inline-title">
+									{state?.file
+										? state.file.replace(/\.[^/.]+$/, '')
+										: ''}
+								</div>
 
-                  return (
-                    <div
-                      key={index}
-                      className={`infio-diff-line ${part.added ? 'added' : part.removed ? 'removed' : ''} ${status !== 'active' ? status : ''}`}
-                    >
-                      <div className="infio-diff-content-wrapper">
-                        <ContentEditable
-                          html={editedContents[index]}
-                          onChange={(evt) => handleContentChange(index, evt)}
-                          className="infio-editable-content"
-                        />
-                        {(part.added || part.removed) && status === 'active' && (
-                          <div className="infio-diff-line-actions">
-                            <button
-                              aria-label="Accept line"
-                              onClick={() => acceptDiffLine(index)}
-                              className="infio-accept"
-                            >
-                              {acceptIcon && '✓'}
-                            </button>
-                            <button
-                              aria-label="Exclude line"
-                              onClick={() => excludeDiffLine(index)}
-                              className="infio-exclude"
-                            >
-                              {excludeIcon && '✗'}
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <style>{`
+								{diff.map((part, index) => {
+									// Determine line display status based on diffStatus
+									const status = diffStatus[index]
+									const isHidden =
+										(part.added && status === 'excluded') ||
+										(part.removed && status === 'accepted')
+
+									if (isHidden) return null
+
+									return (
+										<div
+											key={index}
+											className={`infio-diff-line ${part.added ? 'added' : part.removed ? 'removed' : ''} ${status !== 'active' ? status : ''}`}
+										>
+											<div className="infio-diff-content-wrapper">
+												<ContentEditable
+													html={editedContents[index]}
+													onChange={(evt) => handleContentChange(index, evt)}
+													className="infio-editable-content"
+												/>
+												{(part.added || part.removed) && status === 'active' && (
+													<div className="infio-diff-line-actions">
+														<button
+															aria-label={t('applyView.acceptLine')}
+															onClick={() => acceptDiffLine(index)}
+															className="infio-accept"
+														>
+															{acceptIcon && '✓'}
+														</button>
+														<button
+															aria-label={t('applyView.excludeLine')}
+															onClick={() => excludeDiffLine(index)}
+															className="infio-exclude"
+														>
+															{excludeIcon && '✗'}
+														</button>
+													</div>
+												)}
+											</div>
+										</div>
+									)
+								})}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<style>{`
         .infio-diff-content-wrapper {
           position: relative;
           width: 100%;
@@ -275,6 +273,6 @@ export default function ApplyViewRoot({
           opacity: 0.7;
         }
       `}</style>
-    </div>
-  )
+		</div>
+	)
 }

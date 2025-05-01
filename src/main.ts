@@ -25,13 +25,13 @@ import RenderSuggestionPlugin from "./render-plugin/render-surgestion-plugin"
 import { InlineSuggestionState } from "./render-plugin/states"
 import { InfioSettingTab } from './settings/SettingTab'
 import StatusBar from "./status-bar"
+import { t } from './lang/helpers'
 import {
 	InfioSettings,
 	parseInfioSettings,
 } from './types/settings'
 import { getMentionableBlockData } from './utils/obsidian'
 import './utils/path'
-
 
 export default class InfioPlugin extends Plugin {
 	private metadataCacheUnloadFn: (() => void) | null = null
@@ -56,7 +56,7 @@ export default class InfioPlugin extends Plugin {
 		this.addSettingTab(this.settingTab)
 
 		// add icon to ribbon
-		this.addRibbonIcon('wand-sparkles', 'Open infio copilot', () =>
+		this.addRibbonIcon('wand-sparkles', t('main.openInfioCopilot'), () =>
 			this.openChatView(),
 		)
 
@@ -163,13 +163,13 @@ export default class InfioPlugin extends Plugin {
 		/// *** Commands ***
 		this.addCommand({
 			id: 'open-new-chat',
-			name: 'Open new chat',
+			name: t('main.openNewChat'),
 			callback: () => this.openChatView(true),
 		})
 
 		this.addCommand({
 			id: 'add-selection-to-chat',
-			name: 'Add selection to chat',
+			name: t('main.addSelectionToChat'),
 			editorCallback: (editor: Editor, view: MarkdownView) => {
 				this.addSelectionToChat(editor, view)
 			},
@@ -183,9 +183,9 @@ export default class InfioPlugin extends Plugin {
 
 		this.addCommand({
 			id: 'rebuild-vault-index',
-			name: 'Rebuild entire vault index',
+			name: t('main.rebuildVaultIndex'),
 			callback: async () => {
-				const notice = new Notice('Rebuilding vault index...', 0)
+				const notice = new Notice(t('notifications.rebuildingIndex'), 0)
 				try {
 					const ragEngine = await this.getRAGEngine()
 					await ragEngine.updateVaultIndex(
@@ -195,15 +195,15 @@ export default class InfioPlugin extends Plugin {
 								const { completedChunks, totalChunks } =
 									queryProgress.indexProgress
 								notice.setMessage(
-									`Indexing chunks: ${completedChunks} / ${totalChunks}`,
+									t('notifications.indexingChunks', { completedChunks, totalChunks }),
 								)
 							}
 						},
 					)
-					notice.setMessage('Rebuilding vault index complete')
+					notice.setMessage(t('notifications.rebuildComplete'))
 				} catch (error) {
 					console.error(error)
-					notice.setMessage('Rebuilding vault index failed')
+					notice.setMessage(t('notifications.rebuildFailed'))
 				} finally {
 					setTimeout(() => {
 						notice.hide()
@@ -214,9 +214,9 @@ export default class InfioPlugin extends Plugin {
 
 		this.addCommand({
 			id: 'update-vault-index',
-			name: 'Update index for modified files',
+			name: t('main.updateVaultIndex'),
 			callback: async () => {
-				const notice = new Notice('Updating vault index...', 0)
+				const notice = new Notice(t('notifications.updatingIndex'), 0)
 				try {
 					const ragEngine = await this.getRAGEngine()
 					await ragEngine.updateVaultIndex(
@@ -226,15 +226,15 @@ export default class InfioPlugin extends Plugin {
 								const { completedChunks, totalChunks } =
 									queryProgress.indexProgress
 								notice.setMessage(
-									`Indexing chunks: ${completedChunks} / ${totalChunks}`,
+									t('notifications.indexingChunks', { completedChunks, totalChunks }),
 								)
 							}
 						},
 					)
-					notice.setMessage('Vault index updated')
+					notice.setMessage(t('notifications.updateComplete'))
 				} catch (error) {
 					console.error(error)
-					notice.setMessage('Vault index update failed')
+					notice.setMessage(t('notifications.updateFailed'))
 				} finally {
 					setTimeout(() => {
 						notice.hide()
@@ -245,7 +245,7 @@ export default class InfioPlugin extends Plugin {
 
 		this.addCommand({
 			id: 'autocomplete-accept',
-			name: 'Autocomplete accept',
+			name: t('main.autocompleteAccept'),
 			editorCheckCallback: (
 				checking: boolean,
 				editor: Editor,
@@ -265,7 +265,7 @@ export default class InfioPlugin extends Plugin {
 
 		this.addCommand({
 			id: 'autocomplete-predict',
-			name: 'Autocomplete predict',
+			name: t('main.autocompletePredict'),
 			editorCheckCallback: (
 				checking: boolean,
 				editor: Editor,
@@ -288,7 +288,7 @@ export default class InfioPlugin extends Plugin {
 
 		this.addCommand({
 			id: "autocomplete-toggle",
-			name: "Autocomplete toggle",
+			name: t('main.autocompleteToggle'),
 			callback: () => {
 				const newValue = !this.settings.autocompleteEnabled;
 				this.setSettings({
@@ -300,7 +300,7 @@ export default class InfioPlugin extends Plugin {
 
 		this.addCommand({
 			id: "autocomplete-enable",
-			name: "Autocomplete enable",
+			name: t('main.autocompleteEnable'),
 			checkCallback: (checking) => {
 				if (checking) {
 					return !this.settings.autocompleteEnabled;
@@ -316,7 +316,7 @@ export default class InfioPlugin extends Plugin {
 
 		this.addCommand({
 			id: "autocomplete-disable",
-			name: "Autocomplete disable",
+			name: t('main.autocompleteDisable'),
 			checkCallback: (checking) => {
 				if (checking) {
 					return this.settings.autocompleteEnabled;
@@ -332,7 +332,7 @@ export default class InfioPlugin extends Plugin {
 
 		this.addCommand({
 			id: "ai-inline-edit",
-			name: "Inline edit",
+			name: t('main.inlineEditCommand'),
 			// hotkeys: [
 			// 	{
 			// 		modifiers: ['Mod', 'Shift'],
@@ -342,7 +342,7 @@ export default class InfioPlugin extends Plugin {
 			editorCallback: (editor: Editor) => {
 				const selection = editor.getSelection();
 				if (!selection) {
-					new Notice("Please select some text first");
+					new Notice(t('notifications.selectTextFirst'));
 					return;
 				}
 				// Get the selection start position
@@ -495,7 +495,7 @@ export default class InfioPlugin extends Plugin {
 		} catch (error) {
 			console.error('Failed to migrate to JSON storage:', error)
 			new Notice(
-				'Failed to migrate to JSON storage. Please check the console for details.',
+				t('notifications.migrationFailed'),
 			)
 		}
 	}
@@ -505,7 +505,7 @@ export default class InfioPlugin extends Plugin {
 		if (leaves.length === 0 || !(leaves[0].view instanceof ChatView)) {
 			return
 		}
-		new Notice('Reloading "infio" due to migration', 1000)
+		new Notice(t('notifications.reloadingInfio'), 1000)
 		leaves[0].detach()
 		await this.activateChatView()
 	}
