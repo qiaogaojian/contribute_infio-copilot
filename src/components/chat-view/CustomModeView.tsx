@@ -215,7 +215,7 @@ const CustomModeView = () => {
 			{/* Mode name */}
 			<div className="infio-custom-modes-section">
 				<div className="infio-section-header">
-					<h3>Mode Name</h3>
+					<h3>{t('prompt.modeName')}</h3>
 					{!isBuiltinMode && !isNewMode && (
 						<button className="infio-section-btn" onClick={deleteMode}>
 							<Trash2 size={16} />
@@ -224,10 +224,10 @@ const CustomModeView = () => {
 				</div>
 				{
 					isBuiltinMode ? (
-						<p className="infio-section-subtitle">Built-in mode names cannot be modified</p>
+						<p className="infio-section-subtitle">{t('prompt.builtinModeNameWarning')}</p>
 					) : (
 						<p className="infio-section-subtitle">
-							Mode names must only contain letters, numbers, and hyphens
+							{t('prompt.modeNameRequirements')}
 						</p>
 					)
 				}
@@ -241,7 +241,7 @@ const CustomModeView = () => {
 						setModeName(e.target.value)
 					}}
 					className="infio-custom-modes-input"
-					placeholder="Enter mode name..."
+					placeholder={t('prompt.modeNamePlaceholder')}
 					disabled={isBuiltinMode}
 				/>
 			</div>
@@ -249,14 +249,14 @@ const CustomModeView = () => {
 			{/* Role definition */}
 			<div className="infio-custom-modes-section">
 				<div className="infio-section-header">
-					<h3>Role Definition</h3>
+					<h3>{t('prompt.roleDefinition')}</h3>
 					{isBuiltinMode && (
 						<button className="infio-section-btn">
 							<Undo2 size={16} />
 						</button>
 					)}
 				</div>
-				<p className="infio-section-subtitle">Set professional domain and response style</p>
+				<p className="infio-section-subtitle">{t('prompt.roleDefinitionDescription')}</p>
 				<textarea
 					className="infio-custom-textarea"
 					value={roleDefinition}
@@ -266,14 +266,14 @@ const CustomModeView = () => {
 						}
 						setRoleDefinition(e.target.value)
 					}}
-					placeholder="Enter role definition..."
+					placeholder={t('prompt.roleDefinitionPlaceholder')}
 				/>
 			</div>
 
 			{/* Available features */}
 			<div className="infio-custom-modes-section">
 				<div className="infio-section-header">
-					<h3>Available Features</h3>
+					<h3>{t('prompt.availableFeatures')}</h3>
 					{/* {!isBuiltinMode && (
 					<button className="infio-section-btn">
 						<Undo2 size={16} />
@@ -282,7 +282,7 @@ const CustomModeView = () => {
 				</div>
 				{
 					isBuiltinMode && (
-						<p className="infio-section-subtitle">Available features of built-in modes cannot be modified</p>
+						<p className="infio-section-subtitle">{t('prompt.builtinFeaturesWarning')}</p>
 					)
 				}
 				<div className="infio-tools-list">
@@ -294,7 +294,7 @@ const CustomModeView = () => {
 								checked={selectedTools.includes('read')}
 								onChange={() => handleToolChange('read')}
 							/>
-							Read Files
+							{t('prompt.readFiles')}
 						</label>
 					</div>
 					<div className="infio-tool-item">
@@ -305,7 +305,7 @@ const CustomModeView = () => {
 								checked={selectedTools.includes('edit')}
 								onChange={() => handleToolChange('edit')}
 							/>
-							Edit Files
+							{t('prompt.editFiles')}
 						</label>
 					</div>
 					<div className="infio-tool-item">
@@ -316,7 +316,7 @@ const CustomModeView = () => {
 								checked={selectedTools.includes('research')}
 								onChange={() => handleToolChange('research')}
 							/>
-							Web Search
+							{t('prompt.webSearch')}
 						</label>
 					</div>
 				</div>
@@ -325,14 +325,14 @@ const CustomModeView = () => {
 			{/* Mode-specific rules */}
 			<div className="infio-custom-modes-section">
 				<div className="infio-section-header">
-					<h3>Mode-Specific Rules (Optional)</h3>
+					<h3>{t('prompt.modeSpecificRules')}</h3>
 					{isBuiltinMode && (
 						<button className="infio-section-btn">
 							<Undo2 size={16} />
 						</button>
 					)}
 				</div>
-				<p className="infio-section-subtitle">Mode-specific rules</p>
+				<p className="infio-section-subtitle">{t('prompt.modeSpecificRulesDescription')}</p>
 				<textarea
 					className="infio-custom-textarea"
 					value={customInstructions}
@@ -342,10 +342,10 @@ const CustomModeView = () => {
 						}
 						setCustomInstructions(e.target.value)
 					}}
-					placeholder="Enter mode custom instructions..."
+					placeholder={t('prompt.modeSpecificRulesPlaceholder')}
 				/>
 				<p className="infio-section-footer">
-					Support reading configuration from<a href="#" className="infio-link" onClick={() => openOrCreateMarkdownFile(app, `_infio_prompts/${modeName}/rules.md`, 0)}>_infio_prompts/{modeName}/rules</a> file
+					{t('prompt.supportReadingConfig')}<a href="#" className="infio-link" onClick={() => openOrCreateMarkdownFile(app, `_infio_prompts/${modeName}/rules.md`, 0)}>_infio_prompts/{modeName}/rules</a> {t('prompt.file')}
 				</p>
 			</div>
 
@@ -357,15 +357,15 @@ const CustomModeView = () => {
 				>
 					<div className="infio-section-header-title-container">
 						{isAdvancedCollapsed ? <ChevronRight size={16} /> : <ChevronDown size={16} />}
-						<h6 className="infio-section-header-title">Override System Prompt</h6>
+						<h6 className="infio-section-header-title">{t('prompt.overrideSystemPrompt')}</h6>
 					</div>
 				</div>
 				{!isAdvancedCollapsed && (
 					<>
 						<p className="infio-section-subtitle">
-							You can completely replace the system prompt for this mode (excluding role definition and custom instructions) by creating a file
+							{t('prompt.overrideDescription')}
 							<a href="#" className="infio-link" onClick={() => openOrCreateMarkdownFile(app, `_infio_prompts/${modeName}/system_prompt.md`, 0)}>_infio_prompts/{modeName}/system_prompt</a>
-							. This is a very advanced feature that will override all built-in prompts including tool usage, please use with caution						<button
+							{t('prompt.overrideWarning')}						<button
 								className="infio-preview-btn"
 								onClick={async () => {
 									let filesSearchMethod = settings.filesSearchMethod
@@ -396,7 +396,7 @@ const CustomModeView = () => {
 								}
 								}
 							>
-								Preview System Prompt
+								{t('prompt.previewSystemPrompt')}
 							</button>
 						</p></>
 				)}
@@ -414,7 +414,7 @@ const CustomModeView = () => {
 						}
 					}}
 				>
-					Save
+					{t('prompt.save')}
 				</button>
 			</div>
 
