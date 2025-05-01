@@ -9,6 +9,7 @@ import {
 import * as React from "react";
 import { createRoot } from "react-dom/client";
 
+import { t } from '../lang/helpers';
 import InfioPlugin from '../main';
 import { InfioSettings } from '../types/settings';
 import { findFilesMatchingPatterns } from '../utils/glob-utils';
@@ -61,10 +62,10 @@ export class InfioSettingTab extends PluginSettingTab {
 	}
 
 	private renderModelParametersSection(containerEl: HTMLElement): void {
-		new Setting(containerEl).setHeading().setName('Model parameters');
+		new Setting(containerEl).setHeading().setName(t('settings.ModelParameters.title'));
 		new Setting(containerEl)
-			.setName('Temperature')
-			.setDesc('This parameter affects randomness in the sampling. Lower values result in more repetitive and deterministic responses. Higher temperatures will result in more unexpected or creative responses. Default: 0.0, please don\'t change this if you don\'t know what you are doing.')
+			.setName(t('settings.ModelParameters.temperature'))
+			.setDesc(t('settings.ModelParameters.temperatureDescription'))
 			.addText((text) => {
 				text
 					.setValue(String(this.plugin.settings.modelOptions.temperature))
@@ -79,8 +80,8 @@ export class InfioSettingTab extends PluginSettingTab {
 					})
 			});
 		new Setting(containerEl)
-			.setName('TopP')
-			.setDesc("Like the temperature parameter, the Top P parameter affects the randomness in sampling. Lowering the value will limit the model's token selection to likelier tokens while increasing the value expands the model's token selection with lower likelihood tokens. Default: 1, please don't change this if you don't know what you are doing.")
+			.setName(t('settings.ModelParameters.topP'))
+			.setDesc(t('settings.ModelParameters.topPDescription'))
 			.addText((text) => {
 				text
 					.setValue(String(this.plugin.settings.modelOptions.top_p))
@@ -95,8 +96,8 @@ export class InfioSettingTab extends PluginSettingTab {
 					})
 			});
 		new Setting(containerEl)
-			.setName('Frequency penalty')
-			.setDesc('This parameter reduces the chance of repeating a token proportionally based on how often it has appeared in the text so far. This decreases the likelihood of repeating the exact same text in a response. Default: 0.25')
+			.setName(t('settings.ModelParameters.frequencyPenalty'))
+			.setDesc(t('settings.ModelParameters.frequencyPenaltyDescription'))
 			.addText((text) => {
 				text
 					.setValue(String(this.plugin.settings.modelOptions.frequency_penalty))
@@ -111,8 +112,8 @@ export class InfioSettingTab extends PluginSettingTab {
 					})
 			});
 		new Setting(containerEl)
-			.setName('Presence penalty')
-			.setDesc("This parameter reduces the chance of repeating any token that has appeared in the text so far. This increases the likelihood of introducing new topics in a response. Default: 2")
+			.setName(t('settings.ModelParameters.presencePenalty'))
+			.setDesc(t('settings.ModelParameters.presencePenaltyDescription'))
 			.addText((text) => {
 				text
 					.setValue(String(this.plugin.settings.modelOptions.presence_penalty))
@@ -127,8 +128,8 @@ export class InfioSettingTab extends PluginSettingTab {
 					})
 			});
 		new Setting(containerEl)
-			.setName('Max tokens')
-			.setDesc("This parameter changes the maximum number of tokens the model is allowed to generate. Default: 4096")
+			.setName(t('settings.ModelParameters.maxTokens'))
+			.setDesc(t('settings.ModelParameters.maxTokensDescription'))
 			.addText((text) => {
 				text
 					.setValue(String(this.plugin.settings.modelOptions.max_tokens))
@@ -145,15 +146,15 @@ export class InfioSettingTab extends PluginSettingTab {
 	}
 
 	private renderFilesSearchSection(containerEl: HTMLElement): void {
-		new Setting(containerEl).setHeading().setName('File search')
+		new Setting(containerEl).setHeading().setName(t('settings.FilesSearch.title'))
 		new Setting(containerEl)
-			.setName('Files search method')
-			.setDesc('Choose the method to search for files.')
+			.setName(t('settings.FilesSearch.method'))
+			.setDesc(t('settings.FilesSearch.methodDescription'))
 			.addDropdown((dropdown) =>
 				dropdown
-					.addOption('auto', 'Auto')
-					.addOption('semantic', 'Semantic')
-					.addOption('regex', 'Regex')
+					.addOption('auto', t('settings.FilesSearch.auto'))
+					.addOption('semantic', t('settings.FilesSearch.semantic'))
+					.addOption('regex', t('settings.FilesSearch.regex'))
 					.setValue(this.plugin.settings.filesSearchMethod)
 					.onChange(async (value) => {
 						await this.plugin.setSettings({
@@ -163,8 +164,8 @@ export class InfioSettingTab extends PluginSettingTab {
 					}),
 			)
 		new Setting(containerEl)
-			.setName('ripgrep path')
-			.setDesc('Path to the ripgrep binary. When using regex search, this is required.')
+			.setName(t('settings.FilesSearch.ripgrepPath'))
+			.setDesc(t('settings.FilesSearch.ripgrepPathDescription'))
 			.addText((text) =>
 				text
 					.setPlaceholder('/opt/homebrew/bin/')
@@ -179,15 +180,15 @@ export class InfioSettingTab extends PluginSettingTab {
 	}
 
 	private renderChatBehaviorSection(containerEl: HTMLElement): void {
-		new Setting(containerEl).setHeading().setName('Chat behavior');
+		new Setting(containerEl).setHeading().setName(t('settings.ChatBehavior.title'));
 		new Setting(containerEl)
-			.setName('Default mention for new chat')
-			.setDesc('Choose the default file mention behavior when starting a new chat.')
+			.setName(t('settings.ChatBehavior.defaultMention'))
+			.setDesc(t('settings.ChatBehavior.defaultMentionDescription'))
 			.addDropdown((dropdown) =>
 				dropdown
-					.addOption('none', 'None')
-					.addOption('current-file', 'Current File')
-					.addOption('vault', 'Vault')
+					.addOption('none', t('settings.ChatBehavior.none'))
+					.addOption('current-file', t('settings.ChatBehavior.currentFile'))
+					.addOption('vault', t('settings.ChatBehavior.vault'))
 					.setValue(this.plugin.settings.defaultMention || 'none')
 					.onChange(async (value) => {
 						await this.plugin.setSettings({
@@ -207,12 +208,12 @@ export class InfioSettingTab extends PluginSettingTab {
 	renderDeepResearchSection(containerEl: HTMLElement): void {
 		new Setting(containerEl)
 			.setHeading()
-			.setName('Web search')
+			.setName(t('settings.WebSearch.title'))
 
 		new Setting(containerEl)
-			.setName('Serper API key')
+			.setName(t('settings.WebSearch.serperApiKey'))
 			.setDesc(createFragment(el => {
-				el.appendText('API key for web search functionality. Serper allows the plugin to search the internet for information, similar to a search engine. Get your key from ');
+				el.appendText(t('settings.WebSearch.serperApiKeyDescription') + ' ');
 				const a = el.createEl('a', {
 					href: 'https://serpapi.com/manage-api-key',
 					text: 'https://serpapi.com/manage-api-key'
@@ -237,13 +238,13 @@ export class InfioSettingTab extends PluginSettingTab {
 			})
 
 		new Setting(containerEl)
-			.setName('Serper search engine')
-			.setDesc('Choose the search engine to use for web search.')
+			.setName(t('settings.WebSearch.searchEngine'))
+			.setDesc(t('settings.WebSearch.searchEngineDescription'))
 			.addDropdown((dropdown) =>
 				dropdown
-					.addOption('google', 'Google')
-					.addOption('duckduckgo', 'DuckDuckGo')
-					.addOption('bing', 'Bing')
+					.addOption('google', t('settings.WebSearch.google'))
+					.addOption('duckduckgo', t('settings.WebSearch.duckDuckGo'))
+					.addOption('bing', t('settings.WebSearch.bing'))
 					.setValue(this.plugin.settings.serperSearchEngine)
 					.onChange(async (value) => {
 						await this.plugin.setSettings({
@@ -255,9 +256,9 @@ export class InfioSettingTab extends PluginSettingTab {
 			)
 
 		new Setting(containerEl)
-			.setName('Jina API key (Optional)')
+			.setName(t('settings.WebSearch.jinaApiKey'))
 			.setDesc(createFragment(el => {
-				el.appendText('API key for parsing web pages into markdown format. If not provided, local parsing will be used. Get your key from ');
+				el.appendText(t('settings.WebSearch.jinaApiKeyDescription') + ' ');
 				const a = el.createEl('a', {
 					href: 'https://jina.ai/api-key',
 					text: 'https://jina.ai/api-key'
@@ -283,14 +284,14 @@ export class InfioSettingTab extends PluginSettingTab {
 	}
 
 	renderRAGSection(containerEl: HTMLElement): void {
-		new Setting(containerEl).setHeading().setName('RAG')
+		new Setting(containerEl).setHeading().setName(t('settings.RAG.title'))
 		new Setting(containerEl)
-			.setName('Include patterns')
+			.setName(t('settings.RAG.includePatterns'))
 			.setDesc(
-				'If any patterns are specified, ONLY files matching at least one pattern will be included in indexing. One pattern per line. Uses glob patterns (e.g., "notes/*", "*.md"). Leave empty to include all files not excluded by exclude patterns. After changing this, use the command "Rebuild entire vault index" to apply changes.',
+				t('settings.RAG.includePatternsDescription'),
 			)
 			.addButton((button) =>
-				button.setButtonText('Test patterns').onClick(async () => {
+				button.setButtonText(t('settings.RAG.testPatterns')).onClick(async () => {
 					const patterns = this.plugin.settings.ragOptions.includePatterns
 					const includedFiles = await findFilesMatchingPatterns(
 						patterns,
@@ -320,12 +321,12 @@ export class InfioSettingTab extends PluginSettingTab {
 			)
 
 		new Setting(containerEl)
-			.setName('Exclude patterns')
+			.setName(t('settings.RAG.excludePatterns'))
 			.setDesc(
-				'Files matching ANY of these patterns will be excluded from indexing. One pattern per line. Uses glob patterns (e.g., "private/*", "*.tmp"). Leave empty to exclude nothing. After changing this, use the command "Rebuild entire vault index" to apply changes.',
+				t('settings.RAG.excludePatternsDescription'),
 			)
 			.addButton((button) =>
-				button.setButtonText('Test patterns').onClick(async () => {
+				button.setButtonText(t('settings.RAG.testPatterns')).onClick(async () => {
 					const patterns = this.plugin.settings.ragOptions.excludePatterns
 					const excludedFiles = await findFilesMatchingPatterns(
 						patterns,
@@ -355,9 +356,9 @@ export class InfioSettingTab extends PluginSettingTab {
 			)
 
 		new Setting(containerEl)
-			.setName('Chunk size')
+			.setName(t('settings.RAG.chunkSize'))
 			.setDesc(
-				'Set the chunk size for text splitting. After changing this, please re-index the vault using the "Rebuild entire vault index" command.',
+				t('settings.RAG.chunkSizeDescription'),
 			)
 			.addText((text) =>
 				text
@@ -378,9 +379,9 @@ export class InfioSettingTab extends PluginSettingTab {
 			)
 
 		new Setting(containerEl)
-			.setName('Threshold tokens')
+			.setName(t('settings.RAG.thresholdTokens'))
 			.setDesc(
-				'Maximum number of tokens before switching to RAG. If the total tokens from mentioned files exceed this, RAG will be used instead of including all file contents.',
+				t('settings.RAG.thresholdTokensDescription'),
 			)
 			.addText((text) =>
 				text
@@ -401,9 +402,9 @@ export class InfioSettingTab extends PluginSettingTab {
 			)
 
 		new Setting(containerEl)
-			.setName('Minimum similarity')
+			.setName(t('settings.RAG.minSimilarity'))
 			.setDesc(
-				'Minimum similarity score for RAG results. Higher values return more relevant but potentially fewer results.',
+				t('settings.RAG.minSimilarityDescription'),
 			)
 			.addText((text) =>
 				text
@@ -424,9 +425,9 @@ export class InfioSettingTab extends PluginSettingTab {
 			)
 
 		new Setting(containerEl)
-			.setName('Limit')
+			.setName(t('settings.RAG.limit'))
 			.setDesc(
-				'Maximum number of RAG results to include in the prompt. Higher values provide more context but increase token usage.',
+				t('settings.RAG.limitDescription'),
 			)
 			.addText((text) =>
 				text
@@ -471,7 +472,7 @@ export class InfioSettingTab extends PluginSettingTab {
 		const errors = new Map();
 
 		// AutoComplete base
-		new Setting(containerEl).setName('AutoComplete').setHeading();
+		new Setting(containerEl).setName(t('settings.AutoComplete.title')).setHeading();
 		this.renderComponent(containerEl,
 			<BasicAutoCompleteSettings
 				settings={this.plugin.settings}
@@ -480,7 +481,7 @@ export class InfioSettingTab extends PluginSettingTab {
 		);
 
 		// Preprocessing
-		new Setting(containerEl).setName('Preprocessing').setHeading();
+		new Setting(containerEl).setName(t('settings.AutoComplete.preprocessing.title')).setHeading();
 		this.renderComponent(containerEl,
 			<PreprocessingSettings
 				settings={this.plugin.settings}
@@ -490,7 +491,7 @@ export class InfioSettingTab extends PluginSettingTab {
 		);
 
 		// Postprocessing
-		new Setting(containerEl).setName('Postprocessing').setHeading();
+		new Setting(containerEl).setName(t('settings.AutoComplete.postprocessing.title')).setHeading();
 		this.renderComponent(containerEl,
 			<PostprocessingSettings
 				settings={this.plugin.settings}
@@ -499,7 +500,7 @@ export class InfioSettingTab extends PluginSettingTab {
 		);
 
 		// Trigger
-		new Setting(containerEl).setName('Trigger').setHeading();
+		new Setting(containerEl).setName(t('settings.AutoComplete.trigger.title')).setHeading();
 		this.renderComponent(containerEl,
 			<TriggerSettingsSection
 				settings={this.plugin.settings}
@@ -509,7 +510,7 @@ export class InfioSettingTab extends PluginSettingTab {
 		);
 
 		// Privacy
-		new Setting(containerEl).setName('Privacy').setHeading();
+		new Setting(containerEl).setName(t('settings.AutoComplete.privacy.title')).setHeading();
 		this.renderComponent(containerEl,
 			<PrivacySettings
 				settings={this.plugin.settings}
@@ -519,20 +520,20 @@ export class InfioSettingTab extends PluginSettingTab {
 		);
 
 		// Danger zone
-		new Setting(containerEl).setName('Danger zone').setHeading();
+		new Setting(containerEl).setName(t('settings.AutoComplete.dangerZone.title')).setHeading();
 		this.renderComponent(containerEl,
 			<DangerZoneSettings
 				settings={this.plugin.settings}
 				updateSettings={updateSettings}
 				onReset={() => {
-					new Notice("Factory reset complete.");
+					new Notice(t('settings.AutoComplete.dangerZone.resetComplete'));
 				}}
 			/>
 		);
 
 		// Advanced
 		if (this.plugin.settings.advancedMode) {
-			new Setting(containerEl).setName('Advanced').setHeading();
+			new Setting(containerEl).setName(t('settings.AutoComplete.advanced.title')).setHeading();
 			this.renderComponent(containerEl,
 				<AdvancedSettings
 					settings={this.plugin.settings}
@@ -565,7 +566,7 @@ class ExcludedFilesModal extends Modal {
 		this.titleEl.setText(`Excluded Files (${this.files.length})`)
 
 		if (this.files.length === 0) {
-			contentEl.createEl('p', { text: 'No files match the exclusion patterns' })
+			contentEl.createEl('p', { text: t('settings.RAG.noExcludedFiles') })
 			return
 		}
 
@@ -599,14 +600,14 @@ class IncludedFilesModal extends Modal {
 
 		if (this.patterns.length === 0) {
 			contentEl.createEl('p', {
-				text: 'No inclusion patterns specified - all files will be included (except those matching exclusion patterns)',
+				text: t('settings.RAG.noInclusionPatterns'),
 			})
 			return
 		}
 
 		if (this.files.length === 0) {
 			contentEl.createEl('p', {
-				text: 'No files match the inclusion patterns',
+				text: t('settings.RAG.noMatchingFiles'),
 			})
 			return
 		}

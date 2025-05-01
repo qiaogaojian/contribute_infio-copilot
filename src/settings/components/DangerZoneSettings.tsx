@@ -1,5 +1,6 @@
 import * as React from "react";
 
+import { t } from '../../lang/helpers';
 import { InfioSettings } from '../../types/settings';
 
 import CheckBoxSettingItem from "./CheckBoxSettingItem";
@@ -15,22 +16,22 @@ export default function DangerZoneSettings({ settings, updateSettings, onReset }
     return (
         <>
             <SettingsItem
-                name={"Factory reset"}
+                name={t("settings.AutoComplete.dangerZone.factoryReset")}
                 description={
-                    "Messed-up the settings? No worries, press this button! After that, the plugin will go back to the default settings. The URL and API key will remain unchanged."
+                    t("settings.AutoComplete.dangerZone.factoryResetDescription")
                 }
             >
                 <button
                     aria-label="Reset to default settings"
                     onClick={onReset}
                 >
-                    Reset
+                    {t("settings.AutoComplete.dangerZone.reset")}
                 </button>
             </SettingsItem>
             <CheckBoxSettingItem
-                name={"Advanced mode"}
+                name={t("settings.AutoComplete.dangerZone.advancedMode")}
                 description={
-                    "If you are familiar with prompt engineering, you can enable this setting to view the prompt generation and a few shot example settings. Turn off this button. It will not reset your changes; use the factory reset button for that."
+                    t("settings.AutoComplete.dangerZone.advancedModeDescription")
                 }
                 enabled={settings.advancedMode}
                 setEnabled={(value) => updateSettings({ advancedMode: value })}

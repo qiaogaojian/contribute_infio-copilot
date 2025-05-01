@@ -1,5 +1,6 @@
 import * as React from "react";
 
+import { t } from '../../lang/helpers';
 import { InfioSettings } from '../../types/settings';
 import {
 	MAX_MAX_CHAR_LIMIT,
@@ -19,9 +20,9 @@ export default function PreprocessingSettings({ settings, updateSettings, errors
     return (
         <>
             <CheckBoxSettingItem
-                name={"Don't include Dataview"}
+                name={t("settings.AutoComplete.preprocessing.excludeDataview")}
                 description={
-                    "Dataview(js) blocks can be quite long while not providing much value to the AI. If this setting is enabled, data view blocks will be removed promptly to reduce the number of tokens. This could save you some money in the long run."
+                    t("settings.AutoComplete.preprocessing.excludeDataviewDescription")
                 }
                 enabled={settings.dontIncludeDataviews}
                 setEnabled={(value) =>
@@ -29,9 +30,9 @@ export default function PreprocessingSettings({ settings, updateSettings, errors
                 }
             />
             <SliderSettingsItem
-                name={"Maximum prefix length"}
+                name={t("settings.AutoComplete.preprocessing.maxPrefixLength")}
                 description={
-                    "The maximum number of characters that will be included in the prefix. A larger value will increase the context for the completion, but it can also increase the cost or push you over the token limit."
+                    t("settings.AutoComplete.preprocessing.maxPrefixLengthDescription")
                 }
                 value={settings.maxPrefixCharLimit}
                 errorMessage={errors.get("maxPrefixCharLimit")}
@@ -41,12 +42,12 @@ export default function PreprocessingSettings({ settings, updateSettings, errors
                 min={MIN_MAX_CHAR_LIMIT}
                 max={MAX_MAX_CHAR_LIMIT}
                 step={100}
-                suffix={" chars"}
+                suffix={t("settings.AutoComplete.preprocessing.chars")}
             />
             <SliderSettingsItem
-                name={"Maximum suffix length"}
+                name={t("settings.AutoComplete.preprocessing.maxSuffixLength")}
                 description={
-                    "The maximum number of characters that will be included in the suffix. A larger value will increase the context for the completion, but it can also increase the cost or push you over the token limit."
+                    t("settings.AutoComplete.preprocessing.maxSuffixLengthDescription")
                 }
                 value={settings.maxSuffixCharLimit}
                 errorMessage={errors.get("maxSuffixCharLimit")}
@@ -56,7 +57,7 @@ export default function PreprocessingSettings({ settings, updateSettings, errors
                 min={MIN_MAX_CHAR_LIMIT}
                 max={MAX_MAX_CHAR_LIMIT}
                 step={100}
-                suffix={" chars"}
+                suffix={t("settings.AutoComplete.preprocessing.chars")}
             />
         </>
     );

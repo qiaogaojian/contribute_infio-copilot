@@ -1,5 +1,6 @@
 import * as React from "react";
 
+import { t } from '../../lang/helpers';
 import { InfioSettings } from '../../types/settings';
 
 import CheckBoxSettingItem from "./CheckBoxSettingItem";
@@ -13,9 +14,9 @@ export default function PostprocessingSettings({ settings, updateSettings }: Pro
     return (
         <>
             <CheckBoxSettingItem
-                name={"Auto remove duplicate mat block indicators"}
+                name={t("settings.AutoComplete.postprocessing.removeMathBlockIndicators")}
                 description={
-                    "The AI model might eagerly add a math block indicator ($), even though the cursor is already inside a math block. If this setting is enabled, the plugin will automatically remove these duplicate indicators from the completion."
+                    t("settings.AutoComplete.postprocessing.removeMathBlockIndicatorsDescription")
                 }
                 enabled={settings.removeDuplicateMathBlockIndicator}
                 setEnabled={(value) =>
@@ -23,9 +24,9 @@ export default function PostprocessingSettings({ settings, updateSettings }: Pro
                 }
             />
             <CheckBoxSettingItem
-                name={"Auto remove duplicate code block indicators"}
+                name={t("settings.AutoComplete.postprocessing.removeCodeBlockIndicators")}
                 description={
-                    "The AI model might eagerly add a code block indicator (`), even though the cursor is already inside a code block. If this setting is enabled, the plugin will automatically remove these duplicate indicators from the completion."
+                    t("settings.AutoComplete.postprocessing.removeCodeBlockIndicatorsDescription")
                 }
                 enabled={settings.removeDuplicateCodeBlockIndicator}
                 setEnabled={(value) =>

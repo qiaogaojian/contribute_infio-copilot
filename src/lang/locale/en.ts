@@ -177,5 +177,177 @@ export default {
 	},
 	previewView: {
 		close: 'Close',
+	},
+	settings: {
+		// Models Section
+		ApiProvider: {
+			label: 'Api provider:',
+			useCustomBaseUrl: 'Use custom base url',
+			enterApiKey: 'Enter your api key',
+			enterCustomUrl: 'Enter your custom api endpoint url',
+		},
+		Models: {
+			chatModel: 'Chat model:',
+			autocompleteModel: 'Autocomplete model:',
+			embeddingModel: 'Embedding model:',
+		},
+		
+		// Model Parameters Section
+		ModelParameters: {
+			title: 'Model parameters',
+			temperature: 'Temperature',
+			temperatureDescription: 'This parameter affects randomness in the sampling. Lower values result in more repetitive and deterministic responses. Higher temperatures will result in more unexpected or creative responses. Default: 0.0, please don\'t change this if you don\'t know what you are doing.',
+			topP: 'TopP',
+			topPDescription: 'Like the temperature parameter, the Top P parameter affects the randomness in sampling. Lowering the value will limit the model\'s token selection to likelier tokens while increasing the value expands the model\'s token selection with lower likelihood tokens. Default: 1, please don\'t change this if you don\'t know what you are doing.',
+			frequencyPenalty: 'Frequency penalty',
+			frequencyPenaltyDescription: 'This parameter reduces the chance of repeating a token proportionally based on how often it has appeared in the text so far. This decreases the likelihood of repeating the exact same text in a response. Default: 0.25',
+			presencePenalty: 'Presence penalty',
+			presencePenaltyDescription: 'This parameter reduces the chance of repeating any token that has appeared in the text so far. This increases the likelihood of introducing new topics in a response. Default: 2',
+			maxTokens: 'Max tokens',
+			maxTokensDescription: 'This parameter changes the maximum number of tokens the model is allowed to generate. Default: 4096',
+		},
+		
+		// Files Search Section
+		FilesSearch: {
+			title: 'File search',
+			method: 'Files search method',
+			methodDescription: 'Choose the method to search for files.',
+			auto: 'Auto',
+			semantic: 'Semantic',
+			regex: 'Regex',
+			ripgrepPath: 'ripgrep path',
+			ripgrepPathDescription: 'Path to the ripgrep binary. When using regex search, this is required.',
+		},
+		
+		// Chat Behavior Section
+		ChatBehavior: {
+			title: 'Chat behavior',
+			defaultMention: 'Default mention for new chat',
+			defaultMentionDescription: 'Choose the default file mention behavior when starting a new chat.',
+			none: 'None',
+			currentFile: 'Current File',
+			vault: 'Vault',
+		},
+		
+		// Deep Research Section
+		WebSearch: {
+			title: 'Web search',
+			serperApiKey: 'Serper API key',
+			serperApiKeyDescription: 'API key for web search functionality. Serper allows the plugin to search the internet for information, similar to a search engine. Get your key from',
+			searchEngine: 'Serper search engine',
+			searchEngineDescription: 'Choose the search engine to use for web search.',
+			google: 'Google',
+			duckDuckGo: 'DuckDuckGo',
+			bing: 'Bing',
+			jinaApiKey: 'Jina API key (Optional)',
+			jinaApiKeyDescription: 'API key for parsing web pages into markdown format. If not provided, local parsing will be used. Get your key from',
+		},
+		
+		// RAG Section
+		RAG: {
+			title: 'RAG',
+			includePatterns: 'Include patterns',
+			includePatternsDescription: 'If any patterns are specified, ONLY files matching at least one pattern will be included in indexing. One pattern per line. Uses glob patterns (e.g., "notes/*", "*.md"). Leave empty to include all files not excluded by exclude patterns. After changing this, use the command "Rebuild entire vault index" to apply changes.',
+			testPatterns: 'Test patterns',
+			excludePatterns: 'Exclude patterns',
+			excludePatternsDescription: 'Files matching ANY of these patterns will be excluded from indexing. One pattern per line. Uses glob patterns (e.g., "private/*", "*.tmp"). Leave empty to exclude nothing. After changing this, use the command "Rebuild entire vault index" to apply changes.',
+			chunkSize: 'Chunk size',
+			chunkSizeDescription: 'Set the chunk size for text splitting. After changing this, please re-index the vault using the "Rebuild entire vault index" command.',
+			thresholdTokens: 'Threshold tokens',
+			thresholdTokensDescription: 'Maximum number of tokens before switching to RAG. If the total tokens from mentioned files exceed this, RAG will be used instead of including all file contents.',
+			minSimilarity: 'Minimum similarity',
+			minSimilarityDescription: 'Minimum similarity score for RAG results. Higher values return more relevant but potentially fewer results.',
+			limit: 'Limit',
+			limitDescription: 'Maximum number of RAG results to include in the prompt. Higher values provide more context but increase token usage.',
+			includedFiles: 'Included Files',
+			noInclusionPatterns: 'No inclusion patterns specified - all files will be included (except those matching exclusion patterns)',
+			noMatchingFiles: 'No files match the inclusion patterns',
+			excludedFiles: 'Excluded Files',
+			noExcludedFiles: 'No files match the exclusion patterns',
+		},
+		
+		// AutoComplete Section
+		AutoComplete: {
+			// Basic AutoComplete Settings
+			title: 'AutoComplete',
+			enable: 'Enable',
+			enableDescription: 'If disabled, nothing will trigger the extension or can result in an API call.',
+			cacheCompletions: 'Cache completions',
+			cacheCompletionsDescription: 'If disabled, the plugin will not cache the completions. After accepting or rejecting a completion, the plugin will not remember it. This might result in more API calls.',
+			debugMode: 'Debug mode',
+			debugModeDescription: 'If enabled, various debug messages will be logged to the console, such as the complete response from the API, including the chain of thought tokens.',
+			
+			// Preprocessing Settings
+			preprocessing: {
+				title: 'Preprocessing',
+				excludeDataview: 'Don\'t include Dataview',
+				excludeDataviewDescription: 'Dataview(js) blocks can be quite long while not providing much value to the AI. If this setting is enabled, data view blocks will be removed promptly to reduce the number of tokens. This could save you some money in the long run.',
+				maxPrefixLength: 'Maximum prefix length',
+				maxPrefixLengthDescription: 'The maximum number of characters that will be included in the prefix. A larger value will increase the context for the completion, but it can also increase the cost or push you over the token limit.',
+				maxSuffixLength: 'Maximum suffix length',
+				maxSuffixLengthDescription: 'The maximum number of characters that will be included in the suffix. A larger value will increase the context for the completion, but it can also increase the cost or push you over the token limit.',
+				chars: 'chars',
+			},
+			
+			// Postprocessing Settings
+			postprocessing: {
+				title: 'Postprocessing',
+				removeMathBlockIndicators: 'Auto remove duplicate mat block indicators',
+				removeMathBlockIndicatorsDescription: 'The AI model might eagerly add a math block indicator ($), even though the cursor is already inside a math block. If this setting is enabled, the plugin will automatically remove these duplicate indicators from the completion.',
+				removeCodeBlockIndicators: 'Auto remove duplicate code block indicators',
+				removeCodeBlockIndicatorsDescription: 'The AI model might eagerly add a code block indicator (`), even though the cursor is already inside a code block. If this setting is enabled, the plugin will automatically remove these duplicate indicators from the completion.',
+			},
+			
+			// Trigger Settings
+			trigger: {
+				title: 'Trigger',
+				delay: 'Delay',
+				delayDescription: 'Delay in ms between the last character typed and the completion request.',
+				ms: 'ms',
+				words: 'Trigger words',
+				wordsDescription: 'Completions will be triggered if the text before the matches any of these words or characters. This can either be a direct string match or a regex match. When using a regex, make sure to include the end of line character ($).',
+			},
+			
+			// Privacy Settings
+			privacy: {
+				title: 'Privacy',
+				ignoredFiles: 'Ignored files',
+				ignoredFilesDescription: 'This field enables you to specify files and directories that the plugin should ignore. When you open any of these files, the plugin will automatically disable itself and display a \'disabled\' status in the bottom menu. Enter one pattern per line. These patterns function similar to glob patterns. Here are some frequently used patterns:',
+				ignoredFilesPattern1: 'path/to/folder/**: This pattern ignores all files and sub folders within this folder.',
+				ignoredFilesPattern2: '**/secret/**: This pattern ignores any file located inside a \'secret\' directory, regardless of its location in the path.',
+				ignoredFilesPattern3: '!path/to/folder/example.md: This pattern explicitly undoes an ignore, making this file noticeable to the plugin.',
+				ignoredFilesPattern4: '**/*Python*.md: This pattern ignores any file with \'Python\' in its name, irrespective of its location.',
+				ignoredFilesPlaceholder: 'Your file patterns, e.g., **/secret/**',
+				ignoredTags: 'Ignored tags',
+				ignoredTagsDescription: 'Files containing any of these tags will be ignored. When you open a file containing a tag listed here, the plugin will automatically disable itself and display a \'disabled\' status in the bottom menu. Enter one tag per line.',
+				ignoredTagsPlaceholder: 'Your file tags, e.g., secret',
+			},
+			
+			// Danger Zone Settings
+			dangerZone: {
+				title: 'Danger zone',
+				factoryReset: 'Factory reset',
+				factoryResetDescription: 'Messed-up the settings? No worries, press this button! After that, the plugin will go back to the default settings. The URL and API key will remain unchanged.',
+				reset: 'Reset',
+				advancedMode: 'Advanced mode',
+				advancedModeDescription: 'If you are familiar with prompt engineering, you can enable this setting to view the prompt generation and a few shot example settings. Turn off this button. It will not reset your changes; use the factory reset button for that.',
+				resetComplete: 'Factory reset complete.',
+			},
+			
+			// Advanced Settings
+			advanced: {
+				title: 'Advanced',
+				chainOfThoughtRemovalRegex: 'Chain of thought removal regex',
+				chainOfThoughtRemovalRegexDescription: 'This regex is used to remove the chain of thought tokens from the generated answer. If it is not implemented correctly, the chain of thought tokens will be included in the suggested completion.',
+				regexPlaceholder: 'your regex...',
+				systemMessage: 'System message',
+				systemMessageDescription: 'This system message gives the models all the context and instructions they need to complete the answer generation tasks. You can edit this message to your liking. If you edit the chain of thought formatting, make sure to update the extract regex and examples accordingly.',
+				systemMessagePlaceholder: 'Your system message...',
+				userMessageTemplate: 'User message template',
+				userMessageTemplateDescription: 'This template defines how the prefix and suffix are formatted to create the user message. You have access to two variables: {{prefix}} and {{suffix}}. If you edit this, make sure to update the examples accordingly.',
+				fewShotExamples: 'Few shot examples',
+				fewShotExamplesDescription: 'The model uses these examples to learn the expected answer format. Not all examples are sent at the same time. We only send the relevant examples, given the current cursor location. For example, the CodeBlock examples are only sent if the cursor is in a code block. If no special context is detected, we send the Text examples. Each context has a default of 2 examples, but you can add or remove examples if there is at least one per context. You can add more examples, but this will increase the inference costs.',
+			},
+		}
 	}
 }

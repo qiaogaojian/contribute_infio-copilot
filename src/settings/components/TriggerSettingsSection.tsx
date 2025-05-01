@@ -1,5 +1,6 @@
 import * as React from "react";
 
+import { t } from '../../lang/helpers';
 import { InfioSettings } from '../../types/settings';
 import {
 	MAX_DELAY,
@@ -19,9 +20,9 @@ export default function TriggerSettingsSection({ settings, updateSettings, error
     return (
         <>
             <SliderSettingsItem
-                name={"Delay"}
+                name={t("settings.AutoComplete.trigger.delay")}
                 description={
-                    "Delay in ms between the last character typed and the completion request."
+                    t("settings.AutoComplete.trigger.delayDescription")
                 }
                 value={settings.delay}
                 errorMessage={errors.get("delay")}
@@ -29,12 +30,12 @@ export default function TriggerSettingsSection({ settings, updateSettings, error
                 min={MIN_DELAY}
                 max={MAX_DELAY}
                 step={100}
-                suffix={"ms"}
+                suffix={t("settings.AutoComplete.trigger.ms")}
             />
             <TriggerSettings
-                name={"Trigger words"}
+                name={t("settings.AutoComplete.trigger.words")}
                 description={
-                    "Completions will be triggered if the text before the matches any of these words or characters. This can either be a direct string match or a regex match. When using a regex, make sure to include the end of line character ($)."
+                    t("settings.AutoComplete.trigger.wordsDescription")
                 }
                 triggers={settings.triggers}
                 setValues={(triggers) => updateSettings({ triggers })}

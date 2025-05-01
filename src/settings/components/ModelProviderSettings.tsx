@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 
+import { t } from '../../lang/helpers';
 import InfioPlugin from "../../main";
 import { ApiProvider } from '../../types/llm/model';
 import { InfioSettings } from '../../types/settings';
@@ -137,7 +138,7 @@ const CustomProviderSettings: React.FC<CustomProviderSettingsProps> = ({ plugin,
 	return (
 		<div className="infio-llm-setting-provider">
 			<DropdownComponent
-				name="Api provider:"
+				name={t("settings.ApiProvider.label")}
 				value={currProvider}
 				options={providers}
 				onChange={updateProvider}
@@ -146,7 +147,7 @@ const CustomProviderSettings: React.FC<CustomProviderSettingsProps> = ({ plugin,
 			{currProvider !== ApiProvider.Ollama && (
 				<TextComponent
 					name={currProvider + " api key:"}
-					placeholder="Enter your api key"
+					placeholder={t("settings.ApiProvider.enterApiKey")}
 					value={providerSetting.apiKey || ''}
 					onChange={updateProviderApiKey}
 					type="password"
@@ -154,13 +155,13 @@ const CustomProviderSettings: React.FC<CustomProviderSettingsProps> = ({ plugin,
 			)}
 			<div className="infio-llm-setting-divider"></div>
 			<ToggleComponent
-				name="Use custom base url"
+				name={t("settings.ApiProvider.useCustomBaseUrl")}
 				value={providerSetting.useCustomUrl || false}
 				onChange={updateProviderUseCustomUrl}
 			/>
 			{providerSetting.useCustomUrl && (
 				<TextComponent
-					placeholder="Enter your custom api endpoint url"
+					placeholder={t("settings.ApiProvider.enterCustomUrl")}
 					value={providerSetting.baseUrl || ''}
 					onChange={updateProviderBaseUrl}
 				/>
@@ -169,21 +170,21 @@ const CustomProviderSettings: React.FC<CustomProviderSettingsProps> = ({ plugin,
 			<div className="infio-llm-setting-divider"></div>
 			<div className="infio-llm-setting-divider"></div>
 			<ComboBoxComponent
-				name="Chat model:"
+				name={t("settings.Models.chatModel")}
 				provider={settings.chatModelProvider || currProvider}
 				modelId={settings.chatModelId}
 				updateModel={updateChatModelId}
 			/>
 			<div className="infio-llm-setting-divider"></div>
 			<ComboBoxComponent
-				name="Autocomplete model:"
+				name={t("settings.Models.autocompleteModel")}
 				provider={settings.applyModelProvider || currProvider}
 				modelId={settings.applyModelId}
 				updateModel={updateApplyModelId}
 			/>
 			<div className="infio-llm-setting-divider"></div>
 			<ComboBoxComponent
-				name="Embedding model:"
+				name={t("settings.Models.embeddingModel")}
 				provider={settings.embeddingModelProvider || ApiProvider.Google}
 				modelId={settings.embeddingModelId}
 				isEmbedding={true}

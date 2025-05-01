@@ -1,5 +1,6 @@
 import * as React from "react";
 
+import { t } from '../../lang/helpers';
 import { InfioSettings } from '../../types/settings';
 
 import CheckBoxSettingItem from "./CheckBoxSettingItem";
@@ -13,25 +14,25 @@ export default function BasicAutoCompleteSettings({ settings, updateSettings }: 
     return (
         <>
             <CheckBoxSettingItem
-                name={"Enable"}
+                name={t("settings.AutoComplete.enable")}
                 description={
-                    "If disabled, nothing will trigger the extension or can result in an API call."
+                    t("settings.AutoComplete.enableDescription")
                 }
                 enabled={settings.autocompleteEnabled}
                 setEnabled={(value) => updateSettings({ autocompleteEnabled: value })}
             />
             <CheckBoxSettingItem
-                name={"Cache completions"}
+                name={t("settings.AutoComplete.cacheCompletions")}
                 description={
-                    "If disabled, the plugin will not cache the completions. After accepting or rejecting a completion, the plugin will not remember it. This might result in more API calls."
+                    t("settings.AutoComplete.cacheCompletionsDescription")
                 }
                 enabled={settings.cacheSuggestions}
                 setEnabled={(value) => updateSettings({ cacheSuggestions: value })}
             />
             <CheckBoxSettingItem
-                name={"Debug mode"}
+                name={t("settings.AutoComplete.debugMode")}
                 description={
-                    "If enabled, various debug messages will be logged to the console, such as the complete response from the API, including the chain of thought tokens."
+                    t("settings.AutoComplete.debugModeDescription")
                 }
                 enabled={settings.debugMode}
                 setEnabled={(value) => updateSettings({ debugMode: value })}

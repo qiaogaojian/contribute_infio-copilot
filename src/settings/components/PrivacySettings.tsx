@@ -1,5 +1,6 @@
 import * as React from "react";
 
+import { t } from '../../lang/helpers';
 import { InfioSettings } from '../../types/settings';
 
 import SettingsItem from "./SettingsItem";
@@ -14,26 +15,18 @@ export default function PrivacySettings({ settings, updateSettings, errors }: Pr
     return (
         <>
             <SettingsItem
-                name={"Ignored files"}
+                name={t("settings.AutoComplete.privacy.ignoredFiles")}
                 description={
                     <div>
-                        <p>This field enables you to specify files and directories that the plugin should ignore. When
-                            you open any of these files, the plugin will automatically disable itself and display a
-                            'disabled' status in the bottom menu. Enter one pattern per line. These patterns function
-                            similar to glob patterns. Here are some frequently used patterns:</p>
+                        <p>{t("settings.AutoComplete.privacy.ignoredFilesDescription")}</p>
                         <ul>
-                            <li><code>path/to/folder/**</code>: This pattern ignores all files and sub folders within
-                                this folder.
+                            <li><code>path/to/folder/**</code>: {t("settings.AutoComplete.privacy.ignoredFilesPattern1")}
                             </li>
-                            <li><code>"**/secret/**"</code>: This pattern ignores any file located inside a 'secret'
-                                directory,
-                                regardless of its location in the path.
+                            <li><code>"**/secret/**"</code>: {t("settings.AutoComplete.privacy.ignoredFilesPattern2")}
                             </li>
-                            <li><code>!path/to/folder/example.md</code>: This pattern explicitly undoes an ignore,
-                                making this file noticeable to the plugin.
+                            <li><code>!path/to/folder/example.md</code>: {t("settings.AutoComplete.privacy.ignoredFilesPattern3")}
                             </li>
-                            <li><code>**/*Python*.md</code>: This pattern ignores any file with 'Python' in its name,
-                                irrespective of its location.
+                            <li><code>**/*Python*.md</code>: {t("settings.AutoComplete.privacy.ignoredFilesPattern4")}
                             </li>
                         </ul>
                     </div>
@@ -44,7 +37,7 @@ export default function PrivacySettings({ settings, updateSettings, errors }: Pr
                 <textarea
                     className="infio-autocomplete-setting-item-textarea"
                     rows={10}
-                    placeholder="Your file patterns, e.g., **/secret/**"
+                    placeholder={t("settings.AutoComplete.privacy.ignoredFilesPlaceholder")}
                     value={settings.ignoredFilePatterns}
                     onChange={(e) =>
                         updateSettings({
@@ -54,12 +47,10 @@ export default function PrivacySettings({ settings, updateSettings, errors }: Pr
                 />
             </SettingsItem>
             <SettingsItem
-                name={"Ignored tags"}
+                name={t("settings.AutoComplete.privacy.ignoredTags")}
                 description={
                     <div>
-                        <p>Files containing any of these tags will be ignored. When you open a file containing a
-                            tag listed here, the plugin will automatically disable itself and display a 'disabled'
-                            status in the bottom menu. Enter one tag per line.
+                        <p>{t("settings.AutoComplete.privacy.ignoredTagsDescription")}
                         </p>
                     </div>
                 }
@@ -69,7 +60,7 @@ export default function PrivacySettings({ settings, updateSettings, errors }: Pr
                 <textarea
                     className="infio-autocomplete-setting-item-textarea"
                     rows={10}
-                    placeholder="Your file tags, e.g., secret"
+                    placeholder={t("settings.AutoComplete.privacy.ignoredTagsPlaceholder")}
                     value={settings.ignoredTags}
                     onChange={(e) =>
                         updateSettings({

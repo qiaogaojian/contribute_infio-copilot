@@ -180,5 +180,177 @@ export default {
 	},
 	previewView: {
 		close: '关闭预览',
+	},
+	settings: {
+		// 模型设置部分
+		ApiProvider: {
+			label: 'LLM 提供商：',
+			useCustomBaseUrl: '使用自定义基础 URL',
+			enterApiKey: '输入您的 API 密钥',
+			enterCustomUrl: '输入您的自定义 API 端点 URL',
+		},
+		Models: {
+			chatModel: '聊天模型：',
+			autocompleteModel: '自动完成模型：',
+			embeddingModel: '嵌入模型：',
+		},
+		
+		// 模型参数部分
+		ModelParameters: {
+			title: '模型参数',
+			temperature: 'Temperature',
+			temperatureDescription: '此参数影响采样中的随机性。较低的值会导致更重复和确定性的响应。较高的温度将导致更意外或创造性的响应。默认值：0.0，如果您不确定自己在做什么，请不要更改此值。',
+			topP: 'TopP',
+			topPDescription: '与 temperature 参数类似，Top P 参数影响采样中的随机性。降低该值将限制模型的标记选择为更可能的标记，而增加该值则会扩展模型对较低可能性标记的选择。默认值：1，如果您不确定自己在做什么，请不要更改此值。',
+			frequencyPenalty: '频率惩罚',
+			frequencyPenaltyDescription: '此参数根据标记在文本中出现的频率成比例地降低重复该标记的几率。这降低了在响应中重复完全相同文本的可能性。默认值：0.25',
+			presencePenalty: '存在惩罚',
+			presencePenaltyDescription: '此参数降低重复文本中任何已出现标记的几率。这增加了在响应中引入新主题的可能性。默认值：2',
+			maxTokens: '最大 Tokens',
+			maxTokensDescription: '此参数更改模型允许生成的最大 Tokens 数。默认值：4096',
+		},
+		
+		// 文件搜索部分
+		FilesSearch: {
+			title: '文件搜索',
+			method: '文件搜索方法',
+			methodDescription: '选择搜索文件的方法。',
+			auto: '自动',
+			semantic: '语义',
+			regex: '正则',
+			ripgrepPath: 'ripgrep 路径',
+			ripgrepPathDescription: 'ripgrep 二进制文件的路径。使用正则搜索时需要此项。',
+		},
+		
+		// 聊天行为部分
+		ChatBehavior: {
+			title: '聊天行为',
+			defaultMention: '新聊天的默认提及',
+			defaultMentionDescription: '选择开始新聊天时的默认文件提及行为。',
+			none: '无',
+			currentFile: '当前文件',
+			vault: '整个 Vault',
+		},
+		
+		// 网页搜索部分
+		WebSearch: {
+			title: '网页搜索',
+			serperApiKey: 'Serper API 密钥',
+			serperApiKeyDescription: '用于网页搜索功能的 API 密钥。Serper 允许插件在互联网上搜索信息，类似于搜索引擎。请从此处获取您的密钥',
+			searchEngine: 'Serper 搜索引擎',
+			searchEngineDescription: '选择用于网页搜索的搜索引擎。',
+			google: 'Google',
+			duckDuckGo: 'DuckDuckGo',
+			bing: 'Bing',
+			jinaApiKey: 'Jina API 密钥（可选）',
+			jinaApiKeyDescription: '用于将网页解析为 Markdown 格式的 API 密钥。如果未提供，将使用本地解析。请从此处获取您的密钥',
+		},
+		
+		// RAG 部分
+		RAG: {
+			title: 'RAG',
+			includePatterns: '包含模式',
+			includePatternsDescription: '如果指定了任何模式，则只有匹配至少一个模式的文件才会被包含在索引中。每行一个模式。使用 glob 模式（例如，"notes/*", "*.md"）。留空以包含所有未被排除模式排除的文件。更改后，请使用命令 "重建整个 Vault 索引" 来应用更改。',
+			testPatterns: '测试模式',
+			excludePatterns: '排除模式',
+			excludePatternsDescription: '匹配任何这些模式的文件将从索引中排除。每行一个模式。使用 glob 模式（例如，"private/*", "*.tmp"）。留空以不排除任何内容。更改后，请使用命令 "重建整个 Vault 索引" 来应用更改。',
+			chunkSize: '分块大小',
+			chunkSizeDescription: '设置文本分割的分块大小。更改后，请使用 "重建整个 Vault 索引" 命令重新索引 Vault。',
+			thresholdTokens: '阈值 Tokens',
+			thresholdTokensDescription: '切换到 RAG 之前的最大 Tokens 数。如果提及文件的总 Tokens 超过此值，将使用 RAG 而不是包含所有文件内容。',
+			minSimilarity: '最小相似度',
+			minSimilarityDescription: 'RAG 结果的最小相似度得分。较高的值返回更相关但可能更少的结果。',
+			limit: '限制',
+			limitDescription: '包含在提示中的最大 RAG 结果数。较高的值提供更多上下文，但会增加 Tokens 使用量。',
+			includedFiles: '包含的文件',
+			noInclusionPatterns: '未指定包含模式 - 将包含所有文件（匹配排除模式的文件除外）',
+			noMatchingFiles: '没有文件匹配包含模式',
+			excludedFiles: '排除的文件',
+			noExcludedFiles: '没有文件匹配排除模式',
+		},
+		
+		// 自动完成部分
+		AutoComplete: {
+			// 基本自动完成设置
+			title: '自动完成',
+			enable: '启用',
+			enableDescription: '如果禁用，任何操作都不会触发扩展或导致 API 调用。',
+			cacheCompletions: '缓存补全',
+			cacheCompletionsDescription: '如果禁用，插件将不会缓存补全。接受或拒绝补全后，插件将不会记住它。这可能会导致更多的 API 调用。',
+			debugMode: '调试模式',
+			debugModeDescription: '如果启用，各种调试消息将被记录到控制台，例如来自 API 的完整响应，包括思维链 Tokens。',
+			
+			// 预处理设置
+			preprocessing: {
+				title: '预处理',
+				excludeDataview: '不包含 Dataview',
+				excludeDataviewDescription: 'Dataview(js) 块可能很长，但对 AI 的价值不大。如果启用此设置，数据视图块将被及时删除以减少 Tokens 数量。从长远来看，这可以为您节省一些费用。',
+				maxPrefixLength: '最大前缀长度',
+				maxPrefixLengthDescription: '将包含在前缀中的最大字符数。较大的值将增加补全的上下文，但也可能增加成本或超出 Tokens 限制。',
+				maxSuffixLength: '最大后缀长度',
+				maxSuffixLengthDescription: '将包含在后缀中的最大字符数。较大的值将增加补全的上下文，但也可能增加成本或超出 Tokens 限制。',
+				chars: '字符',
+			},
+			
+			// 后处理设置
+			postprocessing: {
+				title: '后处理',
+				removeMathBlockIndicators: '自动删除重复的数学块指示符',
+				removeMathBlockIndicatorsDescription: 'AI 模型可能会急切地添加数学块指示符 ($)，即使光标已在数学块内。如果启用此设置，插件将自动从补全中删除这些重复的指示符。',
+				removeCodeBlockIndicators: '自动删除重复的代码块指示符',
+				removeCodeBlockIndicatorsDescription: 'AI 模型可能会急切地添加代码块指示符 (`)，即使光标已在代码块内。如果启用此设置，插件将自动从补全中删除这些重复的指示符。',
+			},
+			
+			// 触发设置
+			trigger: {
+				title: '触发',
+				delay: '延迟',
+				delayDescription: '最后键入的字符与补全请求之间的延迟（毫秒）。',
+				ms: '毫秒',
+				words: '触发词',
+				wordsDescription: '如果之前的文本匹配任何这些单词或字符，将触发补全。这可以是直接字符串匹配或正则表达式匹配。使用正则表达式时，请确保包含行尾字符 ($)。',
+			},
+			
+			// 隐私设置
+			privacy: {
+				title: '隐私',
+				ignoredFiles: '忽略的文件',
+				ignoredFilesDescription: '此字段使您能够指定插件应忽略的文件和目录。当您打开任何这些文件时，插件将自动禁用自身并在底部菜单中显示"已禁用"状态。每行输入一个模式。这些模式的功能类似于 glob 模式。以下是一些常用的模式：',
+				ignoredFilesPattern1: 'path/to/folder/**：此模式忽略此文件夹内的所有文件和子文件夹。',
+				ignoredFilesPattern2: '**/secret/**：此模式忽略位于"secret"目录内的任何文件，无论其在路径中的位置如何。',
+				ignoredFilesPattern3: '!path/to/folder/example.md：此模式明确取消忽略，使此文件对插件可见。',
+				ignoredFilesPattern4: '**/*Python*.md：此模式忽略名称中包含"Python"的任何文件，无论其位置如何。',
+				ignoredFilesPlaceholder: '您的文件模式，例如 **/secret/**',
+				ignoredTags: '忽略的标签',
+				ignoredTagsDescription: '包含任何这些标签的文件将被忽略。当您打开包含此处列出的标签的文件时，插件将自动禁用自身并在底部菜单中显示"已禁用"状态。每行输入一个标签。',
+				ignoredTagsPlaceholder: '您的文件标签，例如 secret',
+			},
+			
+			// 危险区域设置
+			dangerZone: {
+				title: '危险区域',
+				factoryReset: '恢复出厂设置',
+				factoryResetDescription: '搞砸了设置？别担心，按这个按钮！之后，插件将恢复到默认设置。URL 和 API 密钥将保持不变。',
+				reset: '重置',
+				advancedMode: '高级模式',
+				advancedModeDescription: '如果您熟悉提示工程，可以启用此设置以查看提示生成和 few shot 示例设置。关闭此按钮。它不会重置您的更改；请使用恢复出厂设置按钮。',
+				resetComplete: '恢复出厂设置完成。',
+			},
+			
+			// 高级设置
+			advanced: {
+				title: '高级',
+				chainOfThoughtRemovalRegex: '思维链移除正则表达式',
+				chainOfThoughtRemovalRegexDescription: '此正则表达式用于从生成的答案中移除思维链 Tokens。如果未正确实现，思维链 Tokens 将包含在建议的补全中。',
+				regexPlaceholder: '您的正则表达式...',
+				systemMessage: '系统消息',
+				systemMessageDescription: '此系统消息为模型提供了完成答案生成任务所需的所有上下文和指令。您可以根据自己的喜好编辑此消息。如果编辑思维链格式，请确保相应地更新提取正则表达式和示例。',
+				systemMessagePlaceholder: '您的系统消息...',
+				userMessageTemplate: '用户消息模板',
+				userMessageTemplateDescription: '此模板定义了如何格式化前缀和后缀以创建用户消息。您可以使用两个变量：{{prefix}} 和 {{suffix}}。如果编辑此项，请确保相应地更新示例。',
+				fewShotExamples: 'Few shot 示例',
+				fewShotExamplesDescription: '模型使用这些示例来学习预期的答案格式。并非所有示例都同时发送。我们仅根据当前光标位置发送相关示例。例如，仅当光标位于代码块中时才发送 CodeBlock 示例。如果未检测到特殊上下文，则发送 Text 示例。每个上下文默认有 2 个示例，但如果每个上下文至少有一个示例，则可以添加或删除示例。您可以添加更多示例，但这会增加推理成本。',
+			},
+		}
 	}
 };
