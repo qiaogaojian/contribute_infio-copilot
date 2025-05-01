@@ -14,6 +14,8 @@ import { modes as buildinModes } from '../../utils/modes';
 import { openOrCreateMarkdownFile } from '../../utils/obsidian';
 import { PromptGenerator, getFullLanguageName } from '../../utils/prompt-generator';
 
+import { t } from '../../lang/helpers';
+
 const CustomModeView = () => {
 	const app = useApp()
 
@@ -173,7 +175,7 @@ const CustomModeView = () => {
 			{/* Mode configuration title and buttons */}
 			<div className="infio-custom-modes-header">
 				<div className="infio-custom-modes-title">
-					<h2>Mode Configuration</h2>
+					<h2>{t('prompt.title')}</h2>
 				</div>
 				{/* <div className="infio-custom-modes-actions">
 					<button className="infio-custom-modes-btn">
@@ -187,7 +189,7 @@ const CustomModeView = () => {
 
 			{/* Create mode tip */}
 			<div className="infio-custom-modes-tip">
-				Click + to create a new mode
+				{t('prompt.description')}
 			</div>
 
 			{/* Mode selection area */}
