@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Feature Ideas & Suggestions
+    url: https://github.com/infiolab/infio-copilot/discussions/categories/ideas
+    about: Have an idea? Start a discussion to gather feedback and refine your proposal
+  - name: General Questions
+    url: https://github.com/infiolab/infio-copilot/discussions/categories/q-a
+    about: Please submit general questions about using Infio Copilot in our Discussions section
