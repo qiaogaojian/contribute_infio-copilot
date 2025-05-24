@@ -59,7 +59,7 @@ const context = await esbuild.context({
 	},
 	sourcemap: prod ? false : 'inline',
 	treeShaking: true,
-	outfile: 'main.js',
+	outfile: 'D:/Git/Note/note_obsidian/.obsidian/plugins/obsidian-infio-copilot/main.js',
 	minify: prod,
 })
 

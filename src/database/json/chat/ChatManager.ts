@@ -21,27 +21,37 @@ export class ChatManager extends AbstractJsonRepository<
 	}
 
 	protected generateFileName(chat: ChatConversation): string {
-		// Format: v{schemaVersion}_{title}_{updatedAt}_{id}.json
-		const encodedTitle = encodeURIComponent(chat.title)
-		return `v${chat.schemaVersion}_${encodedTitle}_${chat.updatedAt}_${chat.id}.json`
+		// 获取标题的前20个字符，如果标题为空则使用"New chat"
+		const shortTitle = chat.title ? chat.title.substring(0, 20) : "New chat";
+		
+		// 替换文件名中不允许的字符为下划线
+		const safeTitle = shortTitle.replace(/[\\/:*?"<>|]/g, "_");
+		
+		// 生成更简洁的文件名：v版本_简短标题_ID.json
+		// 不再使用更新时间戳，减少文件名长度
+		return `v${chat.schemaVersion}_${safeTitle}_${chat.id.substring(0, 8)}.json`;
 	}
 
 	protected parseFileName(fileName: string): ChatConversationMeta | null {
-		// Parse: v{schemaVersion}_{title}_{updatedAt}_{id}.json
+		// 更新正则表达式以匹配新的文件名格式
+		// 新格式：v{schemaVersion}_{shortTitle}_{shortId}.json
 		const regex = new RegExp(
-			`^v${CHAT_SCHEMA_VERSION}_(.+)_(\\d+)_([0-9a-f-]+)\\.json$`,
+			`^v${CHAT_SCHEMA_VERSION}_(.+)_([0-9a-f]{1,8})\\.json$`,
 		)
 		const match = fileName.match(regex)
 		if (!match) return null
 
-		const title = decodeURIComponent(match[1])
-		const updatedAt = parseInt(match[2], 10)
-		const id = match[3]
+		const shortTitle = match[1]
+		const shortId = match[2]
+		
+		// 使用文件的最后修改时间作为更新时间
+		// 注意：我们不再需要从文件名中获取更新时间，而是从文件状态获取
+		const updatedAt = Date.now(); // 默认使用当前时间，避免错误
 
 		return {
-			id,
+			id: shortId,
 			schemaVersion: CHAT_SCHEMA_VERSION,
-			title,
+			title: shortTitle,
 			updatedAt,
 			createdAt: 0,
 		}
@@ -71,7 +81,8 @@ export class ChatManager extends AbstractJsonRepository<
 
 	public async findById(id: string): Promise<ChatConversation | null> {
 		const allMetadata = await this.listMetadata()
-		const targetMetadata = allMetadata.find((meta) => meta.id === id)
+		// 修改查找逻辑，支持使用短ID进行匹配
+		const targetMetadata = allMetadata.find((meta) => meta.id === id || meta.id.startsWith(id) || id.startsWith(meta.id))
 
 		if (!targetMetadata) return null
 
@@ -103,7 +114,8 @@ export class ChatManager extends AbstractJsonRepository<
 
 	public async deleteChat(id: string): Promise<boolean> {
 		const allMetadata = await this.listMetadata()
-		const targetMetadata = allMetadata.find((meta) => meta.id === id)
+		// 修改删除逻辑，支持使用短ID进行匹配
+		const targetMetadata = allMetadata.find((meta) => meta.id === id || meta.id.startsWith(id) || id.startsWith(meta.id))
 		if (!targetMetadata) return false
 
 		await this.delete(targetMetadata.fileName)
