@@ -17,7 +17,7 @@ export class ChatManager extends AbstractJsonRepository<
 	ChatConversationMeta
 > {
 	constructor(app: App) {
-		super(app, `${ROOT_DIR}/${CHAT_DIR}`)
+		super(app, `${CHAT_DIR}`)
 	}
 
 	protected generateFileName(chat: ChatConversation): string {
